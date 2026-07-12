@@ -277,6 +277,40 @@ def modelled_prevalence(towns, granularity, pop):
     return county_rows, by_town
 
 
+# ---------- world country-level PM2.5 (for the residence country dropdown) ----------
+WORLD_CSV = ("https://satpmdata.s3.us-east-1.amazonaws.com/V6GL03/RegionSummaries/"
+             "GlobalPM25-V6GL03-Annual-1998-2024-wThresFrac.csv")
+
+
+def build_world_country_pm25():
+    """Parse ACAG global country summary CSV -> {country: {values:[YEAR0..YEAR1]}}
+       using the Population-Weighted PM2.5 column."""
+    import csv
+    log("Fetching ACAG global country PM2.5 summary…")
+    raw = http_get(WORLD_CSV).decode("utf-8", "replace")
+    rd = csv.reader(io.StringIO(raw))
+    header = next(rd)  # Region, Year, Population-Weighted PM2.5 [ug/m3], ...
+    ri, yi, pi = 0, 1, 2
+    tmp = {}
+    for row in rd:
+        if len(row) <= pi:
+            continue
+        region = row[ri].strip()
+        try:
+            year, pm = int(row[yi]), float(row[pi])
+        except ValueError:
+            continue
+        if YEAR0 <= year <= YEAR1:
+            tmp.setdefault(region, {})[year] = round(pm, 1)
+    out = {}
+    for region, ys in tmp.items():
+        vals = [ys.get(y) for y in range(YEAR0, YEAR1 + 1)]
+        if any(v is not None for v in vals):
+            out[region] = {"values": vals}
+    log(f"  {len(out)} countries")
+    return out
+
+
 # ---------- write ----------
 def write_json(rel, obj):
     path = os.path.join(OUT, rel)
@@ -328,6 +362,15 @@ def main():
                  "license": "OGDL-Taiwan-1.0", "built": BUILD_DATE},
         "counties": county_rows, "byTown": by_town})
 
+    log("World country PM2.5 (residence dropdown) …")
+    world_pm = build_world_country_pm25()
+    write_json("pm25/world-country-pm25.json", {
+        "meta": {"source": "ACAG SatPM2.5 V6.GL.03 global region summary (population-weighted)",
+                 "units": "ug/m3", "note": "years < 1998 clamp to 1998 in the app",
+                 "citation": "Shen et al. 2024, ACS ES&T Air; van Donkelaar et al. 2021, ES&T",
+                 "license": "CC BY 4.0", "built": BUILD_DATE},
+        "year0": YEAR0, "year1": YEAR1, "countries": world_pm})
+
     log("Boundaries -> geo/tw-districts.topo.json …")
     write_json("geo/tw-districts.topo.json", towns_topo)
 
@@ -336,6 +379,7 @@ def main():
         "assets": {
             "pm25/tw-county-pm25.json": "ACAG V6.GL.03 county x year PM2.5 (CC BY 4.0)",
             "pm25/tw-district-pm25.json": "ACAG V6.GL.03 per-town recent PM2.5 (CC BY 4.0)",
+            "pm25/world-country-pm25.json": "ACAG V6.GL.03 country x year PM2.5, pop-weighted (CC BY 4.0)",
             "geo/tw-districts.topo.json": "taiwan-atlas / MOI #7441 boundaries (OGDL-Taiwan-1.0)",
             "dementia/tw-dementia-modelled.json": "modelled prevalence, NHRI 2020-23 x MOI pop"},
         "attribution": ["PM2.5 © ACAG/WashU (Shen 2024; van Donkelaar 2021), CC BY 4.0",

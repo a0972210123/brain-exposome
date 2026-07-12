@@ -82,7 +82,8 @@ import T from '../../components/T.astro';
           <table class="supp-table res-table">
             <thead>
               <tr>
-                <th><T zh="地區" en="Place" /></th>
+                <th><T zh="國家" en="Country" /></th>
+                <th><T zh="地區" en="Region" /></th>
                 <th><T zh="從" en="From" /></th>
                 <th><T zh="到" en="To" /></th>
                 <th>PM2.5</th>
@@ -244,6 +245,7 @@ import T from '../../components/T.astro';
           <div class="ba-label"><T zh="教育性「腦齡加速」估計" en="Educational 'brain-age acceleration' estimate" /></div>
           <div class="ba-num" id="out-brainage">—</div>
           <div class="ba-caption" id="out-brainage-caption"></div>
+          <div id="out-brainage-detail"></div>
         </div>
 
         <p class="calc-subheading"><T zh="各面向概況" en="By category" /></p>
@@ -425,6 +427,16 @@ import T from '../../components/T.astro';
   .ba-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-muted); }
   .ba-num { font-size: clamp(2.2rem, 8vw, 3.4rem); font-weight: 800; letter-spacing: -0.03em; margin: 0.3rem 0; }
   .ba-caption { font-size: 0.82rem; color: var(--color-text-muted); line-height: 1.6; max-width: 460px; margin: 0 auto; }
+  .ba-detail { margin-top: 0.9rem; text-align: left; font-size: 0.82rem; }
+  .ba-detail summary { cursor: pointer; color: var(--color-accent); font-weight: 600; text-align: center; }
+  .ba-detail-body { margin-top: 0.7rem; color: var(--color-text-muted); line-height: 1.6; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 0.8rem 1rem; }
+  .ba-detail-body strong { color: var(--color-text); }
+  .ba-factors { margin: 0.3rem 0 0.6rem; padding-left: 1.2rem; }
+  .ba-factors li { margin-bottom: 0.15rem; }
+  .ba-steps { margin: 0.3rem 0; padding-left: 1.2rem; }
+  .ba-steps li { margin-bottom: 0.4rem; }
+  .ba-detail-note { font-size: 0.78rem; margin-top: 0.5rem; }
+  .res-nat { color: var(--color-text-muted); font-size: 0.85rem; }
 
   .stat-list { display: flex; flex-direction: column; gap: 0.6rem; }
   .stat-row {
@@ -511,50 +523,82 @@ const LAMBDA = 0.6;            // overlap shrinkage (approximates the Commission
 const CAP_LN = Math.log(4.5);  // cap combined RR (~ +12 brain-years)
 const T_DOUBLE = 5.5;          // dementia risk doubling time (yr); band 5.0–6.3
 
-/* ── Real PM2.5 data (ACAG V6.GL.03, county × year 1998–2024; fetched from /data) ── */
+/* ── Real PM2.5 data (ACAG V6.GL.03; fetched from /data) ──
+   Taiwan: county × year series (finer). Other countries: national × year series. */
 let COUNTY_PM = null;        // { year0, year1, counties: {CODE:{name,nameEn,values:[…]}} }
-let COUNTY_LIST = [];        // [[code, zh, en], …] built from the fetched data
-const FALLBACK_COUNTIES = [  // used only if the fetch fails, so the page never breaks
+let COUNTY_LIST = [];        // [[code, zh, en], …] Taiwan counties, built from data
+let WORLD_PM = null;         // { year0, year1, countries: {Name:{values:[…]}} }
+let COUNTRY_LIST = [];       // [[value, zh, en], …] country picker; 'TW' first
+const FALLBACK_COUNTIES = [
   ['63000', '臺北市', 'Taipei City'], ['65000', '新北市', 'New Taipei City'],
   ['66000', '臺中市', 'Taichung City'], ['64000', '高雄市', 'Kaohsiung City'],
-  ['OVERSEAS', '海外／其他（約略）', 'Overseas / Other (approx.)'],
 ];
-const PM_FALLBACK = 18;      // µg/m³ when a county/year has no value or the fetch failed
-const PM_OVERSEAS = 20;      // flat approx for non-Taiwan residences (global grid is a later phase)
+/* zh names for common countries (English name is used otherwise) */
+const COUNTRY_ZH = {
+  'Japan': '日本', 'South Korea': '南韓', 'Korea, Rep.': '南韓', 'China': '中國', 'Hong Kong': '香港',
+  'Macao': '澳門', 'Singapore': '新加坡', 'Malaysia': '馬來西亞', 'Thailand': '泰國', 'Vietnam': '越南',
+  'Viet Nam': '越南', 'Philippines': '菲律賓', 'Indonesia': '印尼', 'India': '印度', 'United States': '美國',
+  'Canada': '加拿大', 'United Kingdom': '英國', 'Germany': '德國', 'France': '法國', 'Australia': '澳洲',
+  'New Zealand': '紐西蘭', 'Netherlands': '荷蘭', 'Switzerland': '瑞士', 'Sweden': '瑞典', 'Italy': '義大利',
+  'Spain': '西班牙', 'Austria': '奧地利',
+};
+const PM_FALLBACK = 18;      // µg/m³ when a series is missing / a fetch failed
 
-function countyOptions(selected) {
-  const list = COUNTY_LIST.length ? COUNTY_LIST : FALLBACK_COUNTIES;
+function countryLabel(name) { return L(COUNTRY_ZH[name] || name, name); }
+function buildCountryList() {
+  const list = [['TW', '臺灣', 'Taiwan']];
+  if (WORLD_PM) {
+    Object.keys(WORLD_PM.countries).filter(n => n !== 'Taiwan')
+      .sort((a, b) => countryLabel(a).localeCompare(countryLabel(b), 'zh-Hant'))
+      .forEach(n => list.push([n, COUNTRY_ZH[n] || n, n]));
+  }
+  COUNTRY_LIST = list;
+}
+function optionsFrom(list, selected) {
   return list.map(([v, zh, en]) =>
     `<option value="${v}" ${v === selected ? 'selected' : ''}>${L(zh, en)}</option>`
   ).join('');
 }
+function countyOptions(selected) { return optionsFrom(COUNTY_LIST.length ? COUNTY_LIST : FALLBACK_COUNTIES, selected); }
+function countryOptions(selected) { return optionsFrom(COUNTRY_LIST.length ? COUNTRY_LIST : [['TW', '臺灣', 'Taiwan']], selected); }
 
-/* PM2.5 for one county averaged over a residence span (from..to), years clamped to data range.
-   Weighting still uses the real duration; pre-1998 years reuse the 1998 value. */
-function pmForSpan(code, from, to) {
-  const years = Math.max(1, (Number(to) || 0) - (Number(from) || 0));
-  if (code === 'OVERSEAS') return { mean: PM_OVERSEAS, years };
-  const c = COUNTY_PM && COUNTY_PM.counties[code];
-  if (!c) return { mean: PM_FALLBACK, years };
-  const { year0, year1 } = COUNTY_PM;
+/* average a year-indexed series over a residence span (years clamped; pre-1998 reuses the first value) */
+function avgSeries(series, year0, year1, from, to) {
   let a = Math.min(Math.max(Number(from) || year0, year0), year1);
   let b = Math.min(Math.max(Number(to) || year1, year0), year1);
   if (b < a) { const t = a; a = b; b = t; }
   let sum = 0, n = 0;
-  for (let y = a; y <= b; y++) { const v = c.values[y - year0]; if (v != null) { sum += v; n++; } }
-  return { mean: n ? sum / n : PM_FALLBACK, years };
+  for (let y = a; y <= b; y++) { const v = series[y - year0]; if (v != null) { sum += v; n++; } }
+  return n ? sum / n : null;
+}
+
+/* PM2.5 for a residence (country + optional TW county) averaged over a span */
+function pmForSpan(country, place, from, to) {
+  const years = Math.max(1, (Number(to) || 0) - (Number(from) || 0));
+  let mean = null;
+  if (country === 'TW') {
+    const c = COUNTY_PM && COUNTY_PM.counties[place];
+    if (c) mean = avgSeries(c.values, COUNTY_PM.year0, COUNTY_PM.year1, from, to);
+  } else if (WORLD_PM && WORLD_PM.countries[country]) {
+    mean = avgSeries(WORLD_PM.countries[country].values, WORLD_PM.year0, WORLD_PM.year1, from, to);
+  }
+  return { mean: mean == null ? PM_FALLBACK : mean, years };
 }
 
 /* ── Residence state (module-scope array, mutated in place — the diet-calc ccPlan pattern) ── */
-let residences = [{ place: '63000', from: 1990, to: 2020 }]; // normalised to a valid code after load
+let residences = [{ country: 'TW', place: '63000', from: 1990, to: 2020 }];
 
 function renderResidences() {
   const grid = $('res-grid');
   if (!grid) return;
   grid.innerHTML = residences.map((r, i) => {
-    const pm = pmForSpan(r.place, r.from, r.to).mean;
+    const pm = pmForSpan(r.country, r.place, r.from, r.to).mean;
+    const region = r.country === 'TW'
+      ? `<select class="res-place" data-idx="${i}">${countyOptions(r.place)}</select>`
+      : `<span class="res-nat">${L('全國', 'nationwide')}</span>`;
     return `<tr>
-      <td><select class="res-place" data-idx="${i}">${countyOptions(r.place)}</select></td>
+      <td><select class="res-country" data-idx="${i}">${countryOptions(r.country)}</select></td>
+      <td>${region}</td>
       <td><input class="res-from" type="number" data-idx="${i}" value="${r.from}" min="1930" max="2026" step="1" /></td>
       <td><input class="res-to" type="number" data-idx="${i}" value="${r.to}" min="1930" max="2026" step="1" /></td>
       <td class="res-pm">${pm.toFixed(1)} µg/m³</td>
@@ -562,6 +606,12 @@ function renderResidences() {
     </tr>`;
   }).join('');
 
+  grid.querySelectorAll('.res-country').forEach(sel => sel.addEventListener('change', () => {
+    const r = residences[+sel.dataset.idx];
+    r.country = sel.value;
+    if (r.country === 'TW' && !COUNTY_LIST.some(c => c[0] === r.place)) r.place = (COUNTY_LIST[0] || ['63000'])[0];
+    renderResidences();
+  }));
   grid.querySelectorAll('.res-place').forEach(sel => sel.addEventListener('change', () => {
     residences[+sel.dataset.idx].place = sel.value; renderResidences();
   }));
@@ -580,7 +630,7 @@ function renderResidences() {
 function residenceStats() {
   let wsum = 0, w = 0, dose = 0;
   residences.forEach(r => {
-    const { mean, years } = pmForSpan(r.place, r.from, r.to);
+    const { mean, years } = pmForSpan(r.country, r.place, r.from, r.to);
     wsum += years * mean; w += years; dose += years * mean;
   });
   return w > 0 ? { mean: wsum / w, years: w, dose } : null;
@@ -642,7 +692,8 @@ function computeResult() {
   const count = factors.length;
   const band = count <= 2 ? 'few' : count <= 5 ? 'several' : 'many';
 
-  return { factors, meanPM, res, dMid, dLo, dHi, capped, count, band };
+  return { factors, meanPM, res, dMid, dLo, dHi, capped, count, band,
+           rrProd: Math.exp(lnSum), rrEff: Math.exp(lnEff), lambda: LAMBDA, tDouble: T_DOUBLE };
 }
 
 /* ── Categories & actions metadata ── */
@@ -672,6 +723,17 @@ const ACTIONS = {
   education: ['學習與社會連結', 'Learning & social connection', '維持終身學習與認知活動，建立認知存量。', 'Keep learning and stay cognitively active to build cognitive reserve.'],
 };
 
+/* readable labels for the brain-age calculation breakdown */
+const FACTOR_LABELS = {
+  education: ['教育程度較低', 'Less education'], hearing: ['聽力損失（未矯治）', 'Hearing loss (untreated)'],
+  vision: ['視力損失（未矯治）', 'Vision loss (untreated)'], htn: ['高血壓', 'Hypertension'],
+  diabetes: ['糖尿病', 'Diabetes'], obesity: ['肥胖', 'Obesity'], inactive: ['身體活動不足', 'Physical inactivity'],
+  ldl: ['LDL 膽固醇偏高', 'High LDL cholesterol'], depression: ['憂鬱症', 'Depression'],
+  isolation: ['社交孤立', 'Social isolation'], smoking: ['目前吸菸', 'Current smoking'],
+  'smoking-former': ['已戒菸', 'Former smoking'], alcohol: ['過量飲酒', 'Excessive alcohol'],
+  tbi: ['頭部外傷', 'Traumatic brain injury'], pm25: ['空氣污染 PM2.5', 'Air pollution PM2.5'],
+};
+
 function renderResults(r) {
   // 1) categorical profile (LEAD)
   const profileEl = $('out-profile');
@@ -682,12 +744,27 @@ function renderResults(r) {
     ? `${L('目前沒有偵測到可調整的風險因子 — 很好！', 'No modifiable risk factors detected — great!')}<span class="rp-sub">${L('持續維持這些好習慣。', 'Keep up these healthy habits.')}</span>`
     : `${L(`你目前有 ${r.count} 項可調整因子（${bandTxt}）。`, `You currently have ${r.count} modifiable factor${r.count > 1 ? 's' : ''} (${bandTxt}).`)}<span class="rp-sub">${L('針對這些因子採取行動，在族群層級與較低的失智風險相關。', 'Acting on these is associated with lower dementia risk at the population level.')}</span>`;
 
-  // 2) brain-age gap (secondary, clearly educational)
+  // 2) brain-age gap (secondary, clearly educational) + a transparent derivation
   $('out-brainage').textContent = `≈ +${r.dMid.toFixed(1)} ${L('年', 'yr')}`;
   $('out-brainage-caption').textContent = L(
     `估計範圍 +${r.dLo.toFixed(1)} 到 +${r.dHi.toFixed(1)} 年${r.capped ? '（已達上限）' : ''}。這是教育性比喻，非影像量測的真實腦齡，也不是個人預測。`,
     `Estimated range +${r.dLo.toFixed(1)} to +${r.dHi.toFixed(1)} yr${r.capped ? ' (capped)' : ''}. An educational illustration — not a measured brain age, and not a personal prediction.`
   );
+  const frows = r.factors.map(f => {
+    const lab = FACTOR_LABELS[f.key] ? L(FACTOR_LABELS[f.key][0], FACTOR_LABELS[f.key][1]) : f.key;
+    const extra = f.key === 'pm25' && r.meanPM != null ? `（${r.meanPM.toFixed(1)} µg/m³）` : '';
+    return `<li>${lab}${extra} — RR ${f.rr.toFixed(2)}</li>`;
+  }).join('');
+  $('out-brainage-detail').innerHTML = `<details class="ba-detail"><summary>${L('如何算出這個數字？', 'How is this number derived?')}</summary><div class="ba-detail-body">
+    <p>${L('納入計算的因子與其相對風險（RR，主要來自 2024 Lancet 委員會）：', 'Factors included and their relative risks (RR, mainly the 2024 Lancet Commission):')}</p>
+    <ul class="ba-factors">${frows || `<li>${L('（目前沒有可調整因子）', '(no modifiable factors)')}</li>`}</ul>
+    <ol class="ba-steps">
+      <li>${L(`各因子 RR 相乘 → 原始合併 RR ≈ <strong>${r.rrProd.toFixed(2)}</strong>`, `Multiply the RRs → raw combined RR ≈ <strong>${r.rrProd.toFixed(2)}</strong>`)}</li>
+      <li>${L(`乘上重疊縮減係數 λ = ${r.lambda}（因子彼此相關，直接相乘會高估；λ 近似 Lancet 委員會的 communality 調整）→ 有效 RR = 原始RR<sup>${r.lambda}</sup> ≈ <strong>${r.rrEff.toFixed(2)}</strong>`, `Apply overlap-shrinkage λ = ${r.lambda} (factors are correlated; multiplying raw RRs overstates risk — λ approximates the Commission's communality adjustment) → effective RR = rawRR<sup>${r.lambda}</sup> ≈ <strong>${r.rrEff.toFixed(2)}</strong>`)}</li>
+      <li>${L(`換算成腦齡：log₂(有效 RR) × ${r.tDouble} ≈ <strong>+${r.dMid.toFixed(1)} 年</strong>${r.capped ? '（已達上限）' : ''}。失智風險每約 ${r.tDouble} 年翻倍，log₂ 把「風險倍數」換算成「相當於老了幾年」（上限約 ±12 年）。`, `Convert to brain-years: log₂(effective RR) × ${r.tDouble} ≈ <strong>+${r.dMid.toFixed(1)} yr</strong>${r.capped ? ' (capped)' : ''}. Dementia risk roughly doubles every ${r.tDouble} years; log₂ turns the risk multiple into "years older" (capped at about ±12 yr).`)}</li>
+    </ol>
+    <p class="ba-detail-note">${L('λ = 0.6 與 ±12 年上限是本工具為避免高估設的參數（非已發表常數）。這是教育性估計，非個人預測。', 'λ = 0.6 and the ±12-yr cap are this tool\'s parameters to avoid overstatement (not published constants). Educational estimate, not a personal prediction.')}</p>
+  </div></details>`;
 
   // 3) by category
   const catCount = {};
@@ -707,13 +784,24 @@ function renderResults(r) {
     </div>`;
   }).join('');
 
-  // 4) exposome / PM2.5 detail
+  // 4) exposome / PM2.5 detail — WHO guideline → your annual avg → cumulative comparison → provenance
   const ex = $('out-exposome');
   if (r.res) {
     ex.style.display = '';
+    const mult = (r.meanPM / PM_REF).toFixed(1);
+    const yourCum = Math.round(r.res.dose);
+    const whoCum = PM_REF * r.res.years;
     ex.innerHTML = L(
-      `🌫️ 你的<strong>時間加權平均 PM2.5 ≈ ${r.meanPM.toFixed(1)} µg/m³</strong>（WHO 建議 ≤ 5）。累積暴露約 ${Math.round(r.res.dose).toLocaleString()} µg/m³·年，涵蓋約 ${r.res.years} 年居住史。<em>（PM2.5 為示意值，將以逐年衛星資料取代。）</em>`,
-      `🌫️ Your <strong>time-weighted mean PM2.5 ≈ ${r.meanPM.toFixed(1)} µg/m³</strong> (WHO guideline ≤ 5). Cumulative exposure ≈ ${Math.round(r.res.dose).toLocaleString()} µg/m³·years over ~${r.res.years} years of residence. <em>(PM2.5 is a placeholder, to be replaced by year-by-year satellite data.)</em>`
+      `🌫️ <strong>WHO 建議年均 PM2.5 ≤ ${PM_REF} µg/m³。</strong><br>` +
+      `你的時間加權年均暴露 ≈ <strong>${r.meanPM.toFixed(1)} µg/m³</strong>，約為 WHO 建議的 <strong>${mult}×</strong>。<br>` +
+      `在約 ${r.res.years} 年的居住史中，你的估計累積暴露 ≈ <strong>${yourCum.toLocaleString()} µg/m³·年</strong>；` +
+      `同樣年數下、符合 WHO 標準者僅 ${whoCum.toLocaleString()} µg/m³·年 —— 你約為其 <strong>${mult}×</strong>。<br>` +
+      `<em>PM2.5 採用 ACAG 衛星逐年資料（V6.GL.03，1998–2024）；1998 年以前的居住年份沿用 1998 年數值估計。</em>`,
+      `🌫️ <strong>WHO guideline: annual PM2.5 ≤ ${PM_REF} µg/m³.</strong><br>` +
+      `Your time-weighted annual exposure ≈ <strong>${r.meanPM.toFixed(1)} µg/m³</strong>, about <strong>${mult}×</strong> the WHO guideline.<br>` +
+      `Over ~${r.res.years} years of residence, your estimated cumulative exposure ≈ <strong>${yourCum.toLocaleString()} µg/m³·years</strong>; ` +
+      `someone meeting the WHO guideline for the same span would be just ${whoCum.toLocaleString()} µg/m³·years — you are about <strong>${mult}×</strong> that.<br>` +
+      `<em>PM2.5 uses ACAG satellite annual data (V6.GL.03, 1998–2024); residence years before 1998 reuse the 1998 value.</em>`
     );
   } else { ex.style.display = 'none'; }
 
@@ -839,19 +927,24 @@ async function init() {
   document.querySelectorAll('[data-goto]').forEach(b => b.addEventListener('click', () => showStep(+b.dataset.goto)));
   const addBtn = $('res-add');
   if (addBtn) addBtn.addEventListener('click', () => {
-    const last = residences[residences.length - 1];
-    residences.push({ place: last ? last.place : '63000', from: last ? last.to : 2000, to: 2026 });
+    const last = residences[residences.length - 1] || { country: 'TW', place: '63000', to: 2000 };
+    residences.push({ country: last.country, place: last.place, from: last.to || 2000, to: 2026 });
     renderResidences();
   });
-  // load real PM2.5 county series (ACAG); build the county picker from it
+  // load real PM2.5 — Taiwan county series + world country series (ACAG) — in parallel
   try {
-    COUNTY_PM = await fetch('/data/pm25/tw-county-pm25.json').then(r => r.json());
+    const [cty, world] = await Promise.all([
+      fetch('/data/pm25/tw-county-pm25.json').then(r => r.json()),
+      fetch('/data/pm25/world-country-pm25.json').then(r => r.json()).catch(() => null),
+    ]);
+    COUNTY_PM = cty;
     COUNTY_LIST = Object.entries(COUNTY_PM.counties)
       .map(([code, c]) => [code, c.name, c.nameEn])
       .sort((a, b) => a[1].localeCompare(b[1], 'zh-Hant'));
-    COUNTY_LIST.push(['OVERSEAS', '海外／其他（約略）', 'Overseas / Other (approx.)']);
+    WORLD_PM = world;
   } catch (e) { COUNTY_LIST = FALLBACK_COUNTIES.slice(); }
-  if (!COUNTY_LIST.some(c => c[0] === residences[0].place)) residences[0].place = COUNTY_LIST[0][0];
+  buildCountryList();
+  if (!COUNTY_LIST.some(c => c[0] === residences[0].place)) residences[0].place = (COUNTY_LIST[0] || ['63000'])[0];
 
   applyOptionLangs();
   renderResidences();
