@@ -21,6 +21,8 @@
 ## A.1 Verified constants (the numbers to hard-code)
 
 ### A.1.1 Lancet Commission relative risks + weighted PAFs
+> ⚠️ **Superseded by Round 3-D** (`research-round-3-verification.md` §1–2): the ⚠️re-check RRs below were verified and **some corrected** — hearing loss → **1.37**, depression → **1.96**, LDL → **1.08 per 1 mmol/L** (per-unit, not categorical), vision → **1.47 (1.36–1.60)**, air pollution **1.1 is categorical** (don't combine with the continuous PM2.5 dose model). Use the Round-3 §2 table as the source of truth.
+
 The **weighted-PAF split is [H] verified** for both years (2024 sums to 45%, 2020 to 39.7%). RRs: the 9 "carried-over" factors are **[H/M] verified from the open UCL manuscripts**; the 2024-new and re-meta-analysed ones are **⚠️re-check**.
 
 | Factor | 2024 wPAF | RR (use) | Confidence |
@@ -167,6 +169,8 @@ From the residence table rows `(place, startYear, endYear)`:
 **Committed total < ~25 MB** (put the two `.bin` files in Git LFS or Cloudflare R2 if you'd rather keep the repo light). The optional global 0.5° raster is only needed for arbitrary non-Taiwan points; the admin1 table already covers named places.
 
 ## B.2 ACAG PM2.5 pipeline (topic B1)
+
+> ⚠️ **Superseded by Round 3-D** (`research-round-3-verification.md` §5): target **V6.GL.03 (1998–2024)** via `s3://satpmdata/V6GL03/…` — the literal `s3://v6.gl.02.04/` bucket 404s. Live S3 layout + build-time `ncdump` checklist are in Round-3 §5.
 
 - **Dataset** [H]: ACAG/WashU **V6.GL.02.04**, NetCDF-4, var `PM25` (µg/m³), WGS84, **annual 1998–2023**, tiers 0.01° & 0.1°. Grid is lat-clipped ≈55°S–68°N (verify with `ncdump -h`). Access: AWS Open Data `s3://v6.gl.02.04/ --no-sign-request` (us-west-2), CloudFront `d15downnhi4nn0.cloudfront.net`, or WUSTL Box (0.1°). Alt: NASA SEDAC V5.GL.04 (GeoTIFF, var `GWRPM25`, DOI 10.7927/AS2R-9P42, 1998–2022). **License CC BY 4.0** → must credit Shen et al. 2024 (ACS ES&T Air) + van Donkelaar et al. 2021.
 - **Read/process** (Python: xarray+netCDF4, rioxarray/rasterio, numpy, geopandas+exactextract):
