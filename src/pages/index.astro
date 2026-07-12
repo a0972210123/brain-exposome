@@ -27,7 +27,7 @@ import T from '../../components/T.astro';
         <li><T zh="結果描述的是「族群層級」的關聯（來自已發表研究），而不是對「你個人」的預測；同樣的因子，每個人的結果差異其實很大。" en="Results describe population-level associations (from published research), not a prediction about you personally — individual outcomes vary a great deal." /></li>
         <li><T zh="這裡的「腦齡加速」是一個教育性的比喻數字，不是用腦部影像（MRI／EEG）量出來的真實腦齡。" en="The 'brain-age acceleration' here is an educational illustration, not a real brain age measured from imaging (MRI/EEG)." /></li>
         <li><T zh="本工具不能取代醫療專業判斷。如有任何健康疑慮，請諮詢合格的醫療人員。" en="This does not replace professional medical advice. Consult a qualified healthcare provider for any health concern." /></li>
-        <li><T zh="目前預覽版的 PM2.5 數值為各縣市的示意估計值（占位資料），實際的逐年衛星網格資料會在下一階段接上。" en="In this preview the PM2.5 values are placeholder estimates per county; the real year-by-year satellite grid is wired in a later stage." /></li>
+        <li><T zh="PM2.5 採用 ACAG 衛星推估的逐年（1998–2024）縣市資料（1998 年以前的居住年份沿用 1998 值）。地圖上的失智盛行率為縣市層級的模型估計值，非實測。" en="PM2.5 uses ACAG satellite-derived annual (1998–2024) county data (residence years before 1998 reuse the 1998 value). The dementia prevalence on the map is a county-level modelled estimate, not measured." /></li>
       </ul>
     </section>
 
@@ -261,6 +261,20 @@ import T from '../../components/T.astro';
       </section>
     </div>
 
+    <!-- Taiwan map -->
+    <section class="calc-section map-section">
+      <p class="section-heading"><T zh="台灣地圖：空污與失智概況" en="Taiwan map: air pollution & dementia" /></p>
+      <p class="calc-section-desc"><T zh="切換圖層，看各鄉鎮市區近年的 PM2.5，以及縣市層級的失智盛行「模型估計值」。把游標移到區域上看數值。" en="Toggle layers to see recent PM2.5 by district and a county-level MODELLED dementia-prevalence estimate. Hover a district for values." /></p>
+      <div class="map-toggle">
+        <button type="button" class="map-btn is-active" data-mode="prevalence"><T zh="失智盛行（估計）" en="Dementia (modelled)" /></button>
+        <button type="button" class="map-btn" data-mode="pm25"><T zh="PM2.5（近 3 年）" en="PM2.5 (recent)" /></button>
+      </div>
+      <div id="map" class="tw-map"></div>
+      <p class="map-note">
+        <T zh="※ 失智盛行率為縣市層級模型估計（NHRI 2020–2023 年齡別盛行率 × 內政部人口），非實測；鄉鎮市區層級版本可用 scripts/build_data.py 以政府年齡別人口重新產生。PM2.5 為 ACAG 衛星資料（V6.GL.03）。" en="※ Dementia prevalence is a county-level modelled estimate (NHRI 2020–2023 age-band rates × MOI population), not measured; a town-level version can be regenerated via scripts/build_data.py with government population data. PM2.5 is ACAG satellite data (V6.GL.03)." />
+      </p>
+    </section>
+
     <!-- How it's calculated -->
     <section class="calc-section calc-method">
       <p class="section-heading"><T zh="計算方式與參考文獻" en="How this is calculated" /></p>
@@ -281,6 +295,11 @@ import T from '../../components/T.astro';
 
   </div>
 </BaseLayout>
+
+<!-- vendored map libraries (Leaflet + topojson-client, self-hosted) -->
+<link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
+<script is:inline src="/vendor/leaflet/leaflet.js"></script>
+<script is:inline src="/vendor/topojson-client.min.js"></script>
 
 <style>
   .calc-hero { margin-bottom: var(--spacing-md); }
@@ -436,6 +455,26 @@ import T from '../../components/T.astro';
 
   .ref-list { font-size: 0.82rem; line-height: 1.8; color: var(--color-text-muted); padding-left: 1.2rem; }
   .calc-method { margin-top: var(--spacing-lg); }
+
+  /* Taiwan map */
+  .map-toggle { display: flex; gap: 0.5rem; margin-bottom: 0.8rem; flex-wrap: wrap; }
+  .map-btn {
+    font-family: var(--font-sans); font-size: 0.85rem; font-weight: 600;
+    padding: 0.45rem 0.9rem; border-radius: 999px; cursor: pointer;
+    border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text-muted);
+  }
+  .map-btn.is-active { border-color: var(--color-accent); color: var(--color-text); }
+  .tw-map { height: 460px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); }
+  .map-note { font-size: 0.78rem; color: var(--color-text-muted); margin-top: 0.6rem; line-height: 1.6; }
+  .map-fail { padding: 2rem; text-align: center; color: var(--color-text-muted); }
+  .tw-map :global(.leaflet-container) { background: var(--color-surface); font-family: var(--font-sans); font-size: 0.8rem; }
+  .tw-map :global(.map-legend), .tw-map :global(.leaflet-tooltip) {
+    background: var(--card-bg); color: var(--color-text); border: 1px solid var(--card-border);
+    border-radius: var(--radius-sm); box-shadow: var(--card-shadow); font-size: 0.78rem; line-height: 1.5;
+  }
+  .tw-map :global(.map-legend) { padding: 0.5rem 0.7rem; }
+  .tw-map :global(.map-legend i) { display: inline-block; width: 14px; height: 14px; margin-right: 6px; vertical-align: -2px; opacity: 0.85; }
+  .tw-map :global(.leaflet-tooltip) { padding: 0.4rem 0.6rem; }
 </style>
 
 <script>
@@ -472,63 +511,65 @@ const LAMBDA = 0.6;            // overlap shrinkage (approximates the Commission
 const CAP_LN = Math.log(4.5);  // cap combined RR (~ +12 brain-years)
 const T_DOUBLE = 5.5;          // dementia risk doubling time (yr); band 5.0–6.3
 
-/* ── PM2.5 placeholder lookup (µg/m³, per Taiwan county —示意值 / to be replaced by ACAG grid) ── */
-const PM25_STUB = {
-  taipei: 16, newtaipei: 17, keelung: 16, taoyuan: 19, hsinchu_city: 18, hsinchu_county: 18,
-  miaoli: 19, taichung: 21, changhua: 23, nantou: 22, yunlin: 24, chiayi_city: 24, chiayi_county: 24,
-  tainan: 22, kaohsiung: 23, pingtung: 22, yilan: 14, hualien: 12, taitung: 12,
-  penghu: 15, kinmen: 26, lienchiang: 20, overseas: 15,
-};
-const PM_DEFAULT = 15;
-const COUNTIES = [
-  ['taipei', '臺北市', 'Taipei City'], ['newtaipei', '新北市', 'New Taipei City'],
-  ['keelung', '基隆市', 'Keelung City'], ['taoyuan', '桃園市', 'Taoyuan City'],
-  ['hsinchu_city', '新竹市', 'Hsinchu City'], ['hsinchu_county', '新竹縣', 'Hsinchu County'],
-  ['miaoli', '苗栗縣', 'Miaoli County'], ['taichung', '臺中市', 'Taichung City'],
-  ['changhua', '彰化縣', 'Changhua County'], ['nantou', '南投縣', 'Nantou County'],
-  ['yunlin', '雲林縣', 'Yunlin County'], ['chiayi_city', '嘉義市', 'Chiayi City'],
-  ['chiayi_county', '嘉義縣', 'Chiayi County'], ['tainan', '臺南市', 'Tainan City'],
-  ['kaohsiung', '高雄市', 'Kaohsiung City'], ['pingtung', '屏東縣', 'Pingtung County'],
-  ['yilan', '宜蘭縣', 'Yilan County'], ['hualien', '花蓮縣', 'Hualien County'],
-  ['taitung', '臺東縣', 'Taitung County'], ['penghu', '澎湖縣', 'Penghu County'],
-  ['kinmen', '金門縣', 'Kinmen County'], ['lienchiang', '連江縣', 'Lienchiang County'],
-  ['overseas', '海外／其他', 'Overseas / Other'],
+/* ── Real PM2.5 data (ACAG V6.GL.03, county × year 1998–2024; fetched from /data) ── */
+let COUNTY_PM = null;        // { year0, year1, counties: {CODE:{name,nameEn,values:[…]}} }
+let COUNTY_LIST = [];        // [[code, zh, en], …] built from the fetched data
+const FALLBACK_COUNTIES = [  // used only if the fetch fails, so the page never breaks
+  ['63000', '臺北市', 'Taipei City'], ['65000', '新北市', 'New Taipei City'],
+  ['66000', '臺中市', 'Taichung City'], ['64000', '高雄市', 'Kaohsiung City'],
+  ['OVERSEAS', '海外／其他（約略）', 'Overseas / Other (approx.)'],
 ];
-
-/* ── Residence state (module-scope array, mutated in place — the diet-calc ccPlan pattern) ── */
-let residences = [
-  { place: 'taipei', from: 1990, to: 2020 },
-];
-
-function pmFor(place) { return PM25_STUB[place] != null ? PM25_STUB[place] : PM_DEFAULT; }
+const PM_FALLBACK = 18;      // µg/m³ when a county/year has no value or the fetch failed
+const PM_OVERSEAS = 20;      // flat approx for non-Taiwan residences (global grid is a later phase)
 
 function countyOptions(selected) {
-  return COUNTIES.map(([v, zh, en]) =>
+  const list = COUNTY_LIST.length ? COUNTY_LIST : FALLBACK_COUNTIES;
+  return list.map(([v, zh, en]) =>
     `<option value="${v}" ${v === selected ? 'selected' : ''}>${L(zh, en)}</option>`
   ).join('');
 }
 
+/* PM2.5 for one county averaged over a residence span (from..to), years clamped to data range.
+   Weighting still uses the real duration; pre-1998 years reuse the 1998 value. */
+function pmForSpan(code, from, to) {
+  const years = Math.max(1, (Number(to) || 0) - (Number(from) || 0));
+  if (code === 'OVERSEAS') return { mean: PM_OVERSEAS, years };
+  const c = COUNTY_PM && COUNTY_PM.counties[code];
+  if (!c) return { mean: PM_FALLBACK, years };
+  const { year0, year1 } = COUNTY_PM;
+  let a = Math.min(Math.max(Number(from) || year0, year0), year1);
+  let b = Math.min(Math.max(Number(to) || year1, year0), year1);
+  if (b < a) { const t = a; a = b; b = t; }
+  let sum = 0, n = 0;
+  for (let y = a; y <= b; y++) { const v = c.values[y - year0]; if (v != null) { sum += v; n++; } }
+  return { mean: n ? sum / n : PM_FALLBACK, years };
+}
+
+/* ── Residence state (module-scope array, mutated in place — the diet-calc ccPlan pattern) ── */
+let residences = [{ place: '63000', from: 1990, to: 2020 }]; // normalised to a valid code after load
+
 function renderResidences() {
   const grid = $('res-grid');
   if (!grid) return;
-  grid.innerHTML = residences.map((r, i) => `
-    <tr>
+  grid.innerHTML = residences.map((r, i) => {
+    const pm = pmForSpan(r.place, r.from, r.to).mean;
+    return `<tr>
       <td><select class="res-place" data-idx="${i}">${countyOptions(r.place)}</select></td>
       <td><input class="res-from" type="number" data-idx="${i}" value="${r.from}" min="1930" max="2026" step="1" /></td>
       <td><input class="res-to" type="number" data-idx="${i}" value="${r.to}" min="1930" max="2026" step="1" /></td>
-      <td class="res-pm">${pmFor(r.place)} µg/m³</td>
+      <td class="res-pm">${pm.toFixed(1)} µg/m³</td>
       <td>${residences.length > 1 ? `<button type="button" class="res-del" data-idx="${i}" title="${L('移除', 'Remove')}">✕</button>` : ''}</td>
-    </tr>`).join('');
+    </tr>`;
+  }).join('');
 
   grid.querySelectorAll('.res-place').forEach(sel => sel.addEventListener('change', () => {
-    residences[+sel.dataset.idx].place = sel.value;
-    renderResidences();
+    residences[+sel.dataset.idx].place = sel.value; renderResidences();
   }));
   grid.querySelectorAll('.res-from').forEach(inp => inp.addEventListener('change', () => {
-    residences[+inp.dataset.idx].from = parseInt(inp.value, 10) || 0; updateResSummary();
+    residences[+inp.dataset.idx].from = parseInt(inp.value, 10) || 0; renderResidences();
   }));
   grid.querySelectorAll('.res-to').forEach(inp => inp.addEventListener('change', () => {
-    residences[+inp.dataset.idx].to = parseInt(inp.value, 10) || 0; updateResSummary();
+    residences[+inp.dataset.idx].to = parseInt(inp.value, 10) || 0; renderResidences();
   }));
   grid.querySelectorAll('.res-del').forEach(btn => btn.addEventListener('click', () => {
     residences.splice(+btn.dataset.idx, 1); renderResidences();
@@ -539,9 +580,8 @@ function renderResidences() {
 function residenceStats() {
   let wsum = 0, w = 0, dose = 0;
   residences.forEach(r => {
-    const yrs = Math.max(1, (Number(r.to) || 0) - (Number(r.from) || 0));
-    const pm = pmFor(r.place);
-    wsum += yrs * pm; w += yrs; dose += yrs * pm;
+    const { mean, years } = pmForSpan(r.place, r.from, r.to);
+    wsum += years * mean; w += years; dose += years * mean;
   });
   return w > 0 ? { mean: wsum / w, years: w, dose } : null;
 }
@@ -707,22 +747,121 @@ function applyOptionLangs() {
   document.querySelectorAll('select option[data-en]').forEach(o => { o.textContent = en ? o.dataset.en : o.dataset.zh; });
 }
 
+/* ── Taiwan choropleth map (Leaflet + topojson-client, both vendored locally) ── */
+let map = null, geoLayer = null, mapMode = 'prevalence';
+let GEO = null, PREV = null, DPM = null, legendCtl = null;
+const PREV_BINS = [12, 14, 16, 18, 20];   // modelled dementia per 1,000 residents
+const PM_BINS = [12, 15, 18, 21, 24];      // PM2.5 µg/m³
+const RAMP = ['#ffeda0', '#fed976', '#feb24c', '#fd8d3c', '#f03b20', '#bd0026'];
+
+function prevRate(code) { return PREV ? PREV.byTown[code] : null; }
+function pmRate(code) { const d = DPM && DPM.districts[code]; return d ? d.pm25 : null; }
+function valueFor(code) { return mapMode === 'prevalence' ? prevRate(code) : pmRate(code); }
+function colorFor(v) {
+  if (v == null) return '#e6e6e6';
+  const bins = mapMode === 'prevalence' ? PREV_BINS : PM_BINS;
+  let i = 0; while (i < bins.length && v > bins[i]) i++;
+  return RAMP[i];
+}
+function styleFn(f) {
+  return { fillColor: colorFor(valueFor(f.properties.TOWNCODE)), weight: 0.4, color: '#fff', fillOpacity: 0.82 };
+}
+function tooltipFor(f) {
+  const p = f.properties;
+  const name = L(p.COUNTYNAME + ' ' + p.TOWNNAME, (p.TOWNENG || p.TOWNNAME) + ', ' + (p.COUNTYENG || ''));
+  if (mapMode === 'prevalence') {
+    const v = prevRate(p.TOWNCODE);
+    return `<b>${name}</b><br>${L('失智盛行（估計）', 'Dementia (modelled)')}: ${v != null ? v.toFixed(1) : '—'} ${L('／千人', 'per 1,000')}`;
+  }
+  const v = pmRate(p.TOWNCODE);
+  return `<b>${name}</b><br>PM2.5: ${v != null ? v.toFixed(1) : '—'} µg/m³`;
+}
+function buildLegend() {
+  if (!map) return;
+  if (legendCtl) map.removeControl(legendCtl);
+  legendCtl = window.L.control({ position: 'bottomright' });
+  legendCtl.onAdd = () => {
+    const div = window.L.DomUtil.create('div', 'map-legend');
+    const bins = mapMode === 'prevalence' ? PREV_BINS : PM_BINS;
+    const unit = mapMode === 'prevalence' ? L('失智／千人', 'dementia /1,000') : 'PM2.5 µg/m³';
+    const edges = [0, ...bins];
+    let html = `<b>${unit}</b><br>`;
+    for (let i = 0; i < RAMP.length; i++) {
+      const label = bins[i] != null ? `${edges[i]}–${bins[i]}` : `>${edges[edges.length - 1]}`;
+      html += `<i style="background:${RAMP[i]}"></i>${label}<br>`;
+    }
+    div.innerHTML = html;
+    return div;
+  };
+  legendCtl.addTo(map);
+}
+function applyMode() {
+  if (!geoLayer) return;
+  geoLayer.setStyle(styleFn);
+  geoLayer.eachLayer(l => l.setTooltipContent(tooltipFor(l.feature)));
+  buildLegend();
+  document.querySelectorAll('.map-btn').forEach(b => b.classList.toggle('is-active', b.dataset.mode === mapMode));
+}
+async function initMap() {
+  const el = $('map');
+  if (!el || !window.L || !window.topojson) return;
+  try {
+    const [topo, prev, dpm] = await Promise.all([
+      fetch('/data/geo/tw-districts.topo.json').then(r => r.json()),
+      fetch('/data/dementia/tw-dementia-modelled.json').then(r => r.json()),
+      fetch('/data/pm25/tw-district-pm25.json').then(r => r.json()),
+    ]);
+    GEO = window.topojson.feature(topo, topo.objects.towns); PREV = prev; DPM = dpm;
+    map = window.L.map(el, { scrollWheelZoom: false, attributionControl: true });
+    map.attributionControl.setPrefix(false).addAttribution(
+      L('界線 © 內政部NLSC／taiwan-atlas｜PM2.5 © ACAG｜失智盛行率為模型估計值',
+        'Boundaries © MOI NLSC / taiwan-atlas · PM2.5 © ACAG · dementia = modelled estimate'));
+    geoLayer = window.L.geoJSON(GEO, {
+      style: styleFn,
+      onEachFeature: (f, layer) => layer.bindTooltip(tooltipFor(f), { sticky: true }),
+    }).addTo(map);
+    // frame on Taiwan main island + Penghu (offshore Kinmen/Matsu stay reachable by zoom-out)
+    map.fitBounds([[21.9, 119.3], [25.35, 122.05]]);
+    buildLegend();
+    document.querySelectorAll('.map-btn').forEach(b => b.addEventListener('click', () => {
+      mapMode = b.dataset.mode; applyMode();
+    }));
+    setTimeout(() => map && map.invalidateSize(), 200);
+  } catch (e) {
+    console.error('map init failed:', e);
+    el.innerHTML = `<p class="map-fail">${L('地圖資料載入失敗。', 'Map data failed to load.')}</p>`;
+  }
+}
+function relabelMap() { if (map && geoLayer) applyMode(); }
+
 /* ── Init ── */
-function init() {
+async function init() {
   document.querySelectorAll('[data-goto]').forEach(b => b.addEventListener('click', () => showStep(+b.dataset.goto)));
   const addBtn = $('res-add');
   if (addBtn) addBtn.addEventListener('click', () => {
     const last = residences[residences.length - 1];
-    residences.push({ place: last ? last.place : 'taipei', from: last ? last.to : 2000, to: 2026 });
+    residences.push({ place: last ? last.place : '63000', from: last ? last.to : 2000, to: 2026 });
     renderResidences();
   });
+  // load real PM2.5 county series (ACAG); build the county picker from it
+  try {
+    COUNTY_PM = await fetch('/data/pm25/tw-county-pm25.json').then(r => r.json());
+    COUNTY_LIST = Object.entries(COUNTY_PM.counties)
+      .map(([code, c]) => [code, c.name, c.nameEn])
+      .sort((a, b) => a[1].localeCompare(b[1], 'zh-Hant'));
+    COUNTY_LIST.push(['OVERSEAS', '海外／其他（約略）', 'Overseas / Other (approx.)']);
+  } catch (e) { COUNTY_LIST = FALLBACK_COUNTIES.slice(); }
+  if (!COUNTY_LIST.some(c => c[0] === residences[0].place)) residences[0].place = COUNTY_LIST[0][0];
+
   applyOptionLangs();
   renderResidences();
   window.addEventListener('langchange', () => {
     applyOptionLangs();
     renderResidences();
     if (currentStep === 4 && lastResult) renderResults(lastResult);
+    relabelMap();
   });
+  initMap();
 }
 init();
 </script>
