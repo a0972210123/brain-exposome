@@ -263,17 +263,30 @@ import T from '../../components/T.astro';
       </section>
     </div>
 
-    <!-- Taiwan map -->
+    <!-- Regional map (Taiwan / Japan / Korea) -->
     <section class="calc-section map-section">
-      <p class="section-heading"><T zh="台灣地圖：空污與失智概況" en="Taiwan map: air pollution & dementia" /></p>
-      <p class="calc-section-desc"><T zh="切換圖層，看各鄉鎮市區近年的 PM2.5，以及縣市層級的失智盛行「模型估計值」。把游標移到區域上看數值。" en="Toggle layers to see recent PM2.5 by district and a county-level MODELLED dementia-prevalence estimate. Hover a district for values." /></p>
-      <div class="map-toggle">
-        <button type="button" class="map-btn is-active" data-mode="prevalence"><T zh="失智盛行（估計）" en="Dementia (modelled)" /></button>
-        <button type="button" class="map-btn" data-mode="pm25"><T zh="PM2.5（近 3 年）" en="PM2.5 (recent)" /></button>
+      <p class="section-heading"><T zh="地圖：空污與失智概況" en="Map: air pollution & dementia" /></p>
+      <p class="calc-section-desc"><T zh="切換國家與圖層，看各行政區近年的 PM2.5。台灣另有縣市層級的失智盛行「模型估計值」。把游標移到區域上看數值。" en="Switch country and layer to see recent PM2.5 by district. Taiwan also has a county-level MODELLED dementia-prevalence estimate. Hover a district for values." /></p>
+      <div class="map-controls">
+        <label class="map-country-wrap">
+          <span class="map-country-label"><T zh="國家／地區" en="Country / region" /></span>
+          <select id="map-country" class="map-country">
+            <option value="tw" data-zh="臺灣（縣市／鄉鎮）" data-en="Taiwan (county / town)">臺灣（縣市／鄉鎮）</option>
+            <option value="jp" data-zh="日本（都道府県）" data-en="Japan (prefectures)">日本（都道府県）</option>
+            <option value="kr" data-zh="南韓（道／市）" data-en="South Korea (provinces)">南韓（道／市）</option>
+          </select>
+        </label>
+        <div class="map-toggle">
+          <button type="button" class="map-btn is-active" data-mode="prevalence"><T zh="失智盛行（估計）" en="Dementia (modelled)" /></button>
+          <button type="button" class="map-btn" data-mode="pm25"><T zh="PM2.5（近 3 年）" en="PM2.5 (recent)" /></button>
+        </div>
       </div>
+      <p id="map-prev-note" class="map-prev-note" style="display:none">
+        <T zh="※ 日本／南韓的失智盛行率地圖需政府人口與調查資料（目前政策封鎖，見 data-download-points.md），本輪僅顯示 PM2.5。" en="※ Japan/Korea dementia-prevalence maps need government population & survey data (currently blocked — see data-download-points.md); this round shows PM2.5 only." />
+      </p>
       <div id="map" class="tw-map"></div>
       <p class="map-note">
-        <T zh="※ 失智盛行率為縣市層級模型估計（NHRI 2020–2023 年齡別盛行率 × 內政部人口），非實測；鄉鎮市區層級版本可用 scripts/build_data.py 以政府年齡別人口重新產生。PM2.5 為 ACAG 衛星資料（V6.GL.03）。" en="※ Dementia prevalence is a county-level modelled estimate (NHRI 2020–2023 age-band rates × MOI population), not measured; a town-level version can be regenerated via scripts/build_data.py with government population data. PM2.5 is ACAG satellite data (V6.GL.03)." />
+        <T zh="※ 失智盛行率為縣市層級模型估計（NHRI 2020–2023 年齡別盛行率 × 內政部人口），非實測；鄉鎮市區層級版本可用 scripts/build_data.py 以政府年齡別人口重新產生。PM2.5 為 ACAG 衛星資料（V6.GL.03）；日本／南韓為各行政區的衛星網格平均值。" en="※ Dementia prevalence is a county-level modelled estimate (NHRI 2020–2023 age-band rates × MOI population), not measured; a town-level version can be regenerated via scripts/build_data.py with government population data. PM2.5 is ACAG satellite data (V6.GL.03); Japan/Korea values are grid means per admin-1 unit." />
       </p>
     </section>
 
@@ -286,7 +299,7 @@ import T from '../../components/T.astro';
           en="Each 'yes' factor contributes a published relative risk (RR, mainly from the 2024 Lancet Commission and the meta-analyses it cites). Because these factors are correlated and would double-count, we combine them with a shrinkage factor λ = 0.6 (approximating the Commission's communality adjustment) and cap the total to avoid overstating. The combined effective RR is converted to 'brain-age acceleration' years: Δyears ≈ log₂(RR) × 5.5 (dementia risk roughly doubles every 5–6 years). PM2.5 is handled continuously (≈ HR 1.08 per +5 µg/m³), so the Commission's categorical air-pollution factor is not added on top."
         />
       </p>
-      <p class="calc-section-desc"><em><T zh="假設與限制：λ = 0.6 與腦齡年數上限是本工具為避免高估所設的參數（非已發表常數）；PM2.5 目前為各縣市示意值。這是教育性估計，非個人預測。" en="Assumptions: λ = 0.6 and the brain-age cap are this tool's parameters to avoid overstatement (not published constants); PM2.5 is currently a per-county placeholder. This is an educational estimate, not a personal prediction." /></em></p>
+      <p class="calc-section-desc"><em><T zh="假設與限制：λ = 0.6 與腦齡年數上限是本工具為避免高估所設的參數（非已發表常數）；PM2.5 採 ACAG 衛星年均資料（依居住縣市／國家與年份對應），歷史不足年份以最接近年份外推。這是教育性估計，非個人預測。" en="Assumptions: λ = 0.6 and the brain-age cap are this tool's parameters to avoid overstatement (not published constants); PM2.5 uses ACAG satellite annual data (matched to your county/country and year), with missing historical years extrapolated from the nearest available year. This is an educational estimate, not a personal prediction." /></em></p>
       <ul class="ref-list">
         <li>Livingston G, et al. Dementia prevention, intervention, and care: 2024 report of the Lancet standing Commission. <em>Lancet</em> 2024;404:572–628.</li>
         <li>Moguilner S, Ibáñez A, et al. Brain clocks capture diversity and disparities in aging and dementia. <em>Nat Med</em> 2024;30:3646–61.</li>
@@ -468,14 +481,28 @@ import T from '../../components/T.astro';
   .ref-list { font-size: 0.82rem; line-height: 1.8; color: var(--color-text-muted); padding-left: 1.2rem; }
   .calc-method { margin-top: var(--spacing-lg); }
 
-  /* Taiwan map */
-  .map-toggle { display: flex; gap: 0.5rem; margin-bottom: 0.8rem; flex-wrap: wrap; }
+  /* Regional map */
+  .map-controls { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; margin-bottom: 0.8rem; }
+  .map-country-wrap { display: flex; flex-direction: column; gap: 0.25rem; }
+  .map-country-label { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted); }
+  .map-country {
+    font-family: var(--font-sans); font-size: 0.85rem; padding: 0.4rem 0.7rem;
+    border-radius: var(--radius-sm); border: 1px solid var(--color-border);
+    background: var(--color-surface); color: var(--color-text);
+  }
+  .map-toggle { display: flex; gap: 0.5rem; flex-wrap: wrap; }
   .map-btn {
     font-family: var(--font-sans); font-size: 0.85rem; font-weight: 600;
     padding: 0.45rem 0.9rem; border-radius: 999px; cursor: pointer;
     border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text-muted);
   }
   .map-btn.is-active { border-color: var(--color-accent); color: var(--color-text); }
+  .map-btn.is-disabled { opacity: 0.4; cursor: not-allowed; }
+  .map-prev-note {
+    font-size: 0.78rem; color: var(--color-text-muted); margin: 0 0 0.6rem; line-height: 1.6;
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm); padding: 0.5rem 0.8rem;
+  }
   .tw-map { height: 460px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); }
   .map-note { font-size: 0.78rem; color: var(--color-text-muted); margin-top: 0.6rem; line-height: 1.6; }
   .map-fail { padding: 2rem; text-align: center; color: var(--color-text-muted); }
@@ -835,33 +862,44 @@ function applyOptionLangs() {
   document.querySelectorAll('select option[data-en]').forEach(o => { o.textContent = en ? o.dataset.en : o.dataset.zh; });
 }
 
-/* ── Taiwan choropleth map (Leaflet + topojson-client, both vendored locally) ── */
-let map = null, geoLayer = null, mapMode = 'prevalence';
-let GEO = null, PREV = null, DPM = null, legendCtl = null;
+/* ── Choropleth map (Leaflet + topojson-client, vendored) — country switcher.
+     Taiwan: town-level, prevalence + PM2.5. Japan/Korea: admin-1, PM2.5 only
+     (prevalence needs gov population/survey data — see data-download-points.md). ── */
+let map = null, geoLayer = null, legendCtl = null;
+let mapCountry = 'tw', mapMode = 'prevalence';
+let GEO = null;                    // current FeatureCollection
+let VAL = { prev: {}, pm: {} };    // current country: code -> value
+let NAMES = {};                    // current country: code -> {zh, en}
 const PREV_BINS = [12, 14, 16, 18, 20];   // modelled dementia per 1,000 residents
 const PM_BINS = [12, 15, 18, 21, 24];      // PM2.5 µg/m³
 const RAMP = ['#ffeda0', '#fed976', '#feb24c', '#fd8d3c', '#f03b20', '#bd0026'];
+const MAP_CFG = {
+  tw: { topo: '/data/geo/tw-districts.topo.json', topoObject: 'towns', codeProp: 'TOWNCODE',
+        layers: ['prevalence', 'pm25'], fit: [[21.9, 119.3], [25.35, 122.05]],
+        prev: '/data/dementia/tw-dementia-modelled.json', pm: '/data/pm25/tw-district-pm25.json' },
+  jp: { geojson: '/data/geo/jp-admin1.geojson', codeProp: 'code', layers: ['pm25'],
+        pm: '/data/pm25/jp-admin1-pm25.json' },
+  kr: { geojson: '/data/geo/kr-admin1.geojson', codeProp: 'code', layers: ['pm25'],
+        pm: '/data/pm25/kr-admin1-pm25.json' },
+};
 
-function prevRate(code) { return PREV ? PREV.byTown[code] : null; }
-function pmRate(code) { const d = DPM && DPM.districts[code]; return d ? d.pm25 : null; }
-function valueFor(code) { return mapMode === 'prevalence' ? prevRate(code) : pmRate(code); }
+function codeOf(f) { return f.properties[MAP_CFG[mapCountry].codeProp]; }
+function valueFor(code) { return mapMode === 'prevalence' ? VAL.prev[code] : VAL.pm[code]; }
 function colorFor(v) {
   if (v == null) return '#e6e6e6';
   const bins = mapMode === 'prevalence' ? PREV_BINS : PM_BINS;
   let i = 0; while (i < bins.length && v > bins[i]) i++;
   return RAMP[i];
 }
-function styleFn(f) {
-  return { fillColor: colorFor(valueFor(f.properties.TOWNCODE)), weight: 0.4, color: '#fff', fillOpacity: 0.82 };
-}
+function styleFn(f) { return { fillColor: colorFor(valueFor(codeOf(f))), weight: 0.4, color: '#fff', fillOpacity: 0.82 }; }
+function unitName(f) { const n = NAMES[codeOf(f)]; return n ? L(n.zh, n.en) : (f.properties.name || codeOf(f)); }
 function tooltipFor(f) {
-  const p = f.properties;
-  const name = L(p.COUNTYNAME + ' ' + p.TOWNNAME, (p.TOWNENG || p.TOWNNAME) + ', ' + (p.COUNTYENG || ''));
+  const code = codeOf(f), name = unitName(f);
   if (mapMode === 'prevalence') {
-    const v = prevRate(p.TOWNCODE);
+    const v = VAL.prev[code];
     return `<b>${name}</b><br>${L('失智盛行（估計）', 'Dementia (modelled)')}: ${v != null ? v.toFixed(1) : '—'} ${L('／千人', 'per 1,000')}`;
   }
-  const v = pmRate(p.TOWNCODE);
+  const v = VAL.pm[code];
   return `<b>${name}</b><br>PM2.5: ${v != null ? v.toFixed(1) : '—'} µg/m³`;
 }
 function buildLegend() {
@@ -883,38 +921,72 @@ function buildLegend() {
   };
   legendCtl.addTo(map);
 }
+function syncModeButtons() {
+  const layers = MAP_CFG[mapCountry].layers;
+  document.querySelectorAll('.map-btn').forEach(b => {
+    const on = layers.includes(b.dataset.mode);
+    b.disabled = !on;
+    b.classList.toggle('is-disabled', !on);
+    b.classList.toggle('is-active', on && b.dataset.mode === mapMode);
+  });
+  const note = $('map-prev-note');
+  if (note) note.style.display = layers.includes('prevalence') ? 'none' : '';
+}
 function applyMode() {
   if (!geoLayer) return;
   geoLayer.setStyle(styleFn);
   geoLayer.eachLayer(l => l.setTooltipContent(tooltipFor(l.feature)));
   buildLegend();
-  document.querySelectorAll('.map-btn').forEach(b => b.classList.toggle('is-active', b.dataset.mode === mapMode));
+  syncModeButtons();
+}
+async function loadCountryData(cc) {
+  const cfg = MAP_CFG[cc];
+  let geo, prev = {}, pm = {}, names = {};
+  if (cfg.topo) { const t = await fetch(cfg.topo).then(r => r.json()); geo = window.topojson.feature(t, t.objects[cfg.topoObject]); }
+  else { geo = await fetch(cfg.geojson).then(r => r.json()); }
+  if (cfg.prev) { const p = await fetch(cfg.prev).then(r => r.json()); Object.assign(prev, p.byTown || {}); }
+  if (cfg.pm) {
+    const d = await fetch(cfg.pm).then(r => r.json());
+    if (d.districts) for (const [k, v] of Object.entries(d.districts)) pm[k] = v.pm25;
+    else if (d.units) Object.assign(pm, d.units);
+  }
+  geo.features.forEach(f => {
+    const p = f.properties, code = p[cfg.codeProp];
+    names[code] = cc === 'tw'
+      ? { zh: (p.COUNTYNAME || '') + p.TOWNNAME, en: (p.TOWNENG || p.TOWNNAME) + (p.COUNTYENG ? ', ' + p.COUNTYENG : '') }
+      : { zh: p.nameLocal || p.name || code, en: p.name || code };
+  });
+  return { geo, prev, pm, names, cfg };
+}
+async function drawCountry(cc) {
+  const d = await loadCountryData(cc);
+  mapCountry = cc; GEO = d.geo; VAL = { prev: d.prev, pm: d.pm }; NAMES = d.names;
+  if (!d.cfg.layers.includes(mapMode)) mapMode = d.cfg.layers[0];
+  if (geoLayer) { map.removeLayer(geoLayer); geoLayer = null; }
+  geoLayer = window.L.geoJSON(GEO, {
+    style: styleFn,
+    onEachFeature: (f, layer) => layer.bindTooltip(tooltipFor(f), { sticky: true }),
+  }).addTo(map);
+  if (d.cfg.fit) map.fitBounds(d.cfg.fit); else map.fitBounds(geoLayer.getBounds(), { padding: [8, 8] });
+  buildLegend();
+  syncModeButtons();
+  setTimeout(() => map && map.invalidateSize(), 150);
 }
 async function initMap() {
   const el = $('map');
   if (!el || !window.L || !window.topojson) return;
   try {
-    const [topo, prev, dpm] = await Promise.all([
-      fetch('/data/geo/tw-districts.topo.json').then(r => r.json()),
-      fetch('/data/dementia/tw-dementia-modelled.json').then(r => r.json()),
-      fetch('/data/pm25/tw-district-pm25.json').then(r => r.json()),
-    ]);
-    GEO = window.topojson.feature(topo, topo.objects.towns); PREV = prev; DPM = dpm;
     map = window.L.map(el, { scrollWheelZoom: false, attributionControl: true });
     map.attributionControl.setPrefix(false).addAttribution(
-      L('界線 © 內政部NLSC／taiwan-atlas｜PM2.5 © ACAG｜失智盛行率為模型估計值',
-        'Boundaries © MOI NLSC / taiwan-atlas · PM2.5 © ACAG · dementia = modelled estimate'));
-    geoLayer = window.L.geoJSON(GEO, {
-      style: styleFn,
-      onEachFeature: (f, layer) => layer.bindTooltip(tooltipFor(f), { sticky: true }),
-    }).addTo(map);
-    // frame on Taiwan main island + Penghu (offshore Kinmen/Matsu stay reachable by zoom-out)
-    map.fitBounds([[21.9, 119.3], [25.35, 122.05]]);
-    buildLegend();
+      L('界線 © NLSC／taiwan-atlas · Natural Earth｜PM2.5 © ACAG｜失智盛行率為模型估計值',
+        'Boundaries © NLSC/taiwan-atlas · Natural Earth · PM2.5 © ACAG · dementia = modelled estimate'));
+    await drawCountry('tw');
     document.querySelectorAll('.map-btn').forEach(b => b.addEventListener('click', () => {
+      if (b.disabled) return;
       mapMode = b.dataset.mode; applyMode();
     }));
-    setTimeout(() => map && map.invalidateSize(), 200);
+    const cs = $('map-country');
+    if (cs) cs.addEventListener('change', () => drawCountry(cs.value));
   } catch (e) {
     console.error('map init failed:', e);
     el.innerHTML = `<p class="map-fail">${L('地圖資料載入失敗。', 'Map data failed to load.')}</p>`;

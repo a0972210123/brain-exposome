@@ -40,6 +40,7 @@ import requests
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 OUT = os.path.join(ROOT, "public", "data")
+DATA_IN = os.path.join(ROOT, "scripts", "_data_in")  # owner-downloaded inputs (gitignored)
 BUILD_DATE = time.strftime("%Y-%m-%d")
 
 # ---- config ----
@@ -47,7 +48,17 @@ YEAR0, YEAR1 = 1998, 2024
 S3 = ("https://satpmdata.s3.us-east-1.amazonaws.com/V6GL03/CoarseResolution/GL/"
       "Annual/V6GL03.CNNPM25.0p10.GL.{y}01-{y}12.nc")
 TW_BBOX = dict(lon_min=118.0, lon_max=122.5, lat_min=21.4, lat_max=26.5)  # incl. offshore
+# Union bbox covering Taiwan + Japan + Korea, so the ACAG grid is loaded once and
+# re-used (each unit is matched by point-in-polygon, so a wider grid is harmless).
+ALL_BBOX = dict(lon_min=118.0, lon_max=154.0, lat_min=21.0, lat_max=46.5)
 TATLAS_TGZ = "https://registry.npmjs.org/taiwan-atlas/-/taiwan-atlas-2021.9.20.tgz"
+NE_ADMIN1 = ("https://raw.githubusercontent.com/nvkelso/natural-earth-vector/"
+             "master/geojson/ne_10m_admin_1_states_provinces.geojson")
+# Other-country sub-national PM2.5 maps (boundaries: Natural Earth admin-1).
+COUNTRY_MAPS = {
+    "jp": {"admin": "Japan", "name": "Japan", "nameZh": "日本"},
+    "kr": {"admin": "South Korea", "name": "South Korea", "nameZh": "南韓"},
+}
 
 # NHRI 2020-2023 age-band dementia prevalence (share of that age band)
 NHRI_RATES = {"65-69": 0.0240, "70-74": 0.0516, "75-79": 0.0910,
@@ -178,8 +189,8 @@ def load_pm25_years():
             lat = ds.variables["lat"][:]
             lon = ds.variables["lon"][:]
             if li is None:
-                la = np.where((lat >= TW_BBOX["lat_min"]) & (lat <= TW_BBOX["lat_max"]))[0]
-                lo = np.where((lon >= TW_BBOX["lon_min"]) & (lon <= TW_BBOX["lon_max"]))[0]
+                la = np.where((lat >= ALL_BBOX["lat_min"]) & (lat <= ALL_BBOX["lat_max"]))[0]
+                lo = np.where((lon >= ALL_BBOX["lon_min"]) & (lon <= ALL_BBOX["lon_max"]))[0]
                 li = (la.min(), la.max() + 1, lo.min(), lo.max() + 1)
                 sub_lat = np.asarray(lat[li[0]:li[1]])
                 sub_lon = np.asarray(lon[li[2]:li[3]])
@@ -193,8 +204,68 @@ def load_pm25_years():
             os.rmdir(tmpdir)
         except OSError:
             pass
-    log(f"  loaded {len(stack)} years, Taiwan grid {stack[0].shape}")
+    log(f"  loaded {len(stack)} years, grid {stack[0].shape} (TW+JP+KR bbox)")
     return years, sub_lat, sub_lon, np.stack(stack)  # [year, lat, lon]
+
+
+def load_ne_admin1():
+    log("Fetching Natural Earth admin-1 (JP/KR provinces)…")
+    return json.loads(http_get(NE_ADMIN1).decode("utf-8", "replace"))
+
+
+def ne_units(ne_geojson, admin_name):
+    """Return [{code, name, nameLocal, geom}] for one country's admin-1 units."""
+    out = []
+    for f in ne_geojson["features"]:
+        p = f["properties"]
+        if p.get("admin") != admin_name:
+            continue
+        geom = shape(f["geometry"])
+        if not geom.is_valid:
+            geom = geom.buffer(0)
+        code = p.get("iso_3166_2") or p.get("adm1_code") or p.get("name")
+        out.append({"code": code, "name": p.get("name"),
+                    "nameLocal": p.get("name_local") or p.get("name"), "geom": geom})
+    return out
+
+
+def admin1_recent_pm(units, years, lat, lon, grid, recent=3):
+    """Per admin-1 unit: mean of grid cells inside the polygon (recent-N-yr mean);
+       tiny units fall back to the nearest cell to the centroid."""
+    yi0 = len(years) - recent
+    recent_mean = np.nanmean(grid[yi0:], axis=0)
+    LON, LAT = np.meshgrid(lon, lat)
+    out = {}
+    for u in units:
+        geom = u["geom"]
+        minx, miny, maxx, maxy = geom.bounds
+        m = (LON >= minx) & (LON <= maxx) & (LAT >= miny) & (LAT <= maxy)
+        vals = []
+        for r, c in np.argwhere(m):
+            if geom.contains(Point(LON[r, c], LAT[r, c])):
+                v = recent_mean[r, c]
+                if not np.isnan(v):
+                    vals.append(v)
+        if not vals:
+            cen = geom.centroid
+            r = int(np.abs(lat - cen.y).argmin())
+            c = int(np.abs(lon - cen.x).argmin())
+            v = recent_mean[r, c]
+            if not np.isnan(v):
+                vals = [v]
+        out[u["code"]] = round(float(np.mean(vals)), 1) if vals else None
+    return out, f"{years[yi0]}-{years[-1]} mean"
+
+
+def units_geojson(units, tol=0.01):
+    from shapely.geometry import mapping
+    feats = []
+    for u in units:
+        g = u["geom"].simplify(tol, preserve_topology=True)
+        feats.append({"type": "Feature",
+                      "properties": {"code": u["code"], "name": u["name"], "nameLocal": u["nameLocal"]},
+                      "geometry": mapping(g)})
+    return {"type": "FeatureCollection", "features": feats}
 
 
 def county_year_series(counties, years, lat, lon, grid):
@@ -275,6 +346,102 @@ def modelled_prevalence(towns, granularity, pop):
         p = t["props"]
         by_town[p["TOWNCODE"]] = county_rate.get(p["COUNTYNAME"])
     return county_rows, by_town
+
+
+# ---------- generic modelled prevalence from owner-downloaded CSVs (_data_in) ----------
+# Lets any country's prevalence layer be built once the owner drops the two CSVs
+# documented in docs/.../data-download-points.md. Schema:
+#   {cc}-admin1-pop.csv     unit_code,pop_total[,pop_65_69,pop_70_74,pop_75_79,pop_80_84,pop_85p]
+#   {cc}-rates.csv          age_band,prevalence_pct        (age_band in POP_BANDS)
+POP_BANDS = ["65_69", "70_74", "75_79", "80_84", "85p"]  # 00_64 contributes ~0 dementia
+
+
+def _read_csv(path):
+    import csv
+    with open(path, newline="", encoding="utf-8-sig") as f:
+        return list(csv.DictReader(f))
+
+
+def load_admin_pop(cc):
+    """_data_in/{cc}-admin1-pop.csv -> {unit_code: {band: n, ..., 'total': n}} or None."""
+    path = os.path.join(DATA_IN, f"{cc}-admin1-pop.csv")
+    if not os.path.exists(path):
+        return None
+    out = {}
+    for row in _read_csv(path):
+        code = (row.get("unit_code") or "").strip()
+        if not code:
+            continue
+        rec = {}
+        for b in POP_BANDS:
+            v = row.get(f"pop_{b}")
+            if v not in (None, ""):
+                rec[b] = float(v)
+        total = row.get("pop_total")
+        rec["total"] = (float(total) if total not in (None, "")
+                        else sum(rec.get(b, 0.0) for b in POP_BANDS))
+        out[code] = rec
+    return out or None
+
+
+def load_rates(cc):
+    """_data_in/{cc}-rates.csv (or {cc}-dementia-rates.csv): age_band,prevalence_pct
+       -> {band: fraction} or None."""
+    for fn in (f"{cc}-rates.csv", f"{cc}-dementia-rates.csv"):
+        path = os.path.join(DATA_IN, fn)
+        if not os.path.exists(path):
+            continue
+        out = {}
+        for row in _read_csv(path):
+            band = (row.get("age_band") or "").strip()
+            pct = row.get("prevalence_pct")
+            if band and pct not in (None, ""):
+                out[band] = float(pct) / 100.0
+        return out or None
+    return None
+
+
+def modelled_from_csv(pop, rates):
+    """cases = Σ_band pop_band × rate_band (or 65+ × RBAR fallback);
+       rate_per_1000 = cases / pop_total × 1000. -> (by_unit{code: rate}, rows)."""
+    by_unit, rows = {}, []
+    have_bandrates = bool(rates) and any(b in rates for b in POP_BANDS)
+    for code, rec in pop.items():
+        total = rec.get("total", 0.0)
+        if not total:
+            continue
+        pop65 = sum(rec.get(b, 0.0) for b in POP_BANDS)
+        if have_bandrates and any(b in rec for b in POP_BANDS):
+            cases = sum(rec.get(b, 0.0) * rates.get(b, 0.0) for b in POP_BANDS)
+        else:
+            cases = pop65 * RBAR  # only 65+ known, or no age-band rates: single crude rate
+        rate = round(cases / total * 1000, 1)
+        by_unit[code] = rate
+        rows.append({"code": code, "pop_total": int(round(total)),
+                     "pop_65plus": int(round(pop65)),
+                     "modelled_cases": int(round(cases)), "rate_per_1000": rate})
+    return by_unit, rows
+
+
+def build_admin_prevalence(cc, name):
+    """If the owner dropped {cc}-admin1-pop.csv (+ optional rates) in _data_in/,
+       emit dementia/{cc}-modelled.json and return True; else False (layer pending)."""
+    pop = load_admin_pop(cc)
+    if not pop:
+        return False
+    rates = load_rates(cc)
+    by_unit, rows = modelled_from_csv(pop, rates)
+    write_json(f"dementia/{cc}-modelled.json", {
+        "meta": {"metric": "modelled dementia cases per 1,000 residents (all ages)",
+                 "method": ("Σ age-band population × age-band prevalence"
+                            if rates else "65+ population × crude 65+ rate (RBAR)"),
+                 "note": "MODELLED estimate, not measured",
+                 "rates_source": "downloaded" if rates else "RBAR fallback",
+                 "built": BUILD_DATE},
+        "byTown": by_unit, "rows": rows})
+    log(f"  {name}: modelled prevalence for {len(by_unit)} units "
+        f"({'age-band rates' if rates else 'RBAR fallback'})")
+    return True
 
 
 # ---------- world country-level PM2.5 (for the residence country dropdown) ----------
@@ -374,16 +541,41 @@ def main():
     log("Boundaries -> geo/tw-districts.topo.json …")
     write_json("geo/tw-districts.topo.json", towns_topo)
 
+    log("Japan & Korea sub-national PM2.5 (Natural Earth admin-1 + ACAG zonal) …")
+    ne = load_ne_admin1()
+    for key, cfg in COUNTRY_MAPS.items():
+        units = ne_units(ne, cfg["admin"])
+        pm, period = admin1_recent_pm(units, years, lat, lon, grid)
+        write_json(f"pm25/{key}-admin1-pm25.json", {
+            "meta": {"source": "ACAG SatPM2.5 V6.GL.03 (0.1deg annual)", "period": period,
+                     "method": "mean of grid cells within each admin-1 polygon",
+                     "units": "ug/m3", "country": cfg["name"],
+                     "citation": "Shen et al. 2024; van Donkelaar et al. 2021",
+                     "license": "CC BY 4.0", "built": BUILD_DATE},
+            "units": pm})
+        write_json(f"geo/{key}-admin1.geojson", units_geojson(units))
+        vv = [v for v in pm.values() if v is not None]
+        log(f"  {cfg['name']}: {len(units)} units, PM2.5 {min(vv):.1f}–{max(vv):.1f} ug/m3")
+        # Prevalence layer builds only if the owner dropped population (+rates) CSVs.
+        if not build_admin_prevalence(key, cfg["name"]):
+            log(f"  {cfg['name']}: no _data_in/{key}-admin1-pop.csv -> prevalence layer pending "
+                f"(see data-download-points.md)")
+
     write_json("manifest.json", {
         "built": BUILD_DATE,
         "assets": {
             "pm25/tw-county-pm25.json": "ACAG V6.GL.03 county x year PM2.5 (CC BY 4.0)",
             "pm25/tw-district-pm25.json": "ACAG V6.GL.03 per-town recent PM2.5 (CC BY 4.0)",
             "pm25/world-country-pm25.json": "ACAG V6.GL.03 country x year PM2.5, pop-weighted (CC BY 4.0)",
+            "pm25/jp-admin1-pm25.json": "ACAG V6.GL.03 Japan prefecture PM2.5 (CC BY 4.0)",
+            "pm25/kr-admin1-pm25.json": "ACAG V6.GL.03 Korea province PM2.5 (CC BY 4.0)",
             "geo/tw-districts.topo.json": "taiwan-atlas / MOI #7441 boundaries (OGDL-Taiwan-1.0)",
+            "geo/jp-admin1.geojson": "Natural Earth admin-1 (Japan), public domain",
+            "geo/kr-admin1.geojson": "Natural Earth admin-1 (Korea), public domain",
             "dementia/tw-dementia-modelled.json": "modelled prevalence, NHRI 2020-23 x MOI pop"},
         "attribution": ["PM2.5 © ACAG/WashU (Shen 2024; van Donkelaar 2021), CC BY 4.0",
-                        "界線 © 內政部NLSC / taiwan-atlas, OGDL-Taiwan-1.0",
+                        "台灣界線 © 內政部NLSC / taiwan-atlas, OGDL-Taiwan-1.0",
+                        "JP/KR 界線: Natural Earth (public domain)",
                         "人口 © 內政部 (MOI)", "失智盛行率為模型估計值 (NHRI 2020-2023)"]})
     log("== DONE ==")
 
