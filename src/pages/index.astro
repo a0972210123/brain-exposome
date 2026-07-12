@@ -1,0 +1,728 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import T from '../../components/T.astro';
+---
+<BaseLayout
+  title="腦健康 Exposome 檢測 · Brain-Health Exposome Check-in — Matt Ye"
+  description="以 2024 年 Lancet 失智症委員會 14 項可調整風險因子與空氣污染（PM2.5）累積暴露為基礎的教育性腦健康自我檢視工具。估算「腦齡加速」的教育性參考值。純前端計算，資料不上傳、不儲存。"
+>
+  <div class="container-wide calc-page">
+
+    <!-- Hero -->
+    <section class="calc-hero">
+      <h1><T zh="腦健康 Exposome" en="Brain-Health Exposome" /> <span class="accent-text"><T zh="檢測" en="Check-in" /></span></h1>
+      <p class="calc-subtitle">
+        <T
+          zh="根據 2024 年《Lancet》失智症委員會的 14 項可調整風險因子，以及你一生中居住地的空氣污染（PM2.5）累積暴露，用淺白的方式看看這些「exposome（環境暴露總和）」與腦健康的關係，並給你可行動的方向。"
+          en="Using the 14 modifiable risk factors from the 2024 Lancet Commission on dementia, plus the cumulative air-pollution (PM2.5) exposure across the places you've lived, see in plain terms how your lifelong 'exposome' relates to brain health — and what you can act on."
+        />
+      </p>
+      <p class="calc-privacy">🔒 <T zh="所有計算都在你的瀏覽器內完成，資料不會上傳或儲存到任何伺服器。" en="All calculations run entirely in your browser — nothing is uploaded or stored on any server." /></p>
+    </section>
+
+    <!-- Disclaimer -->
+    <section class="calc-disclaimer">
+      <p><strong><T zh="⚠️ 重要提醒：" en="⚠️ Important: " /></strong><T zh="本工具僅供一般健康教育與自我覺察之用，並非醫療器材、不是診斷或篩檢工具，無法預測任何人是否會罹患失智症。" en="This tool is for general health education and self-awareness only. It is not a medical device, not a diagnostic or screening test, and cannot predict whether anyone will develop dementia." /></p>
+      <ul>
+        <li><T zh="結果描述的是「族群層級」的關聯（來自已發表研究），而不是對「你個人」的預測；同樣的因子，每個人的結果差異其實很大。" en="Results describe population-level associations (from published research), not a prediction about you personally — individual outcomes vary a great deal." /></li>
+        <li><T zh="這裡的「腦齡加速」是一個教育性的比喻數字，不是用腦部影像（MRI／EEG）量出來的真實腦齡。" en="The 'brain-age acceleration' here is an educational illustration, not a real brain age measured from imaging (MRI/EEG)." /></li>
+        <li><T zh="本工具不能取代醫療專業判斷。如有任何健康疑慮，請諮詢合格的醫療人員。" en="This does not replace professional medical advice. Consult a qualified healthcare provider for any health concern." /></li>
+        <li><T zh="目前預覽版的 PM2.5 數值為各縣市的示意估計值（占位資料），實際的逐年衛星網格資料會在下一階段接上。" en="In this preview the PM2.5 values are placeholder estimates per county; the real year-by-year satellite grid is wired in a later stage." /></li>
+      </ul>
+    </section>
+
+    <!-- Wizard -->
+    <div class="wizard">
+      <ol class="wizard-steps" id="wizard-steps">
+        <li data-step="1" class="is-active"><span class="wz-dot">1</span><span class="wz-lbl"><T zh="基本資料" en="About you" /></span></li>
+        <li data-step="2"><span class="wz-dot">2</span><span class="wz-lbl"><T zh="居住史" en="Places" /></span></li>
+        <li data-step="3"><span class="wz-dot">3</span><span class="wz-lbl"><T zh="健康與生活" en="Health" /></span></li>
+        <li data-step="4"><span class="wz-dot">4</span><span class="wz-lbl"><T zh="結果" en="Results" /></span></li>
+      </ol>
+
+      <!-- Step 1 — About you -->
+      <section class="wizard-step is-active" data-step="1">
+        <p class="section-heading">1. <T zh="關於你" en="About you" /></p>
+        <div class="calc-form-card">
+          <div class="form-grid">
+            <label class="form-field">
+              <span><T zh="年齡" en="Age (years)" /></span>
+              <input type="number" id="in-age" value="50" min="18" max="100" step="1" />
+            </label>
+            <label class="form-field">
+              <span><T zh="生理性別" en="Sex" /></span>
+              <select id="in-sex">
+                <option value="female" data-zh="女性" data-en="Female">女性</option>
+                <option value="male" data-zh="男性" data-en="Male">男性</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span><T zh="教育程度" en="Education" /> <em><T zh="（認知存量）" en="(cognitive reserve)" /></em></span>
+              <select id="in-education">
+                <option value="tertiary" data-zh="大專以上" data-en="Tertiary or above">大專以上</option>
+                <option value="secondary" data-zh="高中職" data-en="Secondary (high school)">高中職</option>
+                <option value="primary" data-zh="國中以下" data-en="Primary or less">國中以下</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <div class="wizard-nav">
+          <span></span>
+          <button type="button" class="wz-btn wz-next" data-goto="2"><T zh="下一步 →" en="Next →" /></button>
+        </div>
+      </section>
+
+      <!-- Step 2 — Places -->
+      <section class="wizard-step" data-step="2">
+        <p class="section-heading">2. <T zh="你住過的地方" en="Places you've lived" /></p>
+        <p class="calc-section-desc">
+          <T zh="加入你人生各階段主要居住的縣市與大約年份。系統會用該地區的年均 PM2.5 估算你「時間加權」的長期空氣污染暴露。年份可粗估即可。" en="Add the main counties you've lived in across life, with rough years. We estimate your time-weighted long-term PM2.5 exposure from each area's annual mean. Approximate years are fine." />
+        </p>
+        <div class="supp-table-wrap">
+          <table class="supp-table res-table">
+            <thead>
+              <tr>
+                <th><T zh="地區" en="Place" /></th>
+                <th><T zh="從" en="From" /></th>
+                <th><T zh="到" en="To" /></th>
+                <th>PM2.5</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="res-grid"></tbody>
+          </table>
+        </div>
+        <div class="res-controls">
+          <button type="button" class="wz-btn wz-ghost" id="res-add">+ <T zh="新增一段居住" en="Add a place" /></button>
+          <p class="res-summary" id="res-summary"></p>
+        </div>
+        <div class="wizard-nav">
+          <button type="button" class="wz-btn wz-back" data-goto="1">← <T zh="上一步" en="Back" /></button>
+          <button type="button" class="wz-btn wz-next" data-goto="3"><T zh="下一步 →" en="Next →" /></button>
+        </div>
+      </section>
+
+      <!-- Step 3 — Health & lifestyle -->
+      <section class="wizard-step" data-step="3">
+        <p class="section-heading">3. <T zh="健康與生活型態" en="Health & lifestyle" /></p>
+        <p class="calc-section-desc"><T zh="不確定就選「不確定」，不會被算成風險。這些對應到 Lancet 委員會可調整的失智風險因子。" en="Pick 'Not sure' if you don't know — it won't be counted as a risk. These map to the Lancet Commission's modifiable dementia risk factors." /></p>
+
+        <div class="calc-form-card">
+          <p class="calc-subheading"><T zh="👂 感官" en="👂 Sensory" /></p>
+          <div class="form-grid">
+            <label class="form-field">
+              <span><T zh="聽力損失" en="Hearing loss" /></span>
+              <select id="in-hearing">
+                <option value="none" data-zh="沒有" data-en="No">沒有</option>
+                <option value="untreated" data-zh="有，未使用助聽器" data-en="Yes, untreated">有，未使用助聽器</option>
+                <option value="treated" data-zh="有，已矯治／戴助聽器" data-en="Yes, treated / aids">有，已矯治／戴助聽器</option>
+                <option value="unknown" data-zh="不確定" data-en="Not sure">不確定</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span><T zh="視力損失" en="Vision loss" /></span>
+              <select id="in-vision">
+                <option value="none" data-zh="沒有" data-en="No">沒有</option>
+                <option value="untreated" data-zh="有，未矯治" data-en="Yes, untreated">有，未矯治</option>
+                <option value="treated" data-zh="有，已矯治（眼鏡／手術）" data-en="Yes, corrected">有，已矯治（眼鏡／手術）</option>
+                <option value="unknown" data-zh="不確定" data-en="Not sure">不確定</option>
+              </select>
+            </label>
+          </div>
+
+          <p class="calc-subheading"><T zh="❤️ 心血管代謝" en="❤️ Cardiometabolic" /></p>
+          <div class="form-grid">
+            <label class="form-field">
+              <span><T zh="高血壓" en="Hypertension" /></span>
+              <select id="in-htn">
+                <option value="no" data-zh="沒有" data-en="No">沒有</option>
+                <option value="yes" data-zh="有" data-en="Yes">有</option>
+                <option value="unknown" data-zh="不確定" data-en="Not sure">不確定</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span><T zh="糖尿病" en="Diabetes" /></span>
+              <select id="in-diabetes">
+                <option value="no" data-zh="沒有" data-en="No">沒有</option>
+                <option value="yes" data-zh="有" data-en="Yes">有</option>
+                <option value="unknown" data-zh="不確定" data-en="Not sure">不確定</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span><T zh="體位（BMI）" en="Body weight (BMI)" /></span>
+              <select id="in-bmi">
+                <option value="normal" data-zh="正常或過輕" data-en="Normal or under">正常或過輕</option>
+                <option value="overweight" data-zh="過重" data-en="Overweight">過重</option>
+                <option value="obese" data-zh="肥胖（BMI ≥ 30）" data-en="Obese (BMI ≥ 30)">肥胖（BMI ≥ 30）</option>
+                <option value="unknown" data-zh="不確定" data-en="Not sure">不確定</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span><T zh="膽固醇" en="Cholesterol" /></span>
+              <select id="in-cholesterol">
+                <option value="normal" data-zh="正常或不確定" data-en="Normal or unsure">正常或不確定</option>
+                <option value="high" data-zh="LDL 偏高" data-en="High LDL">LDL 偏高</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span><T zh="LDL 數值" en="LDL value" /> <em><T zh="（mmol/L，選填，更精準）" en="(mmol/L, optional)" /></em></span>
+              <input type="number" id="in-ldl" placeholder="—" min="1" max="8" step="0.1" />
+            </label>
+            <label class="form-field">
+              <span><T zh="身體活動" en="Physical activity" /></span>
+              <select id="in-inactive">
+                <option value="active" data-zh="每週規律運動" data-en="Regularly active">每週規律運動</option>
+                <option value="inactive" data-zh="很少運動" data-en="Rarely active">很少運動</option>
+              </select>
+            </label>
+          </div>
+
+          <p class="calc-subheading"><T zh="🧠 心理健康" en="🧠 Mental health" /></p>
+          <div class="form-grid">
+            <label class="form-field">
+              <span><T zh="憂鬱症" en="Depression" /></span>
+              <select id="in-depression">
+                <option value="no" data-zh="沒有" data-en="No">沒有</option>
+                <option value="yes" data-zh="有（曾被診斷）" data-en="Yes (diagnosed)">有（曾被診斷）</option>
+                <option value="unknown" data-zh="不確定" data-en="Not sure">不確定</option>
+              </select>
+            </label>
+          </div>
+
+          <p class="calc-subheading"><T zh="🤝 社會與認知" en="🤝 Social & cognitive" /></p>
+          <div class="form-grid">
+            <label class="form-field">
+              <span><T zh="社交孤立" en="Social isolation" /></span>
+              <select id="in-isolation">
+                <option value="connected" data-zh="常有社交往來" data-en="Socially connected">常有社交往來</option>
+                <option value="isolated" data-zh="較少與人往來" data-en="Socially isolated">較少與人往來</option>
+                <option value="unknown" data-zh="不確定" data-en="Not sure">不確定</option>
+              </select>
+            </label>
+          </div>
+
+          <p class="calc-subheading"><T zh="🚬 生活型態與外傷" en="🚬 Lifestyle & injury" /></p>
+          <div class="form-grid">
+            <label class="form-field">
+              <span><T zh="吸菸" en="Smoking" /></span>
+              <select id="in-smoking">
+                <option value="never" data-zh="從不吸菸" data-en="Never">從不吸菸</option>
+                <option value="former" data-zh="已戒菸" data-en="Former smoker">已戒菸</option>
+                <option value="current" data-zh="目前吸菸" data-en="Current smoker">目前吸菸</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span><T zh="飲酒" en="Alcohol" /></span>
+              <select id="in-alcohol">
+                <option value="moderate" data-zh="不喝或適量" data-en="None or moderate">不喝或適量</option>
+                <option value="heavy" data-zh="過量（每週 &gt; 21 份）" data-en="Heavy (&gt; 21 units/wk)">過量（每週 &gt; 21 份）</option>
+              </select>
+            </label>
+            <label class="form-field">
+              <span><T zh="頭部外傷" en="Head injury (TBI)" /></span>
+              <select id="in-tbi">
+                <option value="no" data-zh="沒有" data-en="No">沒有</option>
+                <option value="yes" data-zh="曾有明顯頭部外傷" data-en="Yes, significant TBI">曾有明顯頭部外傷</option>
+              </select>
+            </label>
+          </div>
+        </div>
+
+        <div class="wizard-nav">
+          <button type="button" class="wz-btn wz-back" data-goto="2">← <T zh="上一步" en="Back" /></button>
+          <button type="button" class="wz-btn wz-next" data-goto="4"><T zh="看結果 →" en="See results →" /></button>
+        </div>
+      </section>
+
+      <!-- Step 4 — Results -->
+      <section class="wizard-step" data-step="4">
+        <p class="section-heading">4. <T zh="你的結果" en="Your results" /></p>
+
+        <div class="result-profile" id="out-profile"></div>
+
+        <div class="result-brainage">
+          <div class="ba-label"><T zh="教育性「腦齡加速」估計" en="Educational 'brain-age acceleration' estimate" /></div>
+          <div class="ba-num" id="out-brainage">—</div>
+          <div class="ba-caption" id="out-brainage-caption"></div>
+        </div>
+
+        <p class="calc-subheading"><T zh="各面向概況" en="By category" /></p>
+        <div class="stat-list" id="out-categories"></div>
+
+        <div class="result-exposome" id="out-exposome"></div>
+
+        <p class="calc-subheading"><T zh="你可以做的事" en="What you can do" /></p>
+        <ul class="action-list" id="out-actions"></ul>
+
+        <div class="wizard-nav">
+          <button type="button" class="wz-btn wz-back" data-goto="3">← <T zh="修改答案" en="Edit answers" /></button>
+          <span></span>
+        </div>
+      </section>
+    </div>
+
+    <!-- How it's calculated -->
+    <section class="calc-section calc-method">
+      <p class="section-heading"><T zh="計算方式與參考文獻" en="How this is calculated" /></p>
+      <p class="calc-section-desc">
+        <T
+          zh="每個「有」的因子會帶入已發表的相對風險（RR，主要來自 2024 年 Lancet 委員會與其引用的統合分析）。因為這些因子彼此相關、會重複計算，我們在合併時乘上一個縮減係數 λ = 0.6（近似委員會的 communality 調整），並設上限，避免高估。合併後的有效 RR 再換算成「腦齡加速」年數：Δ年 ≈ log₂(RR) × 5.5（失智風險大約每 5–6 年翻倍）。空氣污染以連續劑量處理（每 +5 µg/m³ 約 HR 1.08），因此不再重複計入委員會的類別式空污因子。"
+          en="Each 'yes' factor contributes a published relative risk (RR, mainly from the 2024 Lancet Commission and the meta-analyses it cites). Because these factors are correlated and would double-count, we combine them with a shrinkage factor λ = 0.6 (approximating the Commission's communality adjustment) and cap the total to avoid overstating. The combined effective RR is converted to 'brain-age acceleration' years: Δyears ≈ log₂(RR) × 5.5 (dementia risk roughly doubles every 5–6 years). PM2.5 is handled continuously (≈ HR 1.08 per +5 µg/m³), so the Commission's categorical air-pollution factor is not added on top."
+        />
+      </p>
+      <p class="calc-section-desc"><em><T zh="假設與限制：λ = 0.6 與腦齡年數上限是本工具為避免高估所設的參數（非已發表常數）；PM2.5 目前為各縣市示意值。這是教育性估計，非個人預測。" en="Assumptions: λ = 0.6 and the brain-age cap are this tool's parameters to avoid overstatement (not published constants); PM2.5 is currently a per-county placeholder. This is an educational estimate, not a personal prediction." /></em></p>
+      <ul class="ref-list">
+        <li>Livingston G, et al. Dementia prevention, intervention, and care: 2024 report of the Lancet standing Commission. <em>Lancet</em> 2024;404:572–628.</li>
+        <li>Moguilner S, Ibáñez A, et al. Brain clocks capture diversity and disparities in aging and dementia. <em>Nat Med</em> 2024;30:3646–61.</li>
+        <li>Long-term air pollution exposure and incident dementia. <em>Lancet Planetary Health</em> 2025 (≈ HR 1.08 per 5 µg/m³ PM2.5).</li>
+        <li>Ziegler-Graham K, et al. AD incidence doubling time ≈ 5.5 years. <em>Alzheimers Dement</em> 2008.</li>
+      </ul>
+    </section>
+
+  </div>
+</BaseLayout>
+
+<style>
+  .calc-hero { margin-bottom: var(--spacing-md); }
+  .calc-hero h1 { font-size: clamp(1.8rem, 4.5vw, 2.6rem); margin-bottom: 0.6rem; }
+  .calc-subtitle { color: var(--color-text-muted); font-size: 1rem; line-height: 1.7; max-width: 720px; }
+  .calc-privacy { font-size: 0.85rem; color: var(--color-accent); margin-top: 0.6rem; }
+
+  .calc-disclaimer {
+    background: var(--color-surface);
+    border: 1px solid var(--color-border);
+    border-left: 4px solid #e5484d;
+    border-radius: var(--radius-md);
+    padding: 1rem 1.25rem;
+    margin-bottom: var(--spacing-lg);
+    font-size: 0.88rem;
+    line-height: 1.6;
+  }
+  .calc-disclaimer ul { margin: 0.5rem 0 0; padding-left: 1.2rem; color: var(--color-text-muted); }
+  .calc-disclaimer li { margin-bottom: 0.3rem; }
+
+  .calc-section { margin-bottom: var(--spacing-xl); }
+  .calc-section-desc { color: var(--color-text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem; }
+
+  .calc-form-card {
+    background: var(--card-bg);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-md);
+    padding: 1.5rem;
+    box-shadow: var(--card-shadow);
+  }
+  .form-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1rem; }
+  .form-field { display: flex; flex-direction: column; gap: 0.35rem; font-size: 0.85rem; font-weight: 600; }
+  .form-field em { font-weight: 400; font-style: normal; color: var(--color-text-muted); font-size: 0.78rem; }
+  .form-field input, .form-field select {
+    background: var(--color-bg);
+    border: 1px solid var(--color-border);
+    color: var(--color-text);
+    padding: 0.55rem 0.7rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.92rem;
+    font-family: var(--font-sans);
+  }
+  .form-field input:focus, .form-field select:focus { border-color: var(--color-accent); outline: none; }
+  .calc-subheading { font-size: 0.95rem; font-weight: 700; margin: 1.5rem 0 0.8rem; }
+  .calc-subheading:first-child { margin-top: 0; }
+
+  /* Wizard */
+  .wizard { margin-bottom: var(--spacing-xl); }
+  .wizard-steps {
+    display: flex; list-style: none; padding: 0; margin: 0 0 var(--spacing-lg);
+    gap: 0.4rem; flex-wrap: wrap;
+  }
+  .wizard-steps li {
+    display: flex; align-items: center; gap: 0.4rem;
+    font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted);
+    padding: 0.35rem 0.7rem 0.35rem 0.4rem; border-radius: 999px;
+    border: 1px solid var(--color-border); background: var(--color-surface);
+  }
+  .wizard-steps li.is-active { color: var(--color-text); border-color: var(--color-accent); }
+  .wizard-steps li.is-done { color: var(--color-accent); }
+  .wz-dot {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 1.4rem; height: 1.4rem; border-radius: 50%;
+    background: var(--color-bg); border: 1px solid var(--color-border);
+    font-size: 0.75rem; flex-shrink: 0;
+  }
+  .wizard-steps li.is-active .wz-dot { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
+  .wizard-steps li.is-done .wz-dot { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
+
+  .wizard-step { display: none; }
+  .wizard-step.is-active { display: block; animation: wzfade 0.2s ease; }
+  @keyframes wzfade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
+
+  .wizard-nav { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: var(--spacing-md); }
+  .wz-btn {
+    font-family: var(--font-sans); font-size: 0.9rem; font-weight: 600;
+    padding: 0.6rem 1.2rem; border-radius: var(--radius-sm); cursor: pointer;
+    border: 1px solid var(--color-accent); background: var(--color-accent); color: #fff;
+  }
+  .wz-btn:hover { background: var(--color-accent-hover); border-color: var(--color-accent-hover); }
+  .wz-btn.wz-back { background: transparent; color: var(--color-text-muted); border-color: var(--color-border); }
+  .wz-btn.wz-back:hover { color: var(--color-text); background: var(--color-surface); }
+  .wz-btn.wz-ghost { background: transparent; color: var(--color-accent); }
+  .wz-btn.wz-ghost:hover { background: var(--color-surface); }
+
+  /* Residence table */
+  .supp-table-wrap { overflow-x: auto; }
+  .supp-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 520px; }
+  .supp-table th, .supp-table td { text-align: left; padding: 0.6rem 0.7rem; border-bottom: 1px solid var(--color-border); vertical-align: middle; }
+  .supp-table th { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted); }
+  .res-table select, .res-table input {
+    background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text);
+    padding: 0.4rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.85rem; font-family: var(--font-sans);
+    width: 100%;
+  }
+  .res-table input[type="number"] { width: 5.5rem; }
+  .res-pm { white-space: nowrap; color: var(--color-text-muted); }
+  .res-del {
+    background: transparent; border: none; color: var(--color-text-muted); cursor: pointer;
+    font-size: 1rem; padding: 0.2rem 0.4rem; border-radius: var(--radius-sm);
+  }
+  .res-del:hover { color: #e5484d; background: var(--color-surface); }
+  .res-controls { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 0.8rem; flex-wrap: wrap; }
+  .res-summary { font-size: 0.85rem; color: var(--color-accent); font-weight: 600; margin: 0; }
+
+  /* Results */
+  .result-profile {
+    font-size: 1rem; font-weight: 700; line-height: 1.6;
+    padding: 1rem 1.25rem; border-radius: var(--radius-md);
+    border: 1px solid var(--color-border); border-left: 4px solid var(--color-accent);
+    background: var(--color-surface); margin-bottom: var(--spacing-md);
+  }
+  .result-profile.ok { border-left-color: #2fbf71; }
+  .result-profile.warn { border-left-color: #f5a623; }
+  .result-profile.bad { border-left-color: #e5484d; }
+  .result-profile .rp-sub { display: block; font-weight: 400; font-size: 0.85rem; color: var(--color-text-muted); margin-top: 0.4rem; }
+
+  .result-brainage {
+    text-align: center; padding: 1.5rem 1.25rem; margin-bottom: var(--spacing-md);
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg); box-shadow: var(--card-shadow);
+  }
+  .ba-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-muted); }
+  .ba-num { font-size: clamp(2.2rem, 8vw, 3.4rem); font-weight: 800; letter-spacing: -0.03em; margin: 0.3rem 0; }
+  .ba-caption { font-size: 0.82rem; color: var(--color-text-muted); line-height: 1.6; max-width: 460px; margin: 0 auto; }
+
+  .stat-list { display: flex; flex-direction: column; gap: 0.6rem; }
+  .stat-row {
+    display: flex; align-items: center; justify-content: space-between; gap: 1rem;
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: var(--radius-md); padding: 0.8rem 1.1rem; box-shadow: var(--card-shadow); flex-wrap: wrap;
+  }
+  .stat-row-label { flex: 1 1 200px; min-width: 0; }
+  .stat-row-title { font-size: 0.9rem; font-weight: 700; }
+  .stat-row-sub { font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.2rem; }
+  .stat-row-num { flex-shrink: 0; font-size: 0.85rem; font-weight: 700; white-space: nowrap; }
+  .cat-badge { font-size: 1rem; }
+
+  .result-exposome {
+    margin-top: var(--spacing-md); font-size: 0.9rem; line-height: 1.6; color: var(--color-text-muted);
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm); padding: 0.9rem 1.1rem;
+  }
+  .result-exposome strong { color: var(--color-text); }
+
+  .action-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
+  .action-list li {
+    font-size: 0.88rem; line-height: 1.6; padding: 0.7rem 1rem 0.7rem 2rem; position: relative;
+    background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-sm);
+  }
+  .action-list li::before { content: "→"; position: absolute; left: 0.9rem; color: var(--color-accent); font-weight: 700; }
+  .action-list .act-cat { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted); display: block; margin-bottom: 0.15rem; }
+
+  .ref-list { font-size: 0.82rem; line-height: 1.8; color: var(--color-text-muted); padding-left: 1.2rem; }
+  .calc-method { margin-top: var(--spacing-lg); }
+</style>
+
+<script>
+/* ── i18n helpers (mirror the site-wide data-lang + langchange pattern) ── */
+const lang = () => document.documentElement.getAttribute('data-lang') === 'en' ? 'en' : 'zh';
+const L = (zh, en) => lang() === 'en' ? en : zh;
+const $ = (id) => document.getElementById(id);
+const val = (id) => { const el = $(id); return el ? el.value : ''; };
+
+/* ── Verified constants (dementia-exposome research round 3-D §2) ──
+   Relative risks: 2024 Lancet Commission (Livingston 2024) + underlying meta-analyses.
+   PM2.5 handled continuously (Lancet Planetary Health 2025, ~HR 1.08 per 5 µg/m³);
+   the Lancet categorical air-pollution factor is intentionally NOT added (no double-count). */
+const RR = {
+  education: 1.6,   // less/no education
+  hearing: 1.37,    // untreated hearing loss (2024 re-meta)
+  vision: 1.47,     // untreated vision loss (Shang 2021)
+  htn: 1.6,
+  diabetes: 1.5,
+  obesity: 1.6,
+  inactive: 1.4,
+  depression: 1.96, // 2024 re-meta
+  isolation: 1.6,
+  alcohol: 1.2,     // > 21 units/week
+  tbi: 1.8,
+  smokingCurrent: 1.6,
+};
+const RR_SMOKING_FORMER = Math.exp(0.5 * Math.log(RR.smokingCurrent)); // ~1.26, halfway on log axis
+const LDL_RR_PER_MMOL = 1.08;   // per +1 mmol/L LDL-C (Lancet 2024 meta of 3 UK cohorts)
+const LDL_REF = 2.6;            // mmol/L reference
+const PM_REF = 5;              // WHO 2021 guideline µg/m³
+const PM_RR_PER_5 = 1.08;      // per +5 µg/m³
+const LAMBDA = 0.6;            // overlap shrinkage (approximates the Commission's communality adjustment)
+const CAP_LN = Math.log(4.5);  // cap combined RR (~ +12 brain-years)
+const T_DOUBLE = 5.5;          // dementia risk doubling time (yr); band 5.0–6.3
+
+/* ── PM2.5 placeholder lookup (µg/m³, per Taiwan county —示意值 / to be replaced by ACAG grid) ── */
+const PM25_STUB = {
+  taipei: 16, newtaipei: 17, keelung: 16, taoyuan: 19, hsinchu_city: 18, hsinchu_county: 18,
+  miaoli: 19, taichung: 21, changhua: 23, nantou: 22, yunlin: 24, chiayi_city: 24, chiayi_county: 24,
+  tainan: 22, kaohsiung: 23, pingtung: 22, yilan: 14, hualien: 12, taitung: 12,
+  penghu: 15, kinmen: 26, lienchiang: 20, overseas: 15,
+};
+const PM_DEFAULT = 15;
+const COUNTIES = [
+  ['taipei', '臺北市', 'Taipei City'], ['newtaipei', '新北市', 'New Taipei City'],
+  ['keelung', '基隆市', 'Keelung City'], ['taoyuan', '桃園市', 'Taoyuan City'],
+  ['hsinchu_city', '新竹市', 'Hsinchu City'], ['hsinchu_county', '新竹縣', 'Hsinchu County'],
+  ['miaoli', '苗栗縣', 'Miaoli County'], ['taichung', '臺中市', 'Taichung City'],
+  ['changhua', '彰化縣', 'Changhua County'], ['nantou', '南投縣', 'Nantou County'],
+  ['yunlin', '雲林縣', 'Yunlin County'], ['chiayi_city', '嘉義市', 'Chiayi City'],
+  ['chiayi_county', '嘉義縣', 'Chiayi County'], ['tainan', '臺南市', 'Tainan City'],
+  ['kaohsiung', '高雄市', 'Kaohsiung City'], ['pingtung', '屏東縣', 'Pingtung County'],
+  ['yilan', '宜蘭縣', 'Yilan County'], ['hualien', '花蓮縣', 'Hualien County'],
+  ['taitung', '臺東縣', 'Taitung County'], ['penghu', '澎湖縣', 'Penghu County'],
+  ['kinmen', '金門縣', 'Kinmen County'], ['lienchiang', '連江縣', 'Lienchiang County'],
+  ['overseas', '海外／其他', 'Overseas / Other'],
+];
+
+/* ── Residence state (module-scope array, mutated in place — the diet-calc ccPlan pattern) ── */
+let residences = [
+  { place: 'taipei', from: 1990, to: 2020 },
+];
+
+function pmFor(place) { return PM25_STUB[place] != null ? PM25_STUB[place] : PM_DEFAULT; }
+
+function countyOptions(selected) {
+  return COUNTIES.map(([v, zh, en]) =>
+    `<option value="${v}" ${v === selected ? 'selected' : ''}>${L(zh, en)}</option>`
+  ).join('');
+}
+
+function renderResidences() {
+  const grid = $('res-grid');
+  if (!grid) return;
+  grid.innerHTML = residences.map((r, i) => `
+    <tr>
+      <td><select class="res-place" data-idx="${i}">${countyOptions(r.place)}</select></td>
+      <td><input class="res-from" type="number" data-idx="${i}" value="${r.from}" min="1930" max="2026" step="1" /></td>
+      <td><input class="res-to" type="number" data-idx="${i}" value="${r.to}" min="1930" max="2026" step="1" /></td>
+      <td class="res-pm">${pmFor(r.place)} µg/m³</td>
+      <td>${residences.length > 1 ? `<button type="button" class="res-del" data-idx="${i}" title="${L('移除', 'Remove')}">✕</button>` : ''}</td>
+    </tr>`).join('');
+
+  grid.querySelectorAll('.res-place').forEach(sel => sel.addEventListener('change', () => {
+    residences[+sel.dataset.idx].place = sel.value;
+    renderResidences();
+  }));
+  grid.querySelectorAll('.res-from').forEach(inp => inp.addEventListener('change', () => {
+    residences[+inp.dataset.idx].from = parseInt(inp.value, 10) || 0; updateResSummary();
+  }));
+  grid.querySelectorAll('.res-to').forEach(inp => inp.addEventListener('change', () => {
+    residences[+inp.dataset.idx].to = parseInt(inp.value, 10) || 0; updateResSummary();
+  }));
+  grid.querySelectorAll('.res-del').forEach(btn => btn.addEventListener('click', () => {
+    residences.splice(+btn.dataset.idx, 1); renderResidences();
+  }));
+  updateResSummary();
+}
+
+function residenceStats() {
+  let wsum = 0, w = 0, dose = 0;
+  residences.forEach(r => {
+    const yrs = Math.max(1, (Number(r.to) || 0) - (Number(r.from) || 0));
+    const pm = pmFor(r.place);
+    wsum += yrs * pm; w += yrs; dose += yrs * pm;
+  });
+  return w > 0 ? { mean: wsum / w, years: w, dose } : null;
+}
+
+function updateResSummary() {
+  const el = $('res-summary'); if (!el) return;
+  const s = residenceStats();
+  el.textContent = s
+    ? L(`時間加權平均 PM2.5 ≈ ${s.mean.toFixed(1)} µg/m³`, `Time-weighted mean PM2.5 ≈ ${s.mean.toFixed(1)} µg/m³`)
+    : '';
+}
+
+/* ── Scoring engine: pure compute → result object (renderer is separate so radar/meters can plug in later) ── */
+function computeResult() {
+  const factors = []; // { cat, rr, key }
+  const add = (cat, rr, key) => { if (rr > 1.0001) factors.push({ cat, rr, key }); };
+
+  if (val('in-education') === 'primary') add('social', RR.education, 'education');
+  if (val('in-hearing') === 'untreated') add('sensory', RR.hearing, 'hearing');
+  if (val('in-vision') === 'untreated') add('sensory', RR.vision, 'vision');
+  if (val('in-htn') === 'yes') add('cardio', RR.htn, 'htn');
+  if (val('in-diabetes') === 'yes') add('cardio', RR.diabetes, 'diabetes');
+  if (val('in-bmi') === 'obese') add('cardio', RR.obesity, 'obesity');
+  if (val('in-inactive') === 'inactive') add('cardio', RR.inactive, 'inactive');
+
+  // LDL: per-mmol/L if a value is given, else categorical proxy for "high"
+  const ldlNum = parseFloat(val('in-ldl'));
+  let ldlRR = 1;
+  if (!isNaN(ldlNum) && ldlNum > 0) ldlRR = Math.pow(LDL_RR_PER_MMOL, Math.max(0, ldlNum - LDL_REF));
+  else if (val('in-cholesterol') === 'high') ldlRR = LDL_RR_PER_MMOL; // ~ +1 mmol/L above reference
+  add('cardio', ldlRR, 'ldl');
+
+  if (val('in-depression') === 'yes') add('mental', RR.depression, 'depression');
+  if (val('in-isolation') === 'isolated') add('social', RR.isolation, 'isolation');
+
+  const smk = val('in-smoking');
+  if (smk === 'current') add('lifestyle', RR.smokingCurrent, 'smoking');
+  else if (smk === 'former') add('lifestyle', RR_SMOKING_FORMER, 'smoking-former');
+  if (val('in-alcohol') === 'heavy') add('lifestyle', RR.alcohol, 'alcohol');
+  if (val('in-tbi') === 'yes') add('lifestyle', RR.tbi, 'tbi');
+
+  // PM2.5 — continuous (the anchor exposome feature)
+  const res = residenceStats();
+  let pmRR = 1, meanPM = null;
+  if (res) { meanPM = res.mean; pmRR = Math.pow(PM_RR_PER_5, Math.max(0, (meanPM - PM_REF) / 5)); }
+  add('exposome', pmRR, 'pm25');
+
+  // Combine with overlap shrinkage + cap
+  const lnSum = factors.reduce((s, f) => s + Math.log(f.rr), 0);
+  const lnEffRaw = LAMBDA * lnSum;
+  const capped = lnEffRaw > CAP_LN;
+  const lnEff = Math.min(lnEffRaw, CAP_LN);
+  const log2rr = lnEff / Math.log(2);
+  const dMid = log2rr * T_DOUBLE;
+  const dLo = log2rr * 5.0;
+  const dHi = log2rr * 6.3;
+
+  const count = factors.length;
+  const band = count <= 2 ? 'few' : count <= 5 ? 'several' : 'many';
+
+  return { factors, meanPM, res, dMid, dLo, dHi, capped, count, band };
+}
+
+/* ── Categories & actions metadata ── */
+const CATS = [
+  ['sensory', '👂 感官', '👂 Sensory'],
+  ['cardio', '❤️ 心血管代謝', '❤️ Cardiometabolic'],
+  ['mental', '🧠 心理健康', '🧠 Mental health'],
+  ['social', '🤝 社會與認知', '🤝 Social & cognitive'],
+  ['lifestyle', '🚬 生活型態', '🚬 Lifestyle'],
+  ['exposome', '🌫️ 環境暴露（PM2.5）', '🌫️ Exposome (PM2.5)'],
+];
+const ACTIONS = {
+  hearing: ['服務可近性', 'Access to services', '做一次聽力檢查；有需要就配戴助聽器——治療聽損是最大的可調整因子之一。', 'Get a hearing check and use aids if needed — treating hearing loss is one of the largest modifiable factors.'],
+  vision: ['服務可近性', 'Access to services', '定期眼科檢查，矯正可治療的視力問題（如白內障）。', 'Have regular eye exams and correct treatable vision loss (e.g. cataracts).'],
+  htn: ['身體健康', 'Physical health', '規律量血壓、與醫師一起把血壓控制好。', 'Monitor and manage your blood pressure with your doctor.'],
+  diabetes: ['身體健康', 'Physical health', '控制血糖、規律追蹤。', 'Keep blood sugar controlled and monitored.'],
+  ldl: ['身體健康', 'Physical health', '注意膽固醇（LDL），必要時飲食或藥物介入。', 'Watch your LDL cholesterol; use diet or medication if advised.'],
+  obesity: ['身體健康', 'Physical health', '朝健康體位邁進，結合飲食與活動。', 'Work toward a healthy weight through diet and activity.'],
+  inactive: ['健康環境', 'Healthy environments', '增加規律的身體活動（每週 150 分鐘中等強度）。', 'Build regular physical activity (150 min/week moderate).'],
+  depression: ['服務可近性', 'Access to services', '重視心理健康，需要時尋求專業協助。', 'Take mental health seriously and seek support when needed.'],
+  isolation: ['學習與社會連結', 'Learning & social connection', '維持社交往來與有意義的人際連結。', 'Maintain social contact and meaningful connections.'],
+  smoking: ['身體健康', 'Physical health', '戒菸——任何時候戒都有幫助。', 'Quit smoking — it helps at any age.'],
+  'smoking-former': ['身體健康', 'Physical health', '繼續維持不吸菸，風險會隨時間下降。', 'Stay smoke-free; risk keeps falling over time.'],
+  alcohol: ['身體健康', 'Physical health', '減少飲酒至適量以下。', 'Cut alcohol to moderate levels or below.'],
+  tbi: ['安全與防護', 'Safety & security', '保護頭部（安全帽、防跌），避免再次受傷。', 'Protect your head (helmets, fall prevention) to avoid further injury.'],
+  pm25: ['健康環境', 'Healthy environments', '空品不良時減少戶外劇烈活動、必要時配戴口罩，室內可用空氣清淨機。', 'Reduce exposure on high-AQI days (limit outdoor exertion, use a mask/air purifier when needed).'],
+  education: ['學習與社會連結', 'Learning & social connection', '維持終身學習與認知活動，建立認知存量。', 'Keep learning and stay cognitively active to build cognitive reserve.'],
+};
+
+function renderResults(r) {
+  // 1) categorical profile (LEAD)
+  const profileEl = $('out-profile');
+  const bandTxt = { few: L('少數', 'a few'), several: L('數項', 'several'), many: L('多項', 'many') }[r.band];
+  const cls = r.band === 'few' ? 'ok' : r.band === 'several' ? 'warn' : 'bad';
+  profileEl.className = 'result-profile ' + cls;
+  profileEl.innerHTML = r.count === 0
+    ? `${L('目前沒有偵測到可調整的風險因子 — 很好！', 'No modifiable risk factors detected — great!')}<span class="rp-sub">${L('持續維持這些好習慣。', 'Keep up these healthy habits.')}</span>`
+    : `${L(`你目前有 ${r.count} 項可調整因子（${bandTxt}）。`, `You currently have ${r.count} modifiable factor${r.count > 1 ? 's' : ''} (${bandTxt}).`)}<span class="rp-sub">${L('針對這些因子採取行動，在族群層級與較低的失智風險相關。', 'Acting on these is associated with lower dementia risk at the population level.')}</span>`;
+
+  // 2) brain-age gap (secondary, clearly educational)
+  $('out-brainage').textContent = `≈ +${r.dMid.toFixed(1)} ${L('年', 'yr')}`;
+  $('out-brainage-caption').textContent = L(
+    `估計範圍 +${r.dLo.toFixed(1)} 到 +${r.dHi.toFixed(1)} 年${r.capped ? '（已達上限）' : ''}。這是教育性比喻，非影像量測的真實腦齡，也不是個人預測。`,
+    `Estimated range +${r.dLo.toFixed(1)} to +${r.dHi.toFixed(1)} yr${r.capped ? ' (capped)' : ''}. An educational illustration — not a measured brain age, and not a personal prediction.`
+  );
+
+  // 3) by category
+  const catCount = {};
+  r.factors.forEach(f => { catCount[f.cat] = (catCount[f.cat] || 0) + 1; });
+  $('out-categories').innerHTML = CATS.map(([key, zh, en]) => {
+    const n = catCount[key] || 0;
+    const badge = n === 0 ? '✅' : '⚠️';
+    const sub = n === 0
+      ? L('無明顯因子', 'no notable factor')
+      : L(`${n} 項因子`, `${n} factor${n > 1 ? 's' : ''}`);
+    return `<div class="stat-row">
+      <div class="stat-row-label">
+        <div class="stat-row-title">${L(zh, en)}</div>
+        <div class="stat-row-sub">${sub}</div>
+      </div>
+      <div class="stat-row-num"><span class="cat-badge">${badge}</span></div>
+    </div>`;
+  }).join('');
+
+  // 4) exposome / PM2.5 detail
+  const ex = $('out-exposome');
+  if (r.res) {
+    ex.style.display = '';
+    ex.innerHTML = L(
+      `🌫️ 你的<strong>時間加權平均 PM2.5 ≈ ${r.meanPM.toFixed(1)} µg/m³</strong>（WHO 建議 ≤ 5）。累積暴露約 ${Math.round(r.res.dose).toLocaleString()} µg/m³·年，涵蓋約 ${r.res.years} 年居住史。<em>（PM2.5 為示意值，將以逐年衛星資料取代。）</em>`,
+      `🌫️ Your <strong>time-weighted mean PM2.5 ≈ ${r.meanPM.toFixed(1)} µg/m³</strong> (WHO guideline ≤ 5). Cumulative exposure ≈ ${Math.round(r.res.dose).toLocaleString()} µg/m³·years over ~${r.res.years} years of residence. <em>(PM2.5 is a placeholder, to be replaced by year-by-year satellite data.)</em>`
+    );
+  } else { ex.style.display = 'none'; }
+
+  // 5) actions
+  const seen = new Set();
+  const items = r.factors.map(f => f.key).filter(k => { if (seen.has(k) || !ACTIONS[k]) return false; seen.add(k); return true; });
+  $('out-actions').innerHTML = items.length === 0
+    ? `<li>${L('沒有需要優先處理的可調整因子 — 繼續保持健康的生活型態與環境。', 'No priority modifiable factors — keep up a healthy lifestyle and environment.')}</li>`
+    : items.map(k => { const a = ACTIONS[k]; return `<li><span class="act-cat">${L(a[0], a[1])}</span>${L(a[2], a[3])}</li>`; }).join('');
+}
+
+/* ── Wizard navigation ── */
+let currentStep = 1;
+let lastResult = null;
+function showStep(n) {
+  currentStep = n;
+  document.querySelectorAll('.wizard-step').forEach(s => s.classList.toggle('is-active', +s.dataset.step === n));
+  document.querySelectorAll('.wizard-steps li').forEach(li => {
+    const s = +li.dataset.step;
+    li.classList.toggle('is-active', s === n);
+    li.classList.toggle('is-done', s < n);
+  });
+  if (n === 4) { lastResult = computeResult(); renderResults(lastResult); }
+  const wiz = document.querySelector('.wizard');
+  if (wiz) window.scrollTo({ top: wiz.getBoundingClientRect().top + window.scrollY - 20, behavior: 'smooth' });
+}
+
+/* ── Language re-render ── */
+function applyOptionLangs() {
+  const en = lang() === 'en';
+  document.querySelectorAll('select option[data-en]').forEach(o => { o.textContent = en ? o.dataset.en : o.dataset.zh; });
+}
+
+/* ── Init ── */
+function init() {
+  document.querySelectorAll('[data-goto]').forEach(b => b.addEventListener('click', () => showStep(+b.dataset.goto)));
+  const addBtn = $('res-add');
+  if (addBtn) addBtn.addEventListener('click', () => {
+    const last = residences[residences.length - 1];
+    residences.push({ place: last ? last.place : 'taipei', from: last ? last.to : 2000, to: 2026 });
+    renderResidences();
+  });
+  applyOptionLangs();
+  renderResidences();
+  window.addEventListener('langchange', () => {
+    applyOptionLangs();
+    renderResidences();
+    if (currentStep === 4 && lastResult) renderResults(lastResult);
+  });
+}
+init();
+</script>
