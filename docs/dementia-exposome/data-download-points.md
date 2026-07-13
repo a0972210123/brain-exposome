@@ -89,6 +89,51 @@ PM2.5-only until real prevalence data exists.)
 
 ---
 
+## Direct per-admin prevalence — 🇨🇳 China & 🇮🇳 India (ready to plug in)
+
+Two priority countries already have **published admin-1 modelled prevalence** — the
+study gives a final value per province/state, so no rates×population step is needed.
+The pipeline path (`build_direct_prevalence`) + the map's per-country metric/legend
+are **already built and tested**; only the data table is missing (publisher pages
+403 automated fetchers, so download by hand).
+
+| Country | Source table | Metric | Verified anchors | Save as |
+|---|---|---|---|---|
+| 🇨🇳 China | **Liu/Gao et al. 2024**, *Lancet Reg Health – W Pac*, "Geographical variation in dementia prevalence across China" — **Appendix G** (per-province, 28 units; CHARLS 2018) · PMC11225804 | prevalence **% among 50+** | range **2.62–13.53%**; high: Xinjiang / Jilin / Beijing; low: Fujian / Zhejiang / Guangdong | `cn-admin1-prevalence.csv` |
+| 🇮🇳 India | **Lee et al. 2023**, *Alzheimer's & Dementia*, "Prevalence of dementia in India: National and state estimates" — **Table 2** (per-state/UT; LASI-DAD) · PMC10338640 / doi:10.1002/alz.12928 | prevalence **% among 60+** | national **7.4%**; **Delhi 4.5%**, **Jammu & Kashmir 11.0%** | `in-admin1-prevalence.csv` |
+
+**Schema** (`{cc}-admin1-prevalence.csv`) — one row per admin unit:
+
+```
+unit_name,prevalence_pct
+Delhi,4.5
+Jammu and Kashmir,11.0
+…
+```
+- `unit_name` is matched (case-insensitive) to the boundary name; use the English
+  state/province name as it appears in `public/data/geo/{cn,in}-admin1.geojson`
+  (e.g. India: `Delhi`, `Jammu and Kashmir`, `Rajasthan`; China: `Xinjiang`, `Beijing`).
+  Or give `unit_code` directly (ISO-3166-2, `IN-DL` / `CN-XJ`). Unmatched rows are
+  logged so you can add an alias.
+- Drop the file in `scripts/_data_in/`, run `python3 scripts/build_data.py` →
+  it writes `public/data/dementia/{cn,in}-modelled.json`.
+
+**Enable on the map** (one line in `MAP_CFG`, `dementia-exposome.astro`) — the metric
++ legend (China “盛行率 50+ %”, India “盛行率 60+ %”) are already wired:
+
+```js
+cn: { …, layers: ['prevalence', 'pm25'], prevMetric: PREV_CN, prev: '/data/dementia/cn-modelled.json', … },
+in: { …, layers: ['prevalence', 'pm25'], prevMetric: PREV_IN, prev: '/data/dementia/in-modelled.json', … },
+```
+
+> **Metric caveat:** these are **% among the elderly** (CN 50+, IN 60+), a different
+> denominator from Taiwan's *cases per 1,000 all-ages* — hence per-country legends.
+> Don't compare the prevalence colours across countries; compare within a country.
+> Both remain **modelled estimates**, not measured. States/provinces not in the study
+> (India ~18 of 36; China excludes Tibet/Ningxia/Hainan) stay grey until filled.
+
+---
+
 ## Reachability legend (tested from the build sandbox, July 2026)
 - ✅ reachable & already wired: ACAG S3, Natural Earth, npm/GitHub, pypi.
 - 🔒 policy-blocked here → **this list** (you download; Playwright can't bypass it here).
