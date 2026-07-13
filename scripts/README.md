@@ -39,7 +39,8 @@ age, prevalence rates) that `build_data.py` can't reach directly, saving into
 `_data_in/`. **These targets are policy-blocked in this repo's CI sandbox** — the
 scraper is meant to run on the owner's unrestricted network. `--smoke` proves the
 browser harness works locally. Exact landing URLs + expected schemas:
-`docs/side-projects/dementia-exposome/data-download-points.md`.
+`docs/side-projects/dementia-exposome/data-download-points.md`. **Step-by-step
+runbook for a local session:** `docs/side-projects/dementia-exposome/local-session-handoff.md`.
 
 ## `_data_in/` (gitignored)
 

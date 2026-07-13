@@ -80,6 +80,14 @@ import T from '../../components/T.astro';
         </p>
         <div class="supp-table-wrap">
           <table class="supp-table res-table">
+            <colgroup>
+              <col class="col-country" />
+              <col class="col-region" />
+              <col class="col-year" />
+              <col class="col-year" />
+              <col class="col-pm" />
+              <col class="col-del" />
+            </colgroup>
             <thead>
               <tr>
                 <th><T zh="國家" en="Country" /></th>
@@ -402,15 +410,24 @@ import T from '../../components/T.astro';
 
   /* Residence table */
   .supp-table-wrap { overflow-x: auto; }
-  .supp-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 520px; }
+  .supp-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 460px; }
   .supp-table th, .supp-table td { text-align: left; padding: 0.6rem 0.7rem; border-bottom: 1px solid var(--color-border); vertical-align: middle; }
   .supp-table th { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted); }
-  .res-table select, .res-table input {
+  /* Fixed layout so the 246-country picker can't stretch the Country column;
+     Country + Region share the remaining width evenly, numeric cols stay compact. */
+  .res-table { table-layout: fixed; }
+  .res-table .col-year { width: 5rem; }
+  .res-table .col-pm { width: 5.5rem; }
+  .res-table .col-del { width: 2.5rem; }
+  /* :global — these selects/inputs are injected by renderResidences() via innerHTML,
+     so they don't carry Astro's scope attribute; scope stays on the static .res-table. */
+  .res-table :global(select), .res-table :global(input) {
     background: var(--color-bg); border: 1px solid var(--color-border); color: var(--color-text);
     padding: 0.4rem 0.5rem; border-radius: var(--radius-sm); font-size: 0.85rem; font-family: var(--font-sans);
-    width: 100%;
+    width: 100%; max-width: 100%; min-width: 0; box-sizing: border-box;
   }
-  .res-table input[type="number"] { width: 5.5rem; }
+  .res-table :global(select) { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
+  .res-table :global(.res-pm) { white-space: nowrap; }
   .res-pm { white-space: nowrap; color: var(--color-text-muted); }
   .res-del {
     background: transparent; border: none; color: var(--color-text-muted); cursor: pointer;
