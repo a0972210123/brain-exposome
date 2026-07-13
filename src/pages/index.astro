@@ -466,7 +466,7 @@ import T from '../../components/T.astro';
   .ba-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-muted); }
   /* brain-age gauge (semicircular meter) — SVG is built at runtime via innerHTML,
      so its inner marks carry no Astro scope attribute → target them with :global. */
-  .ba-gauge { max-width: 240px; margin: 0.5rem auto 0.7rem; }
+  .ba-gauge { max-width: 240px; margin: 0.5rem auto 1.5rem; }
   .ba-gauge :global(svg) { width: 100%; height: auto; display: block; overflow: visible; }
   .ba-gauge :global(.gauge-track) { fill: none; stroke: var(--color-border); stroke-width: 13; stroke-linecap: round; }
   .ba-gauge :global(.gauge-val) { fill: none; stroke-width: 13; stroke-linecap: round; }
