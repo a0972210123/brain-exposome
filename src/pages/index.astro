@@ -259,7 +259,7 @@ import T from '../../components/T.astro';
         </div>
 
         <div class="cat-head">
-          <p class="calc-subheading"><T zh="各面向概況" en="By category" /></p>
+          <p class="calc-subheading"><T zh="各面向風險換算腦齡老化概況" en="Brain-aging by domain (risk-converted)" /></p>
           <div class="cat-toggle" role="group" aria-label="display style">
             <button type="button" class="cat-view-btn is-active" data-view="radar"><T zh="雷達圖" en="Radar" /></button>
             <button type="button" class="cat-view-btn" data-view="list"><T zh="清單" en="List" /></button>
@@ -466,13 +466,13 @@ import T from '../../components/T.astro';
   .ba-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-muted); }
   /* brain-age gauge (semicircular meter) — SVG is built at runtime via innerHTML,
      so its inner marks carry no Astro scope attribute → target them with :global. */
-  .ba-gauge { max-width: 240px; margin: 0.4rem auto -0.4rem; }
+  .ba-gauge { max-width: 240px; margin: 0.5rem auto 0.7rem; }
   .ba-gauge :global(svg) { width: 100%; height: auto; display: block; overflow: visible; }
   .ba-gauge :global(.gauge-track) { fill: none; stroke: var(--color-border); stroke-width: 13; stroke-linecap: round; }
   .ba-gauge :global(.gauge-val) { fill: none; stroke-width: 13; stroke-linecap: round; }
   .ba-gauge :global(.gauge-tick) { fill: var(--color-text-muted); font-size: 11px; font-family: var(--font-sans); }
   .ba-num { font-size: clamp(2.2rem, 8vw, 3.4rem); font-weight: 800; letter-spacing: -0.03em; margin: 0.3rem 0; }
-  .ba-caption { font-size: 0.82rem; color: var(--color-text-muted); line-height: 1.6; max-width: 460px; margin: 0 auto; }
+  .ba-caption { font-size: 0.82rem; color: var(--color-text-muted); line-height: 1.6; max-width: 460px; margin: 0 auto; text-align: left; padding: 0 0.3rem; }
   .ba-detail { margin-top: 0.9rem; text-align: left; font-size: 0.82rem; }
   .ba-detail summary { cursor: pointer; color: var(--color-accent); font-weight: 600; text-align: center; }
   .ba-detail-body { margin-top: 0.7rem; color: var(--color-text-muted); line-height: 1.6; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 0.8rem 1rem; }
@@ -518,6 +518,7 @@ import T from '../../components/T.astro';
   .cat-radar :global(.radar-dot) { fill: var(--color-accent); }
   .cat-radar :global(.radar-hit) { fill: transparent; cursor: pointer; }
   .cat-radar :global(.radar-label) { fill: var(--color-text); font-size: 12px; font-family: var(--font-sans); }
+  .cat-radar :global(.radar-val) { fill: var(--color-accent); font-size: 10px; font-weight: 600; font-family: var(--font-sans); }
   .cat-radar :global(.radar-scale), .cat-radar :global(.radar-empty) { fill: var(--color-text-muted); font-size: 11px; font-family: var(--font-sans); }
 
   .result-exposome {
@@ -910,20 +911,27 @@ function renderRadar(r) {
   for (let i = 0; i < N; i++) { const [x, y] = pt(i, 1); grid += `<line class="radar-spoke" x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/>`; }
   const dpts = dom.map(d => pt(dom.indexOf(d), Math.min(1, Math.max(0, d.years) / niceMax)));
   const dataPoly = `<polygon class="radar-area" points="${poly(dpts)}"/>`;
-  let marks = '', labels = '';
+  let marks = '', labels = '', valLabels = '';
   dom.forEach((d, i) => {
     const [dx, dy] = dpts[i];
     const nm = L(CAT_SHORT[d.key][0], CAT_SHORT[d.key][1]);
-    const tip = `${nm}: +${Math.max(0, d.years).toFixed(1)} ${L('年', 'yr')}` + (d.count ? `（${d.count}）` : '');
+    const yv = Math.max(0, d.years);
+    const tip = `${nm}: +${yv.toFixed(1)} ${L('年', 'yr')}` + (d.count ? `（${d.count}）` : '');
     marks += `<circle class="radar-hit" cx="${dx.toFixed(1)}" cy="${dy.toFixed(1)}" r="15"><title>${tip}</title></circle>`;
     marks += `<circle class="radar-dot" cx="${dx.toFixed(1)}" cy="${dy.toFixed(1)}" r="3.5"/>`;
-    const [lx, ly] = pt(i, 1.22);
+    const [lx, ly] = pt(i, 1.28);
     const anchor = lx > cx + 6 ? 'start' : lx < cx - 6 ? 'end' : 'middle';
     labels += `<text class="radar-label" x="${lx.toFixed(1)}" y="${(ly + 3).toFixed(1)}" text-anchor="${anchor}">${nm}</text>`;
+    // small "+x" value beside each non-zero data point
+    if (yv >= 0.05) {
+      const [vx, vy] = pt(i, Math.min(1, yv / niceMax) + 15 / R);
+      const va = vx > cx + 6 ? 'start' : vx < cx - 6 ? 'end' : 'middle';
+      valLabels += `<text class="radar-val" x="${vx.toFixed(1)}" y="${(vy + 3).toFixed(1)}" text-anchor="${va}">+${yv.toFixed(1)}</text>`;
+    }
   });
   const scale = `<text class="radar-scale" x="4" y="14" text-anchor="start">${L('外圈', 'outer ring')} = +${niceMax} ${L('年', 'yr')}</text>`;
   const empty = r.count === 0 ? `<text class="radar-empty" x="${cx}" y="${cy + 4}" text-anchor="middle">${L('未偵測到可調整因子', 'no modifiable factors')}</text>` : '';
-  el.innerHTML = `<svg viewBox="0 0 300 280" role="img" aria-label="${L('各面向風險雷達圖（腦齡年數）', 'risk radar by category (brain-years)')}">${grid}${dataPoly}${marks}${labels}${scale}${empty}</svg>`;
+  el.innerHTML = `<svg viewBox="0 0 300 280" role="img" aria-label="${L('各面向風險雷達圖（腦齡年數）', 'risk radar by category (brain-years)')}">${grid}${dataPoly}${marks}${valLabels}${labels}${scale}${empty}</svg>`;
 }
 function renderGauge(r) {
   const el = $('out-gauge');
