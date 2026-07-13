@@ -1241,7 +1241,7 @@ function curPrev() { return MAP_CFG[mapCountry].prevMetric || PREV_TW; }
 function codeOf(f) { return f.properties[MAP_CFG[mapCountry].codeProp]; }
 function valueFor(code) { return mapMode === 'prevalence' ? VAL.prev[code] : VAL.pm[code]; }
 function colorFor(v) {
-  if (v == null) return '#e6e6e6';
+  if (v == null) return document.documentElement.getAttribute('data-theme') === 'dark' ? '#2b3050' : '#e6e6e6';
   const bins = mapMode === 'prevalence' ? curPrev().bins : PM_BINS;
   let i = 0; while (i < bins.length && v > bins[i]) i++;
   return RAMP[i];
