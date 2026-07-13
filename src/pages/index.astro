@@ -252,12 +252,20 @@ import T from '../../components/T.astro';
 
         <div class="result-brainage">
           <div class="ba-label"><T zh="教育性「腦齡加速」估計" en="Educational 'brain-age acceleration' estimate" /></div>
+          <div class="ba-gauge" id="out-gauge"></div>
           <div class="ba-num" id="out-brainage">—</div>
           <div class="ba-caption" id="out-brainage-caption"></div>
           <div id="out-brainage-detail"></div>
         </div>
 
-        <p class="calc-subheading"><T zh="各面向概況" en="By category" /></p>
+        <div class="cat-head">
+          <p class="calc-subheading"><T zh="各面向風險換算腦齡老化概況" en="Brain-aging by domain (risk-converted)" /></p>
+          <div class="cat-toggle" role="group" aria-label="display style">
+            <button type="button" class="cat-view-btn is-active" data-view="radar"><T zh="雷達圖" en="Radar" /></button>
+            <button type="button" class="cat-view-btn" data-view="list"><T zh="清單" en="List" /></button>
+          </div>
+        </div>
+        <figure class="cat-radar" id="out-radar"></figure>
         <div class="stat-list" id="out-categories"></div>
 
         <div class="result-exposome" id="out-exposome"></div>
@@ -456,17 +464,27 @@ import T from '../../components/T.astro';
     border-radius: var(--radius-lg); box-shadow: var(--card-shadow);
   }
   .ba-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-muted); }
+  /* brain-age gauge (semicircular meter) — SVG is built at runtime via innerHTML,
+     so its inner marks carry no Astro scope attribute → target them with :global. */
+  .ba-gauge { max-width: 240px; margin: 0.5rem auto 0.8rem; }
+  .ba-gauge :global(svg) { width: 100%; height: auto; display: block; overflow: visible; }
+  .ba-gauge :global(.gauge-track) { fill: none; stroke: var(--color-border); stroke-width: 13; stroke-linecap: round; }
+  .ba-gauge :global(.gauge-val) { fill: none; stroke-width: 13; stroke-linecap: round; }
+  .ba-gauge :global(.gauge-tick) { fill: var(--color-text-muted); font-size: 11px; font-family: var(--font-sans); }
   .ba-num { font-size: clamp(2.2rem, 8vw, 3.4rem); font-weight: 800; letter-spacing: -0.03em; margin: 0.3rem 0; }
-  .ba-caption { font-size: 0.82rem; color: var(--color-text-muted); line-height: 1.6; max-width: 460px; margin: 0 auto; }
-  .ba-detail { margin-top: 0.9rem; text-align: left; font-size: 0.82rem; }
-  .ba-detail summary { cursor: pointer; color: var(--color-accent); font-weight: 600; text-align: center; }
-  .ba-detail-body { margin-top: 0.7rem; color: var(--color-text-muted); line-height: 1.6; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 0.8rem 1rem; }
-  .ba-detail-body strong { color: var(--color-text); }
-  .ba-factors { margin: 0.3rem 0 0.6rem; padding-left: 1.2rem; }
-  .ba-factors li { margin-bottom: 0.15rem; }
-  .ba-steps { margin: 0.3rem 0; padding-left: 1.2rem; }
-  .ba-steps li { margin-bottom: 0.4rem; }
-  .ba-detail-note { font-size: 0.78rem; margin-top: 0.5rem; }
+  .ba-caption { font-size: 0.82rem; color: var(--color-text-muted); line-height: 1.6; max-width: 460px; margin: 0 auto; text-align: left; padding: 0 0.3rem; }
+  /* the derivation detail is injected via innerHTML, so it carries no scope attr →
+     target it with :global under the static card, otherwise it inherits the card's
+     centered text and stays unstyled. One size smaller, left-aligned. */
+  .result-brainage :global(.ba-detail) { margin-top: 0.9rem; text-align: left; font-size: 0.76rem; }
+  .result-brainage :global(.ba-detail summary) { cursor: pointer; color: var(--color-accent); font-weight: 600; text-align: left; }
+  .result-brainage :global(.ba-detail-body) { margin-top: 0.7rem; color: var(--color-text-muted); line-height: 1.6; background: var(--color-surface); border: 1px solid var(--color-border); border-radius: var(--radius-sm); padding: 0.8rem 1rem; }
+  .result-brainage :global(.ba-detail-body strong) { color: var(--color-text); }
+  .result-brainage :global(.ba-factors) { margin: 0.3rem 0 0.6rem; padding-left: 1.2rem; }
+  .result-brainage :global(.ba-factors li) { margin-bottom: 0.15rem; }
+  .result-brainage :global(.ba-steps) { margin: 0.3rem 0; padding-left: 1.2rem; }
+  .result-brainage :global(.ba-steps li) { margin-bottom: 0.4rem; }
+  .result-brainage :global(.ba-detail-note) { font-size: 0.72rem; margin-top: 0.5rem; }
   .res-nat { color: var(--color-text-muted); font-size: 0.85rem; }
 
   .stat-list { display: flex; flex-direction: column; gap: 0.6rem; }
@@ -480,6 +498,31 @@ import T from '../../components/T.astro';
   .stat-row-sub { font-size: 0.8rem; color: var(--color-text-muted); margin-top: 0.2rem; }
   .stat-row-num { flex-shrink: 0; font-size: 0.85rem; font-weight: 700; white-space: nowrap; }
   .cat-badge { font-size: 1rem; }
+
+  /* category display-style toggle (radar ⇄ list) */
+  .cat-head { display: flex; align-items: center; justify-content: space-between; gap: 1rem; flex-wrap: wrap; }
+  .cat-head .calc-subheading { margin: 0; }
+  .cat-toggle { display: inline-flex; gap: 0.3rem; }
+  .cat-view-btn {
+    font-family: var(--font-sans); font-size: 0.78rem; font-weight: 600; cursor: pointer;
+    padding: 0.3rem 0.7rem; border-radius: 999px; color: var(--color-text-muted);
+    border: 1px solid var(--color-border); background: var(--color-surface);
+  }
+  .cat-view-btn.is-active { border-color: var(--color-accent); color: var(--color-text); }
+  /* category radar (inline SVG) */
+  .cat-radar {
+    margin: 0.4rem 0 0; padding: 0.6rem; background: var(--card-bg);
+    border: 1px solid var(--card-border); border-radius: var(--radius-md); box-shadow: var(--card-shadow);
+  }
+  .cat-radar :global(svg) { width: 100%; max-width: 380px; height: auto; margin: 0 auto; display: block; overflow: visible; }
+  .cat-radar :global(.radar-ring) { fill: none; stroke: var(--color-border); stroke-width: 1; }
+  .cat-radar :global(.radar-spoke) { stroke: var(--color-border); stroke-width: 1; }
+  .cat-radar :global(.radar-area) { fill: var(--color-accent); fill-opacity: 0.18; stroke: var(--color-accent); stroke-width: 2; stroke-linejoin: round; }
+  .cat-radar :global(.radar-dot) { fill: var(--color-accent); }
+  .cat-radar :global(.radar-hit) { fill: transparent; cursor: pointer; }
+  .cat-radar :global(.radar-label) { fill: var(--color-text); font-size: 12px; font-family: var(--font-sans); }
+  .cat-radar :global(.radar-val) { fill: var(--color-accent); font-size: 10px; font-weight: 600; font-family: var(--font-sans); }
+  .cat-radar :global(.radar-scale), .cat-radar :global(.radar-empty) { fill: var(--color-text-muted); font-size: 11px; font-family: var(--font-sans); }
 
   .result-exposome {
     margin-top: var(--spacing-md); font-size: 0.9rem; line-height: 1.6; color: var(--color-text-muted);
@@ -803,6 +846,11 @@ const CATS = [
   ['lifestyle', '🚬 生活型態', '🚬 Lifestyle'],
   ['exposome', '🌫️ 環境暴露（PM2.5）', '🌫️ Exposome (PM2.5)'],
 ];
+// short labels for the radar axes (the full CATS names are too long to fit around the chart)
+const CAT_SHORT = {
+  sensory: ['👂 感官', '👂 Sensory'], cardio: ['❤️ 心血管', '❤️ Cardio'], mental: ['🧠 心理', '🧠 Mental'],
+  social: ['🤝 社會', '🤝 Social'], lifestyle: ['🚬 生活', '🚬 Lifestyle'], exposome: ['🌫️ 空污', '🌫️ Air'],
+};
 const ACTIONS = {
   hearing: ['服務可近性', 'Access to services', '做一次聽力檢查；有需要就配戴助聽器——治療聽損是最大的可調整因子之一。', 'Get a hearing check and use aids if needed — treating hearing loss is one of the largest modifiable factors.'],
   vision: ['服務可近性', 'Access to services', '定期眼科檢查，矯正可治療的視力問題（如白內障）。', 'Have regular eye exams and correct treatable vision loss (e.g. cataracts).'],
@@ -831,6 +879,81 @@ const FACTOR_LABELS = {
   'smoking-former': ['已戒菸', 'Former smoking'], alcohol: ['過量飲酒', 'Excessive alcohol'],
   tbi: ['頭部外傷', 'Traumatic brain injury'], pm25: ['空氣污染 PM2.5', 'Air pollution PM2.5'],
 };
+
+/* ── Result visuals: radar (category profile) + gauge (brain-age) — inline SVG, no deps ── */
+let catView = 'radar';   // 'radar' | 'list'
+
+/* brain-years attributable to each domain: λ·Σln(RR)/ln2·T_double (uncapped, per category) */
+function domainYears(r) {
+  const lnByCat = {};
+  r.factors.forEach(f => { lnByCat[f.cat] = (lnByCat[f.cat] || 0) + Math.log(f.rr); });
+  return CATS.map(([key]) => ({
+    key, years: LAMBDA * (lnByCat[key] || 0) / Math.log(2) * r.tDouble,
+    count: r.factors.filter(f => f.cat === key).length,
+  }));
+}
+function applyCatView() {
+  const radar = $('out-radar'), list = $('out-categories');
+  if (radar) radar.style.display = catView === 'radar' ? '' : 'none';
+  if (list) list.style.display = catView === 'list' ? '' : 'none';
+  document.querySelectorAll('.cat-view-btn').forEach(b => b.classList.toggle('is-active', b.dataset.view === catView));
+}
+function renderRadar(r) {
+  const el = $('out-radar');
+  if (!el) return;
+  const dom = domainYears(r), N = dom.length, cx = 150, cy = 140, R = 86;
+  const vals = dom.map(d => Math.max(0, d.years));
+  const niceMax = Math.max(2, Math.ceil(Math.max(...vals)));   // outer ring = whole years
+  const pt = (i, frac) => {
+    const a = (-90 + i * (360 / N)) * Math.PI / 180;
+    return [cx + R * frac * Math.cos(a), cy + R * frac * Math.sin(a)];
+  };
+  const poly = pts => pts.map(p => p[0].toFixed(1) + ',' + p[1].toFixed(1)).join(' ');
+  let grid = '';
+  for (let k = 1; k <= 3; k++) grid += `<polygon class="radar-ring" points="${poly(dom.map((_, i) => pt(i, k / 3)))}"/>`;
+  for (let i = 0; i < N; i++) { const [x, y] = pt(i, 1); grid += `<line class="radar-spoke" x1="${cx}" y1="${cy}" x2="${x.toFixed(1)}" y2="${y.toFixed(1)}"/>`; }
+  const dpts = dom.map(d => pt(dom.indexOf(d), Math.min(1, Math.max(0, d.years) / niceMax)));
+  const dataPoly = `<polygon class="radar-area" points="${poly(dpts)}"/>`;
+  let marks = '', labels = '', valLabels = '';
+  dom.forEach((d, i) => {
+    const [dx, dy] = dpts[i];
+    const nm = L(CAT_SHORT[d.key][0], CAT_SHORT[d.key][1]);
+    const yv = Math.max(0, d.years);
+    const tip = `${nm}: +${yv.toFixed(1)} ${L('年', 'yr')}` + (d.count ? `（${d.count}）` : '');
+    marks += `<circle class="radar-hit" cx="${dx.toFixed(1)}" cy="${dy.toFixed(1)}" r="15"><title>${tip}</title></circle>`;
+    marks += `<circle class="radar-dot" cx="${dx.toFixed(1)}" cy="${dy.toFixed(1)}" r="3.5"/>`;
+    const [lx, ly] = pt(i, 1.28);
+    const anchor = lx > cx + 6 ? 'start' : lx < cx - 6 ? 'end' : 'middle';
+    labels += `<text class="radar-label" x="${lx.toFixed(1)}" y="${(ly + 3).toFixed(1)}" text-anchor="${anchor}">${nm}</text>`;
+    // small "+x" value beside each non-zero data point
+    if (yv >= 0.05) {
+      const [vx, vy] = pt(i, Math.min(1, yv / niceMax) + 15 / R);
+      const va = vx > cx + 6 ? 'start' : vx < cx - 6 ? 'end' : 'middle';
+      valLabels += `<text class="radar-val" x="${vx.toFixed(1)}" y="${(vy + 3).toFixed(1)}" text-anchor="${va}">+${yv.toFixed(1)}</text>`;
+    }
+  });
+  const scale = `<text class="radar-scale" x="4" y="14" text-anchor="start">${L('外圈', 'outer ring')} = +${niceMax} ${L('年', 'yr')}</text>`;
+  const empty = r.count === 0 ? `<text class="radar-empty" x="${cx}" y="${cy + 4}" text-anchor="middle">${L('未偵測到可調整因子', 'no modifiable factors')}</text>` : '';
+  el.innerHTML = `<svg viewBox="0 0 300 280" role="img" aria-label="${L('各面向風險雷達圖（腦齡年數）', 'risk radar by category (brain-years)')}">${grid}${dataPoly}${marks}${valLabels}${labels}${scale}${empty}</svg>`;
+}
+function renderGauge(r) {
+  const el = $('out-gauge');
+  if (!el) return;
+  const GMAX = 12, t = Math.max(0, Math.min(1, r.dMid / GMAX));   // GMAX matches the ±12-yr cap
+  const color = r.band === 'few' ? '#2fbf71' : r.band === 'several' ? '#f5a623' : '#e5484d';
+  const cx = 100, cy = 104, rad = 82;
+  const P = deg => [cx + rad * Math.cos(deg * Math.PI / 180), cy + rad * Math.sin(deg * Math.PI / 180)];
+  const arc = (a0, a1) => {
+    const [x0, y0] = P(a0), [x1, y1] = P(a1);
+    return `M ${x0.toFixed(1)} ${y0.toFixed(1)} A ${rad} ${rad} 0 ${Math.abs(a1 - a0) > 180 ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`;
+  };
+  el.innerHTML = `<svg viewBox="0 0 200 134" role="img" aria-label="${L('腦齡加速儀表', 'brain-age gauge')}">
+    <path class="gauge-track" d="${arc(180, 360)}"/>
+    <path class="gauge-val" d="${arc(180, 180 + 180 * t)}" style="stroke:${color}"/>
+    <text class="gauge-tick" x="14" y="128" text-anchor="middle">0</text>
+    <text class="gauge-tick" x="186" y="128" text-anchor="middle">${GMAX}+</text>
+  </svg>`;
+}
 
 function renderResults(r) {
   // 1) categorical profile (LEAD)
@@ -881,6 +1004,9 @@ function renderResults(r) {
       <div class="stat-row-num"><span class="cat-badge">${badge}</span></div>
     </div>`;
   }).join('');
+  renderGauge(r);
+  renderRadar(r);
+  applyCatView();
 
   // 4) exposome / PM2.5 detail — WHO guideline → your annual avg → cumulative comparison → provenance
   const ex = $('out-exposome');
@@ -1068,6 +1194,7 @@ function relabelMap() { if (map && geoLayer) applyMode(); }
 /* ── Init ── */
 async function init() {
   document.querySelectorAll('[data-goto]').forEach(b => b.addEventListener('click', () => showStep(+b.dataset.goto)));
+  document.querySelectorAll('.cat-view-btn').forEach(b => b.addEventListener('click', () => { catView = b.dataset.view; applyCatView(); }));
   const addBtn = $('res-add');
   if (addBtn) addBtn.addEventListener('click', () => {
     const last = residences[residences.length - 1] || { country: 'TW', place: '63000', to: 2000 };
