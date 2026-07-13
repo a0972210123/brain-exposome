@@ -367,7 +367,7 @@ import T from '../../components/T.astro';
 
     <!-- How it's calculated -->
     <section class="calc-section calc-method">
-      <p class="section-heading"><T zh="計算方式與參考文獻" en="How this is calculated" /></p>
+      <p class="section-heading"><T zh="計算方式" en="How this is calculated" /></p>
       <p class="calc-section-desc">
         <T
           zh="每個「有」的因子會帶入已發表的相對風險（RR，主要來自 2024 年 Lancet 委員會與其引用的統合分析）。因為這些因子彼此相關、會重複計算，我們在合併時乘上一個縮減係數 λ = 0.6（近似委員會的 communality 調整），並設上限，避免高估。合併後的有效 RR 再換算成「腦齡加速」年數：Δ年 ≈ log₂(RR) × 5.5（失智風險大約每 5–6 年翻倍）。空氣污染以連續劑量處理（每 +5 µg/m³ 約 HR 1.08），因此不再重複計入委員會的類別式空污因子。"
@@ -375,11 +375,46 @@ import T from '../../components/T.astro';
         />
       </p>
       <p class="calc-section-desc"><em><T zh="假設與限制：λ = 0.6 與腦齡年數上限是本工具為避免高估所設的參數（非已發表常數）；PM2.5 採 ACAG 衛星年均資料（依居住縣市／國家與年份對應），歷史不足年份以最接近年份外推。這是教育性估計，非個人預測。" en="Assumptions: λ = 0.6 and the brain-age cap are this tool's parameters to avoid overstatement (not published constants); PM2.5 uses ACAG satellite annual data (matched to your county/country and year), with missing historical years extrapolated from the nearest available year. This is an educational estimate, not a personal prediction." /></em></p>
+    </section>
+
+    <!-- Sources & references -->
+    <section class="calc-section calc-refs">
+      <p class="section-heading"><T zh="資料來源與參考文獻" en="Sources & references" /></p>
+      <p class="calc-section-desc"><T zh="本工具整合以下公開文獻、政府與國際組織資料庫。所有失智盛行率與腦齡數字皆為教育性模型估計，非醫療診斷。" en="This tool builds on the public literature, government, and international datasets below. All dementia-prevalence and brain-age figures are educational modelled estimates, not medical diagnoses." /></p>
+
+      <p class="ref-cat"><T zh="① 失智風險與腦齡模型" en="① Dementia risk & brain-age model" /></p>
       <ul class="ref-list">
         <li>Livingston G, et al. Dementia prevention, intervention, and care: 2024 report of the Lancet standing Commission. <em>Lancet</em> 2024;404:572–628.</li>
         <li>Moguilner S, Ibáñez A, et al. Brain clocks capture diversity and disparities in aging and dementia. <em>Nat Med</em> 2024;30:3646–61.</li>
         <li>Long-term air pollution exposure and incident dementia. <em>Lancet Planetary Health</em> 2025 (≈ HR 1.08 per 5 µg/m³ PM2.5).</li>
-        <li>Ziegler-Graham K, et al. AD incidence doubling time ≈ 5.5 years. <em>Alzheimers Dement</em> 2008.</li>
+        <li>Ziegler-Graham K, et al. Alzheimer's disease incidence doubling time ≈ 5.5 years. <em>Alzheimers Dement</em> 2008.</li>
+      </ul>
+
+      <p class="ref-cat"><T zh="② 失智盛行率調查與資料庫" en="② Dementia-prevalence surveys & databases" /></p>
+      <ul class="ref-list">
+        <li><T zh="台灣：國家衛生研究院（NHRI）全國社區失智症流行病學調查，2020–2023（年齡別盛行率）。" en="Taiwan: National Health Research Institutes (NHRI), nationwide community dementia epidemiology survey, 2020–2023 (age-band prevalence)." /></li>
+        <li>IHME Global Burden of Disease (GBD 2021) — Alzheimer's disease &amp; other dementias, prevalence. <a href="https://vizhub.healthdata.org/gbd-results/" target="_blank" rel="noopener">vizhub.healthdata.org/gbd-results</a></li>
+        <li><T zh="中國：" en="China: " />Jia L, et al. Prevalence of dementia in China (CCAS). <em>Lancet Public Health</em> 2020 · Liu, Gao, et al. Geographical variation in dementia prevalence across China (per-province). <em>Lancet Reg Health – West Pac</em> 2024. <a href="https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11225804/" target="_blank" rel="noopener">PMC11225804</a></li>
+        <li><T zh="印度：" en="India: " />Lee J, et al. Prevalence of dementia in India: national and state estimates (LASI-DAD). <em>Alzheimer's &amp; Dementia</em> 2023. <a href="https://doi.org/10.1002/alz.12928" target="_blank" rel="noopener">doi:10.1002/alz.12928</a></li>
+      </ul>
+
+      <p class="ref-cat"><T zh="③ 空氣污染（PM2.5）" en="③ Air pollution (PM2.5)" /></p>
+      <ul class="ref-list">
+        <li>Atmospheric Composition Analysis Group (ACAG), Washington University in St. Louis — surface PM2.5, V6.GL.03 (satellite-derived, annual 1998–2024), CC BY 4.0. van Donkelaar A, et al. <em>Environ Sci Technol</em> 2021; Shen S, et al. 2024. <a href="https://sites.wustl.edu/acag/" target="_blank" rel="noopener">sites.wustl.edu/acag</a></li>
+        <li><T zh="WHO 全球空氣品質指引 2021（年均 PM2.5 建議 ≤ 5 µg/m³）。" en="WHO Global Air Quality Guidelines 2021 (recommended annual PM2.5 ≤ 5 µg/m³)." /> <a href="https://www.who.int/publications/i/item/9789240034228" target="_blank" rel="noopener">who.int</a></li>
+      </ul>
+
+      <p class="ref-cat"><T zh="④ 地理界線" en="④ Administrative boundaries" /></p>
+      <ul class="ref-list">
+        <li><T zh="台灣：內政部國土測繪中心（NLSC）鄉鎮市區界線，經 taiwan-atlas 轉製（OGDL-Taiwan-1.0）。" en="Taiwan: township boundaries from the National Land Surveying and Mapping Center (NLSC), via taiwan-atlas (OGDL-Taiwan-1.0)." /></li>
+        <li><T zh="其他國家：" en="Other countries: " />Natural Earth admin-1 boundaries (public domain). <a href="https://www.naturalearthdata.com/" target="_blank" rel="noopener">naturalearthdata.com</a></li>
+      </ul>
+
+      <p class="ref-cat"><T zh="⑤ 人口與國際報告" en="⑤ Population & international reports" /></p>
+      <ul class="ref-list">
+        <li><T zh="台灣人口：內政部戶政司年齡別人口統計（data.gov.tw）。" en="Taiwan population: Ministry of the Interior (MOI) age-band population statistics (data.gov.tw)." /></li>
+        <li><T zh="跨國盛行率模型的人口分母：" en="Population denominators for cross-country prevalence modelling: " />WorldPop (<a href="https://www.worldpop.org" target="_blank" rel="noopener">worldpop.org</a>, CC BY 4.0) · UN World Population Prospects (<a href="https://population.un.org/wpp/" target="_blank" rel="noopener">population.un.org/wpp</a>).</li>
+        <li>WHO. <T zh="失智症全球公共衛生應對現況報告，2021（全球失智人口 55M → 78M（2030）→ 139M（2050））。" en="Global status report on the public health response to dementia, 2021 (55M now → 78M by 2030 → 139M by 2050)." /> <a href="https://www.who.int/publications/i/item/9789240033245" target="_blank" rel="noopener">who.int</a></li>
       </ul>
     </section>
 
@@ -620,6 +655,10 @@ import T from '../../components/T.astro';
 
   .ref-list { font-size: 0.82rem; line-height: 1.8; color: var(--color-text-muted); padding-left: 1.2rem; }
   .calc-method { margin-top: var(--spacing-lg); }
+  .ref-cat { font-size: 0.9rem; font-weight: 700; color: var(--color-text); margin: 1.1rem 0 0.3rem; }
+  .calc-refs .ref-list { margin: 0; }
+  .calc-refs a { color: var(--color-accent); text-decoration: none; border-bottom: 1px solid transparent; }
+  .calc-refs a:hover { border-bottom-color: var(--color-accent); }
 
   /* Regional map */
   .map-controls { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; margin-bottom: 0.8rem; }
