@@ -1264,11 +1264,11 @@ const MAP_CFG = {
         pm: '/data/pm25/jp-admin1-pm25.json' },
   kr: { geojson: '/data/geo/kr-admin1.geojson', codeProp: 'code', layers: ['pm25'],
         pm: '/data/pm25/kr-admin1-pm25.json' },
-  // CN/IN: prevalence metric is READY; to enable once scripts/_data_in prevalence CSV is
-  // built into cn/in-modelled.json, add   prev: '/data/dementia/{cn,in}-modelled.json'   and
-  // 'prevalence' to layers (see data-download-points.md).
-  cn: { geojson: '/data/geo/cn-admin1.geojson', codeProp: 'code', layers: ['pm25'],
-        prevMetric: PREV_CN, pm: '/data/pm25/cn-admin1-pm25.json' },
+  // CN/IN carry published per-admin prevalence (China: Liu/Gao 2024, % among 50+; India:
+  // Lee 2023, % among 60+) via PREV_CN/PREV_IN — a different denominator from TW's cases/1,000,
+  // so not cross-country comparable; units absent from each study stay unshaded.
+  cn: { geojson: '/data/geo/cn-admin1.geojson', codeProp: 'code', layers: ['prevalence', 'pm25'],
+        prevMetric: PREV_CN, prev: '/data/dementia/cn-modelled.json', pm: '/data/pm25/cn-admin1-pm25.json' },
   us: { geojson: '/data/geo/us-admin1.geojson', codeProp: 'code', layers: ['pm25'],
         pm: '/data/pm25/us-admin1-pm25.json' },
   in: { geojson: '/data/geo/in-admin1.geojson', codeProp: 'code', layers: ['pm25'],
