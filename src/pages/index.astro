@@ -28,6 +28,7 @@ import T from '../../components/T.astro';
         <li><T zh="這裡的「腦齡加速」是一個教育性的比喻數字，不是用腦部影像（MRI／EEG）量出來的真實腦齡。" en="The 'brain-age acceleration' here is an educational illustration, not a real brain age measured from imaging (MRI/EEG)." /></li>
         <li><T zh="本工具不能取代醫療專業判斷。如有任何健康疑慮，請諮詢合格的醫療人員。" en="This does not replace professional medical advice. Consult a qualified healthcare provider for any health concern." /></li>
         <li><T zh="PM2.5 採用 ACAG 衛星推估的逐年（1998–2024）縣市資料（1998 年以前的居住年份沿用 1998 值）。地圖上的失智盛行率為縣市層級的模型估計值，非實測。" en="PM2.5 uses ACAG satellite-derived annual (1998–2024) county data (residence years before 1998 reuse the 1998 value). The dementia prevalence on the map is a county-level modelled estimate, not measured." /></li>
+        <li><T zh="為了少填一步，第一段居住地的「國家」會依你目前的網路所在地或瀏覽器語系自動預設（不經第三方、不會索取定位權限），你可以隨時自行更改。所有計算都在你的瀏覽器完成，不會上傳。" en="To save a step, the first residence's country is pre-filled from your current network location or browser locale (no third party, no location-permission prompt); you can change it anytime. All calculations run in your browser and nothing is uploaded." /></li>
       </ul>
     </section>
 
@@ -606,6 +607,59 @@ function optionsFrom(list, selected) {
 function countyOptions(selected) { return optionsFrom(COUNTY_LIST.length ? COUNTY_LIST : FALLBACK_COUNTIES, selected); }
 function countryOptions(selected) { return optionsFrom(COUNTRY_LIST.length ? COUNTRY_LIST : [['TW', '臺灣', 'Taiwan']], selected); }
 
+/* ── Auto-detect the visitor's country to pre-fill the first residence (soft default). ──
+   Signal priority: Cloudflare edge (same-origin, IP-based) → browser locale → timezone.
+   All client-side; the only network call is same-origin /cdn-cgi/trace (no third party,
+   no API key, no geolocation prompt). Result is just a dropdown default the user can change. */
+const ISO_NAME_OVERRIDE = {  // ISO alpha-2 → the name ACAG (world-country-pm25.json) uses, where it differs from Intl.DisplayNames('en')
+  MM: 'Myanmar', HK: 'Hong Kong', MO: 'Macao', TR: 'Turkey', CZ: 'Czech Republic',
+};
+const TZ_COUNTRY = {  // tertiary fallback only (used when both trace and locale give nothing)
+  'Asia/Taipei': 'TW', 'Asia/Tokyo': 'JP', 'Asia/Seoul': 'KR', 'Asia/Shanghai': 'CN',
+  'Asia/Hong_Kong': 'HK', 'Asia/Macau': 'MO', 'Asia/Singapore': 'SG', 'Asia/Bangkok': 'TH',
+  'Asia/Kuala_Lumpur': 'MY', 'Asia/Jakarta': 'ID', 'Asia/Manila': 'PH', 'Asia/Ho_Chi_Minh': 'VN',
+  'Asia/Kolkata': 'IN', 'Asia/Dubai': 'AE', 'Europe/London': 'GB', 'Europe/Paris': 'FR',
+  'Europe/Berlin': 'DE', 'Europe/Madrid': 'ES', 'Europe/Rome': 'IT', 'Europe/Amsterdam': 'NL',
+  'America/New_York': 'US', 'America/Chicago': 'US', 'America/Los_Angeles': 'US', 'America/Denver': 'US',
+  'America/Toronto': 'CA', 'America/Vancouver': 'CA', 'Australia/Sydney': 'AU', 'Pacific/Auckland': 'NZ',
+};
+async function detectCountryIso() {
+  // 1) Cloudflare edge — returns "loc=XX" on the live pages.dev/mattye.dev; 404s on localhost.
+  try {
+    const ctrl = new AbortController();
+    const t = setTimeout(() => ctrl.abort(), 1500);
+    const txt = await fetch('/cdn-cgi/trace', { signal: ctrl.signal }).then(r => (r.ok ? r.text() : ''));
+    clearTimeout(t);
+    const m = txt.match(/^loc=([A-Z]{2})/m);
+    if (m) return m[1];
+  } catch (e) { /* offline / aborted / not on Cloudflare → fall through */ }
+  // 2) Browser locale region (offline, explicit region only — avoid maximize() misfires)
+  try {
+    const langs = (navigator.languages && navigator.languages.length) ? navigator.languages : [navigator.language];
+    for (const l of langs) { if (!l) continue; const r = new Intl.Locale(l).region; if (r) return r; }
+  } catch (e) { /* Intl.Locale unsupported */ }
+  // 3) Timezone (offline)
+  try {
+    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+    if (tz && TZ_COUNTRY[tz]) return TZ_COUNTRY[tz];
+  } catch (e) { /* no Intl */ }
+  return null;
+}
+/* ISO alpha-2 → a residence-dropdown value ('TW', or an ACAG country name present in COUNTRY_LIST); null if unknown */
+function isoToCountryValue(iso) {
+  if (!iso) return null;
+  iso = iso.toUpperCase();
+  if (iso === 'TW') return 'TW';
+  if (!WORLD_PM || !WORLD_PM.countries) return null;
+  let name = ISO_NAME_OVERRIDE[iso];
+  if (!name) { try { name = new Intl.DisplayNames(['en'], { type: 'region' }).of(iso); } catch (e) { return null; } }
+  if (!name) return null;
+  if (WORLD_PM.countries[name]) return name;                                   // exact
+  const norm = s => s.toLowerCase().replace(/\s+sar\s+china$/, '').replace(/\s*\(.*\)$/, '').trim();
+  const target = norm(name);
+  return Object.keys(WORLD_PM.countries).find(k => norm(k) === target) || null; // normalized
+}
+
 /* average a year-indexed series over a residence span (years clamped; pre-1998 reuses the first value) */
 function avgSeries(series, year0, year1, from, to) {
   let a = Math.min(Math.max(Number(from) || year0, year0), year1);
@@ -1020,20 +1074,31 @@ async function init() {
     residences.push({ country: last.country, place: last.place, from: last.to || 2000, to: 2026 });
     renderResidences();
   });
-  // load real PM2.5 — Taiwan county series + world country series (ACAG) — in parallel
+  // load real PM2.5 — Taiwan county series + world country series (ACAG) — plus geo-detect, in parallel
+  let detectedIso = null;
   try {
-    const [cty, world] = await Promise.all([
+    const [cty, world, iso] = await Promise.all([
       fetch('/data/pm25/tw-county-pm25.json').then(r => r.json()),
       fetch('/data/pm25/world-country-pm25.json').then(r => r.json()).catch(() => null),
+      detectCountryIso().catch(() => null),
     ]);
     COUNTY_PM = cty;
     COUNTY_LIST = Object.entries(COUNTY_PM.counties)
       .map(([code, c]) => [code, c.name, c.nameEn])
       .sort((a, b) => a[1].localeCompare(b[1], 'zh-Hant'));
     WORLD_PM = world;
+    detectedIso = iso;
   } catch (e) { COUNTY_LIST = FALLBACK_COUNTIES.slice(); }
   buildCountryList();
-  if (!COUNTY_LIST.some(c => c[0] === residences[0].place)) residences[0].place = (COUNTY_LIST[0] || ['63000'])[0];
+  // Soft-default the first residence to the visitor's country (overridable; only the untouched default row).
+  const detectedCountry = isoToCountryValue(detectedIso);
+  if (detectedCountry && detectedCountry !== residences[0].country) {
+    residences[0].country = detectedCountry;
+    if (detectedCountry !== 'TW') residences[0].place = '';  // non-TW rows show "nationwide"; place unused
+  }
+  if (residences[0].country === 'TW' && !COUNTY_LIST.some(c => c[0] === residences[0].place)) {
+    residences[0].place = (COUNTY_LIST[0] || ['63000'])[0];
+  }
 
   applyOptionLangs();
   renderResidences();
