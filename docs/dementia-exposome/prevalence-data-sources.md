@@ -103,6 +103,37 @@ The map already shows **sub-national PM2.5** for TW/JP/KR/CN/US/IN. Only **Taiwa
 4. Does WorldPop age/sex cover all targets at admin-1 with consistent 5-yr bands + recent vintage; best crosswalk to Natural Earth admin-1?
 5. Is IHME's **non-commercial** licence compatible with hosting derived admin-1 values in a public client-side map (attribution-only vs permission request)?
 
+## Resolved — 2026-07 local session
+
+*Answered from an open-network machine (the local session in `local-session-kickoff.md`). Each item cites what was actually fetched/verified.*
+
+1. **Korea & Japan national rates — found; both usable.**
+   - **Korea:** 중앙치매센터 (National Institute of Dementia) annual **「대한민국 치매현황」 / Korean Dementia Observatory** — https://www.nid.or.kr (publications). 65+ age-band prevalence (65+ standardised ≈ **9.25% (2023)**, rising to **≈38% at 85+**), from the national dementia registry + KOSIS population; cross-check *Dementia Epidemiology Fact Sheet 2022* (Ann Rehabil Med, e-arm.org). Population half: **KOSIS** 시도×age (kosis.kr/eng). Licence: NID reports public; KOSIS is **KOGL** (Korea Open Government Licence, attribution). → `kr-dementia-rates.csv`.
+   - **Japan:** the **2024 MHLW research group (Ninomiya, Kyushu U — 久山町/Hisayama + 3 towns, surveyed 2022–23)** produced the current nationwide age-band dementia + MCI estimates (65+ ≈ **12.1%** in 2022; projections to 2050/2060). Peer-reviewed age-band anchor: **Hisayama 37-yr trends**, *Alz Res Ther* 2025, **PMC12751825** (open, CC BY). Population half: **e-Stat** 都道府県×5歳階級 (e-stat.go.jp/en; 政府統計, free reuse w/ attribution). → `jp-dementia-rates.csv`.
+
+2. **China & India per-admin tables — resolved (shipped this session).** No publisher ships a clean per-row CSV, but **both are transcribable tables, not figures**:
+   - China **Appendix G** = *Supplementary Table 4* inside supplementary **`mmc1.docx`**, reachable via the **Elsevier OA CDN** `https://ars.els-cdn.com/content/image/1-s2.0-S2666606524001111-mmc1.docx` (PMC gates `/bin/` binaries behind a JS proof-of-work; the els-cdn mirror does not). `python-docx` → 28 provinces.
+   - India **Table 2** = in-article HTML at `pmc.ncbi.nlm.nih.gov/articles/PMC10338640/` (`id=T2`), BeautifulSoup → 22 states/UTs (+ a pooled "NE states" row and the national row, both excluded).
+   Now shipped as `{cn,in}-modelled.json` (PRs #125, #126).
+
+3. **Expansion-country admin-1 — effectively all GBD fallback; two partial exceptions.**
+   - **UK:** no modelled *community* admin-1 layer, but **OHID/PHE Fingertips "Dementia Profile"** has **recorded (diagnosed, QOF) prevalence by local authority + ICB** for England — https://fingertips.phe.org.uk/profile-group/mental-health/profile/dementia. Usable as a *diagnosed-prevalence* layer (different metric label; England only). CFAS = national age-specific community rates.
+   - **Brazil:** **ELSI-Brazil** (Bertola et al. 2023, *Alz & Dementia*) gives national + **5 macro-regions** (N/NE/Midwest/SE/S), **not** the 27 states → state-level still GBD.
+   - **Indonesia / Thailand / Vietnam:** **10/66** = catchment-site prevalence only, no admin-1 → GBD.
+   ⇒ Keep **GBD 2021 national × WorldPop admin-1** as the comparable backbone for all of these; UK-England-diagnosed and Brazil-5-region are optional, separately-labelled extras.
+
+4. **WorldPop → Natural-Earth admin-1 crosswalk — feasible; one band caveat.**
+   - Source: **WorldPop "Age and sex structures", 2020, 1km GeoTIFF**, per-country + global, unconstrained + constrained, **CC BY 4.0** — https://hub.worldpop.org/geodata/summary?id=24798 (also on HDX). Files `…_{m,f}_{age}_2020_1km.tif`; age codes `00` (0–1), `01` (1–4), then 5-yr `05…80`, **top band `80` = 80+**.
+   - Crosswalk: zonal-**sum** each age×sex raster over the *same* Natural-Earth admin-1 polygons the PM2.5 layers use (`rasterstats.zonal_stats(polys, tif, stats='sum')`), m+f per band. Prefer **unconstrained 2020** for consistent global coverage; calibrate national totals against **UN WPP**.
+   - **Caveat:** WorldPop tops out at **80+**, coarser than the pipeline's `POP_BANDS` (…`80_84`,`85p`). Either model 80+ as one band (pair with a GBD **80+** rate) or split 80+ using a national 80–84 / 85+ ratio from UN WPP. All targets covered at admin-1; vintage 2020.
+
+5. **IHME licence — OK for a free, non-commercial map with attribution; two hard limits.**
+   Per the **IHME Free-of-Charge Non-Commercial User Agreement** (https://www.healthdata.org/Data-tools-practices/data-practices/ihme-free-charge-non-commercial-user-agreement) + Terms:
+   - Non-commercial users get a royalty-free licence to download and **use, share, modify or build upon** the data — incl. publishing results on a **website** — **with attribution**. Hosting our **derived** admin-1 values (national rate × WorldPop pop = a transformed estimate) is within this.
+   - **Limit 1 — don't re-host the raw dataset:** users "may not provide third parties the ability to download IHME datasets from user-provided hosting facilities" (linking to IHME's own download is fine) ⇒ ship only the **derived** per-admin numbers, never the raw GBD CSV as a download.
+   - **Limit 2 — non-commercial only:** ads/monetisation = "commercial use" → needs an IHME commercial licence. (IHME's own visualisations are **CC BY-NC-ND 4.0**.)
+   ⇒ For the current free/ad-free educational site: **attribution-only is fine** ("IHME GBD 2021, non-commercial"). If the site ever runs ads, request commercial permission (services@healthdata.org) first.
+
 ## Key sources
 - GBD 2021 Results Tool — https://vizhub.healthdata.org/gbd-results/
 - WorldPop — https://www.worldpop.org · HRSL — https://registry.opendata.aws/dataforgood-fb-hrsl/
