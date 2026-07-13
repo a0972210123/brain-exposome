@@ -511,6 +511,49 @@ def build_admin_prevalence(cc, name):
     return True
 
 
+def _norm_name(s):
+    return (s or "").strip().lower().replace(".", "").replace("&", "and").replace("-", " ")
+
+
+def build_direct_prevalence(cc, name, units, meta_extra=None):
+    """Published per-admin prevalence (e.g. China Liu/Gao 2024 provinces, India Lee 2023
+       states): the study already gives a final value per unit — no rates×pop modelling.
+       Reads _data_in/{cc}-admin1-prevalence.csv with columns:
+         unit_code (ISO like CN-XJ / IN-RJ)  OR  unit_name (matched to the boundary name),
+         prevalence (or prevalence_pct)  [, age_group, note]
+       -> dementia/{cc}-modelled.json (byTown: code -> value). Returns True if built."""
+    path = os.path.join(DATA_IN, f"{cc}-admin1-prevalence.csv")
+    if not os.path.exists(path):
+        return False
+    codes = {u["code"] for u in units}
+    by_name = {_norm_name(u["name"]): u["code"] for u in units}
+    by_local = {_norm_name(u["nameLocal"]): u["code"] for u in units}
+    by_unit, unmatched = {}, []
+    for row in _read_csv(path):
+        code = (row.get("unit_code") or "").strip()
+        nm = (row.get("unit_name") or "").strip()
+        pv = row.get("prevalence") if row.get("prevalence") not in (None, "") else row.get("prevalence_pct")
+        if pv in (None, ""):
+            continue
+        c = code if code in codes else by_name.get(_norm_name(nm)) or by_local.get(_norm_name(nm))
+        if not c:
+            unmatched.append(nm or code)
+            continue
+        by_unit[c] = round(float(pv), 2)
+    if not by_unit:
+        log(f"  {name}: prevalence CSV present but 0 rows matched (unmatched: {unmatched})")
+        return False
+    meta = {"metric": "published per-admin dementia prevalence",
+            "note": "MODELLED estimate from a published study, not measured",
+            "built": BUILD_DATE}
+    if meta_extra:
+        meta.update(meta_extra)
+    write_json(f"dementia/{cc}-modelled.json", {"meta": meta, "byTown": by_unit})
+    log(f"  {name}: DIRECT prevalence for {len(by_unit)} units"
+        + (f"  (UNMATCHED, add to boundary aliases: {unmatched})" if unmatched else ""))
+    return True
+
+
 # ---------- world country-level PM2.5 (for the residence country dropdown) ----------
 WORLD_CSV = ("https://satpmdata.s3.us-east-1.amazonaws.com/V6GL03/RegionSummaries/"
              "GlobalPM25-V6GL03-Annual-1998-2024-wThresFrac.csv")
@@ -627,10 +670,14 @@ def main():
             vv = [v for v in pm.values() if v is not None]
             log(f"  {cfg['name']}: {len(units)} units, PM2.5 "
                 f"{min(vv):.1f}–{max(vv):.1f} ug/m3" if vv else f"  {cfg['name']}: {len(units)} units, no data")
-            # Prevalence layer builds only if the owner dropped population (+rates) CSVs.
-            if not build_admin_prevalence(key, cfg["name"]):
-                log(f"  {cfg['name']}: no _data_in/{key}-admin1-pop.csv -> prevalence layer pending "
-                    f"(see data-download-points.md)")
+            # Prevalence layer (all "modelled estimate"): prefer a published per-admin table
+            # (direct), else rates×population; else pending (owner downloads — see the doc).
+            prev_meta = {"cn": {"age_group": "50+", "source": "Liu/Gao 2024 (CHARLS 2018)"},
+                         "in": {"age_group": "60+", "source": "Lee et al. 2023 (LASI-DAD)"}}.get(key)
+            if not build_direct_prevalence(key, cfg["name"], units, prev_meta) \
+                    and not build_admin_prevalence(key, cfg["name"]):
+                log(f"  {cfg['name']}: no _data_in/{key}-admin1-prevalence.csv or -pop.csv -> "
+                    f"prevalence layer pending (see data-download-points.md)")
     finally:
         for p in rpaths.values():
             try:

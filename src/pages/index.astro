@@ -1170,27 +1170,39 @@ const PREV_BINS = [12, 14, 16, 18, 20];   // modelled dementia per 1,000 residen
 // and heavily polluted China/India are both legible on one comparable ramp.
 const PM_BINS = [5, 10, 15, 25, 35];       // PM2.5 µg/m³
 const RAMP = ['#ffeda0', '#fed976', '#feb24c', '#fd8d3c', '#f03b20', '#bd0026'];
+// Prevalence metrics differ by source (all "modelled estimate"): TW = cases per 1,000
+// all-ages; CN/IN = published % among 50+/60+. Each country carries its own label + bins.
+const PREV_TW = { bins: PREV_BINS, tipZh: '失智盛行（估計）', tipEn: 'Dementia (modelled)',
+  unitZh: '／千人', unitEn: 'per 1,000', legendZh: '失智／千人', legendEn: 'dementia /1,000', decimals: 1 };
+const PREV_CN = { bins: [3, 5, 7, 9, 11], tipZh: '失智盛行率（50+）', tipEn: 'Dementia prevalence (50+)',
+  unitZh: '%', unitEn: '%', legendZh: '失智盛行率 50+ %', legendEn: 'prevalence 50+ %', decimals: 1 };
+const PREV_IN = { bins: [5, 6, 7, 8, 9], tipZh: '失智盛行率（60+）', tipEn: 'Dementia prevalence (60+)',
+  unitZh: '%', unitEn: '%', legendZh: '失智盛行率 60+ %', legendEn: 'prevalence 60+ %', decimals: 1 };
 const MAP_CFG = {
   tw: { topo: '/data/geo/tw-districts.topo.json', topoObject: 'towns', codeProp: 'TOWNCODE',
-        layers: ['prevalence', 'pm25'], fit: [[21.9, 119.3], [25.35, 122.05]],
+        layers: ['prevalence', 'pm25'], fit: [[21.9, 119.3], [25.35, 122.05]], prevMetric: PREV_TW,
         prev: '/data/dementia/tw-dementia-modelled.json', pm: '/data/pm25/tw-district-pm25.json' },
   jp: { geojson: '/data/geo/jp-admin1.geojson', codeProp: 'code', layers: ['pm25'],
         pm: '/data/pm25/jp-admin1-pm25.json' },
   kr: { geojson: '/data/geo/kr-admin1.geojson', codeProp: 'code', layers: ['pm25'],
         pm: '/data/pm25/kr-admin1-pm25.json' },
+  // CN/IN: prevalence metric is READY; to enable once scripts/_data_in prevalence CSV is
+  // built into cn/in-modelled.json, add   prev: '/data/dementia/{cn,in}-modelled.json'   and
+  // 'prevalence' to layers (see data-download-points.md).
   cn: { geojson: '/data/geo/cn-admin1.geojson', codeProp: 'code', layers: ['pm25'],
-        pm: '/data/pm25/cn-admin1-pm25.json' },
+        prevMetric: PREV_CN, pm: '/data/pm25/cn-admin1-pm25.json' },
   us: { geojson: '/data/geo/us-admin1.geojson', codeProp: 'code', layers: ['pm25'],
         pm: '/data/pm25/us-admin1-pm25.json' },
   in: { geojson: '/data/geo/in-admin1.geojson', codeProp: 'code', layers: ['pm25'],
-        pm: '/data/pm25/in-admin1-pm25.json' },
+        prevMetric: PREV_IN, pm: '/data/pm25/in-admin1-pm25.json' },
 };
+function curPrev() { return MAP_CFG[mapCountry].prevMetric || PREV_TW; }
 
 function codeOf(f) { return f.properties[MAP_CFG[mapCountry].codeProp]; }
 function valueFor(code) { return mapMode === 'prevalence' ? VAL.prev[code] : VAL.pm[code]; }
 function colorFor(v) {
   if (v == null) return '#e6e6e6';
-  const bins = mapMode === 'prevalence' ? PREV_BINS : PM_BINS;
+  const bins = mapMode === 'prevalence' ? curPrev().bins : PM_BINS;
   let i = 0; while (i < bins.length && v > bins[i]) i++;
   return RAMP[i];
 }
@@ -1199,8 +1211,8 @@ function unitName(f) { const n = NAMES[codeOf(f)]; return n ? L(n.zh, n.en) : (f
 function tooltipFor(f) {
   const code = codeOf(f), name = unitName(f);
   if (mapMode === 'prevalence') {
-    const v = VAL.prev[code];
-    return `<b>${name}</b><br>${L('失智盛行（估計）', 'Dementia (modelled)')}: ${v != null ? v.toFixed(1) : '—'} ${L('／千人', 'per 1,000')}`;
+    const p = curPrev(), v = VAL.prev[code];
+    return `<b>${name}</b><br>${L(p.tipZh, p.tipEn)}: ${v != null ? v.toFixed(p.decimals) : '—'} ${L(p.unitZh, p.unitEn)}`;
   }
   const v = VAL.pm[code];
   return `<b>${name}</b><br>PM2.5: ${v != null ? v.toFixed(1) : '—'} µg/m³`;
@@ -1211,8 +1223,9 @@ function buildLegend() {
   legendCtl = window.L.control({ position: 'bottomright' });
   legendCtl.onAdd = () => {
     const div = window.L.DomUtil.create('div', 'map-legend');
-    const bins = mapMode === 'prevalence' ? PREV_BINS : PM_BINS;
-    const unit = mapMode === 'prevalence' ? L('失智／千人', 'dementia /1,000') : 'PM2.5 µg/m³';
+    const p = curPrev();
+    const bins = mapMode === 'prevalence' ? p.bins : PM_BINS;
+    const unit = mapMode === 'prevalence' ? L(p.legendZh, p.legendEn) : 'PM2.5 µg/m³';
     const edges = [0, ...bins];
     let html = `<b>${unit}</b><br>`;
     for (let i = 0; i < RAMP.length; i++) {
@@ -1247,7 +1260,7 @@ async function loadCountryData(cc) {
   let geo, prev = {}, pm = {}, names = {};
   if (cfg.topo) { const t = await fetch(cfg.topo).then(r => r.json()); geo = window.topojson.feature(t, t.objects[cfg.topoObject]); }
   else { geo = await fetch(cfg.geojson).then(r => r.json()); }
-  if (cfg.prev) { const p = await fetch(cfg.prev).then(r => r.json()); Object.assign(prev, p.byTown || {}); }
+  if (cfg.prev) { const p = await fetch(cfg.prev).then(r => r.ok ? r.json() : null).catch(() => null); if (p) Object.assign(prev, p.byTown || {}); }
   if (cfg.pm) {
     const d = await fetch(cfg.pm).then(r => r.json());
     if (d.districts) for (const [k, v] of Object.entries(d.districts)) pm[k] = v.pm25;

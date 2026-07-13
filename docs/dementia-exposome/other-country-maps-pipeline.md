@@ -71,10 +71,10 @@ Fill a row's cells as each ingredient is secured; flip **status** to *ready* whe
 | 🇹🇼 Taiwan | ✅ taiwan-atlas | ⚠️ county snapshot (want #77132) | ✅ NHRI 2020–23 | ✅ ACAG zonal | **live (county-level prevalence + town PM2.5)** |
 | 🇯🇵 Japan | ✅ Natural Earth admin-1 (47) | ⏳ e-Stat (download) | ⏳ GBD / Ninomiya-Kyushu (download) | ✅ ACAG zonal (8.9–12.9 µg/m³) | **PM2.5 live; prevalence pending download** |
 | 🇰🇷 South Korea | ✅ Natural Earth admin-1 (17) | ⏳ KOSIS (download) | ⏳ NID report / GBD (download) | ✅ ACAG zonal (12.8–22.1 µg/m³) | **PM2.5 live; prevalence pending download** |
-| 🇨🇳 China | geoBoundaries ADM1 | national census | Jia 2020 / GBD | **ACAG REGIONAL CSV ✅** | not started |
-| 🇺🇸 USA | geoBoundaries ADM1/ADM2 | US Census | GBD / CDC | **ACAG REGIONAL CSV ✅** | not started |
-| 🇬🇧 UK | geoBoundaries ADM1 | ONS | GBD / national | ACAG zonal | not started |
-| 🇮🇳 India | geoBoundaries ADM1 | census | GBD | **ACAG REGIONAL CSV ✅** | not started |
+| 🇨🇳 China | ✅ Natural Earth admin-1 (31) | — (direct study) | ✅ **Liu/Gao 2024 provinces (download)** | ✅ ACAG zonal (9.8–41.6) | **PM2.5 live; prevalence drop-in ready (download Appendix G)** |
+| 🇺🇸 USA | ✅ Natural Earth admin-1 (49) | US Census | GBD / CDC | ✅ ACAG zonal (4.4–8.5) | **PM2.5 live; prevalence pending** |
+| 🇮🇳 India | ✅ Natural Earth admin-1 (36) | — (direct study) | ✅ **Lee 2023 states (download)** | ✅ ACAG zonal (11.5–86.2) | **PM2.5 live; prevalence drop-in ready (download Table 2)** |
+| 🇬🇧 UK | Natural Earth admin-1 | ONS | GBD / national | ACAG zonal | not started |
 
 **Done this round (Japan + South Korea):** boundaries via **Natural Earth admin-1** (`iso_a2 ∈ {JP,KR}` → `public/data/geo/{jp,kr}-admin1.geojson`, code = ISO-3166-2) and **real sub-national PM2.5** via ACAG zonal-mean per unit (`public/data/pm25/{jp,kr}-admin1-pm25.json`, recent-3-yr mean). The page's map country switcher renders both. **Prevalence maps are NOT built** — population-by-age + prevalence rates are policy-blocked here; the owner downloads them (`data-download-points.md`) and the pipeline emits `{jp,kr}-modelled.json`, which auto-enables the prevalence layer.
 
