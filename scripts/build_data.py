@@ -68,6 +68,54 @@ COUNTRY_MAPS = {
            "bbox": dict(lon_min=-125.0, lon_max=-66.5, lat_min=24.0, lat_max=49.5)},
     "in": {"admin": "India", "name": "India", "nameZh": "印度",
            "bbox": dict(lon_min=68.0, lon_max=97.5, lat_min=6.0, lat_max=37.5)},
+    # --- expansion batch (PM2.5 only; Natural Earth admin-1 + ACAG zonal) ---
+    # SE / South Asia
+    "th": {"admin": "Thailand", "name": "Thailand", "nameZh": "泰國",
+           "bbox": dict(lon_min=97.3, lon_max=105.7, lat_min=5.5, lat_max=20.5)},
+    "vn": {"admin": "Vietnam", "name": "Vietnam", "nameZh": "越南",
+           "bbox": dict(lon_min=102.0, lon_max=109.5, lat_min=8.2, lat_max=23.4)},
+    "id": {"admin": "Indonesia", "name": "Indonesia", "nameZh": "印尼",
+           "bbox": dict(lon_min=95.0, lon_max=141.1, lat_min=-11.1, lat_max=6.1)},
+    "ph": {"admin": "Philippines", "name": "Philippines", "nameZh": "菲律賓",
+           "bbox": dict(lon_min=116.9, lon_max=126.7, lat_min=4.5, lat_max=19.6)},
+    "my": {"admin": "Malaysia", "name": "Malaysia", "nameZh": "馬來西亞",
+           "bbox": dict(lon_min=99.6, lon_max=119.3, lat_min=0.8, lat_max=7.4)},
+    "pk": {"admin": "Pakistan", "name": "Pakistan", "nameZh": "巴基斯坦",
+           "bbox": dict(lon_min=60.8, lon_max=77.9, lat_min=23.6, lat_max=37.1)},
+    "bd": {"admin": "Bangladesh", "name": "Bangladesh", "nameZh": "孟加拉",
+           "bbox": dict(lon_min=88.0, lon_max=92.7, lat_min=20.5, lat_max=26.7)},
+    "mm": {"admin": "Myanmar", "name": "Myanmar", "nameZh": "緬甸",
+           "bbox": dict(lon_min=92.1, lon_max=101.2, lat_min=9.5, lat_max=28.6)},
+    # Europe (metropolitan; overseas territories dropped by centroid filter)
+    "gb": {"admin": "United Kingdom", "name": "United Kingdom", "nameZh": "英國",
+           "bbox": dict(lon_min=-8.7, lon_max=1.9, lat_min=49.8, lat_max=61.0)},
+    "de": {"admin": "Germany", "name": "Germany", "nameZh": "德國",
+           "bbox": dict(lon_min=5.8, lon_max=15.1, lat_min=47.2, lat_max=55.1)},
+    "fr": {"admin": "France", "name": "France", "nameZh": "法國",
+           "bbox": dict(lon_min=-5.3, lon_max=9.7, lat_min=41.3, lat_max=51.1)},
+    "it": {"admin": "Italy", "name": "Italy", "nameZh": "義大利",
+           "bbox": dict(lon_min=6.6, lon_max=18.6, lat_min=35.4, lat_max=47.1)},
+    "es": {"admin": "Spain", "name": "Spain", "nameZh": "西班牙",
+           "bbox": dict(lon_min=-9.4, lon_max=4.4, lat_min=35.9, lat_max=43.9)},
+    "pl": {"admin": "Poland", "name": "Poland", "nameZh": "波蘭",
+           "bbox": dict(lon_min=14.0, lon_max=24.2, lat_min=49.0, lat_max=54.9)},
+    # Americas (negative lon — handled by crop_recent)
+    "ca": {"admin": "Canada", "name": "Canada", "nameZh": "加拿大",
+           "bbox": dict(lon_min=-141.0, lon_max=-52.0, lat_min=41.6, lat_max=70.0)},
+    "br": {"admin": "Brazil", "name": "Brazil", "nameZh": "巴西",
+           "bbox": dict(lon_min=-74.1, lon_max=-34.7, lat_min=-33.8, lat_max=5.3)},
+    "mx": {"admin": "Mexico", "name": "Mexico", "nameZh": "墨西哥",
+           "bbox": dict(lon_min=-118.5, lon_max=-86.7, lat_min=14.5, lat_max=32.8)},
+    # Oceania (NZ capped <180; Chatham Is dropped by centroid filter)
+    "au": {"admin": "Australia", "name": "Australia", "nameZh": "澳洲",
+           "bbox": dict(lon_min=112.9, lon_max=153.7, lat_min=-43.7, lat_max=-10.5)},
+    "nz": {"admin": "New Zealand", "name": "New Zealand", "nameZh": "紐西蘭",
+           "bbox": dict(lon_min=166.0, lon_max=179.0, lat_min=-47.3, lat_max=-34.3)},
+    # Middle East
+    "tr": {"admin": "Turkey", "name": "Turkey", "nameZh": "土耳其",
+           "bbox": dict(lon_min=25.6, lon_max=44.9, lat_min=35.8, lat_max=42.2)},
+    "ir": {"admin": "Iran", "name": "Iran", "nameZh": "伊朗",
+           "bbox": dict(lon_min=44.0, lon_max=63.4, lat_min=25.0, lat_max=39.9)},
 }
 
 # NHRI 2020-2023 age-band dementia prevalence (share of that age band)
@@ -689,27 +737,20 @@ def main():
         except OSError:
             pass
 
+    assets = {
+        "pm25/tw-county-pm25.json": "ACAG V6.GL.03 county x year PM2.5 (CC BY 4.0)",
+        "pm25/tw-district-pm25.json": "ACAG V6.GL.03 per-town recent PM2.5 (CC BY 4.0)",
+        "pm25/world-country-pm25.json": "ACAG V6.GL.03 country x year PM2.5, pop-weighted (CC BY 4.0)",
+        "geo/tw-districts.topo.json": "taiwan-atlas / MOI #7441 boundaries (OGDL-Taiwan-1.0)",
+        "dementia/tw-dementia-modelled.json": "modelled prevalence, NHRI 2020-23 x MOI pop"}
+    for key, cfg in COUNTRY_MAPS.items():   # admin-1 PM2.5 (+ boundaries) per country
+        assets[f"pm25/{key}-admin1-pm25.json"] = f"ACAG V6.GL.03 {cfg['name']} admin-1 PM2.5 (CC BY 4.0)"
+        assets[f"geo/{key}-admin1.geojson"] = f"Natural Earth admin-1 ({cfg['name']}), public domain"
     write_json("manifest.json", {
-        "built": BUILD_DATE,
-        "assets": {
-            "pm25/tw-county-pm25.json": "ACAG V6.GL.03 county x year PM2.5 (CC BY 4.0)",
-            "pm25/tw-district-pm25.json": "ACAG V6.GL.03 per-town recent PM2.5 (CC BY 4.0)",
-            "pm25/world-country-pm25.json": "ACAG V6.GL.03 country x year PM2.5, pop-weighted (CC BY 4.0)",
-            "pm25/jp-admin1-pm25.json": "ACAG V6.GL.03 Japan prefecture PM2.5 (CC BY 4.0)",
-            "pm25/kr-admin1-pm25.json": "ACAG V6.GL.03 Korea province PM2.5 (CC BY 4.0)",
-            "pm25/cn-admin1-pm25.json": "ACAG V6.GL.03 China province PM2.5 (CC BY 4.0)",
-            "pm25/us-admin1-pm25.json": "ACAG V6.GL.03 US state (contiguous) PM2.5 (CC BY 4.0)",
-            "pm25/in-admin1-pm25.json": "ACAG V6.GL.03 India state PM2.5 (CC BY 4.0)",
-            "geo/tw-districts.topo.json": "taiwan-atlas / MOI #7441 boundaries (OGDL-Taiwan-1.0)",
-            "geo/jp-admin1.geojson": "Natural Earth admin-1 (Japan), public domain",
-            "geo/kr-admin1.geojson": "Natural Earth admin-1 (Korea), public domain",
-            "geo/cn-admin1.geojson": "Natural Earth admin-1 (China), public domain",
-            "geo/us-admin1.geojson": "Natural Earth admin-1 (USA, contiguous), public domain",
-            "geo/in-admin1.geojson": "Natural Earth admin-1 (India), public domain",
-            "dementia/tw-dementia-modelled.json": "modelled prevalence, NHRI 2020-23 x MOI pop"},
+        "built": BUILD_DATE, "assets": assets,
         "attribution": ["PM2.5 © ACAG/WashU (Shen 2024; van Donkelaar 2021), CC BY 4.0",
                         "台灣界線 © 內政部NLSC / taiwan-atlas, OGDL-Taiwan-1.0",
-                        "JP/KR/CN/US/IN 界線: Natural Earth (public domain)",
+                        "其他國家界線: Natural Earth (public domain)",
                         "人口 © 內政部 (MOI)", "失智盛行率為模型估計值 (NHRI 2020-2023)"]})
     log("== DONE ==")
 

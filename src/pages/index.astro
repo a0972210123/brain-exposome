@@ -303,17 +303,52 @@ import T from '../../components/T.astro';
     <!-- Regional map (Taiwan / Japan / Korea / China / USA / India) -->
     <section class="calc-section map-section">
       <p class="section-heading"><T zh="地圖：空污與失智概況" en="Map: air pollution & dementia" /></p>
-      <p class="calc-section-desc"><T zh="切換國家（台灣、日本、南韓、中國、美國、印度）與圖層，看各行政區近年的 PM2.5；色階以 WHO 標準（≤5 µg/m³）為基準，可跨國比較。台灣另有縣市層級的失智盛行「模型估計值」。把游標移到區域上看數值。" en="Switch country (Taiwan, Japan, Korea, China, USA, India) and layer to see recent PM2.5 by district, on a WHO-anchored scale (≤5 µg/m³) that's comparable across countries. Taiwan also has a county-level MODELLED dementia-prevalence estimate. Hover a district for values." /></p>
+      <p class="calc-section-desc"><T zh="切換國家（涵蓋亞洲、歐洲、美洲、大洋洲等 20 多國）與圖層，看各行政區近年的 PM2.5；色階以 WHO 標準（≤5 µg/m³）為基準，可跨國比較。台灣另有縣市層級的失智盛行「模型估計值」。把游標移到區域上看數值。" en="Switch country (20+ across Asia, Europe, the Americas and Oceania) and layer to see recent PM2.5 by district, on a WHO-anchored scale (≤5 µg/m³) that's comparable across countries. Taiwan also has a county-level MODELLED dementia-prevalence estimate. Hover a district for values." /></p>
       <div class="map-controls">
         <label class="map-country-wrap">
           <span class="map-country-label"><T zh="國家／地區" en="Country / region" /></span>
           <select id="map-country" class="map-country">
-            <option value="tw" data-zh="臺灣（縣市／鄉鎮）" data-en="Taiwan (county / town)">臺灣（縣市／鄉鎮）</option>
-            <option value="jp" data-zh="日本（都道府県）" data-en="Japan (prefectures)">日本（都道府県）</option>
-            <option value="kr" data-zh="南韓（道／市）" data-en="South Korea (provinces)">南韓（道／市）</option>
-            <option value="cn" data-zh="中國（省級）" data-en="China (provinces)">中國（省級）</option>
-            <option value="us" data-zh="美國（州級・本土）" data-en="United States (states, contiguous)">美國（州級・本土）</option>
-            <option value="in" data-zh="印度（邦級）" data-en="India (states)">印度（邦級）</option>
+            <optgroup data-zh="東亞" data-en="East Asia" label="東亞">
+              <option value="tw" data-zh="臺灣（縣市／鄉鎮）" data-en="Taiwan (county / town)">臺灣（縣市／鄉鎮）</option>
+              <option value="jp" data-zh="日本（都道府県）" data-en="Japan (prefectures)">日本（都道府県）</option>
+              <option value="kr" data-zh="南韓（道／市）" data-en="South Korea (provinces)">南韓（道／市）</option>
+              <option value="cn" data-zh="中國（省級）" data-en="China (provinces)">中國（省級）</option>
+            </optgroup>
+            <optgroup data-zh="東南亞" data-en="Southeast Asia" label="東南亞">
+              <option value="th" data-zh="泰國" data-en="Thailand">泰國</option>
+              <option value="vn" data-zh="越南" data-en="Vietnam">越南</option>
+              <option value="id" data-zh="印尼" data-en="Indonesia">印尼</option>
+              <option value="ph" data-zh="菲律賓" data-en="Philippines">菲律賓</option>
+              <option value="my" data-zh="馬來西亞" data-en="Malaysia">馬來西亞</option>
+              <option value="mm" data-zh="緬甸" data-en="Myanmar">緬甸</option>
+            </optgroup>
+            <optgroup data-zh="南亞" data-en="South Asia" label="南亞">
+              <option value="in" data-zh="印度（邦級）" data-en="India (states)">印度（邦級）</option>
+              <option value="pk" data-zh="巴基斯坦" data-en="Pakistan">巴基斯坦</option>
+              <option value="bd" data-zh="孟加拉" data-en="Bangladesh">孟加拉</option>
+            </optgroup>
+            <optgroup data-zh="歐洲" data-en="Europe" label="歐洲">
+              <option value="gb" data-zh="英國" data-en="United Kingdom">英國</option>
+              <option value="de" data-zh="德國" data-en="Germany">德國</option>
+              <option value="fr" data-zh="法國" data-en="France">法國</option>
+              <option value="it" data-zh="義大利" data-en="Italy">義大利</option>
+              <option value="es" data-zh="西班牙" data-en="Spain">西班牙</option>
+              <option value="pl" data-zh="波蘭" data-en="Poland">波蘭</option>
+            </optgroup>
+            <optgroup data-zh="美洲" data-en="Americas" label="美洲">
+              <option value="us" data-zh="美國（州級・本土）" data-en="United States (states, contiguous)">美國（州級・本土）</option>
+              <option value="ca" data-zh="加拿大" data-en="Canada">加拿大</option>
+              <option value="br" data-zh="巴西" data-en="Brazil">巴西</option>
+              <option value="mx" data-zh="墨西哥" data-en="Mexico">墨西哥</option>
+            </optgroup>
+            <optgroup data-zh="大洋洲" data-en="Oceania" label="大洋洲">
+              <option value="au" data-zh="澳洲" data-en="Australia">澳洲</option>
+              <option value="nz" data-zh="紐西蘭" data-en="New Zealand">紐西蘭</option>
+            </optgroup>
+            <optgroup data-zh="中東" data-en="Middle East" label="中東">
+              <option value="tr" data-zh="土耳其" data-en="Turkey">土耳其</option>
+              <option value="ir" data-zh="伊朗" data-en="Iran">伊朗</option>
+            </optgroup>
           </select>
         </label>
         <div class="map-toggle">
@@ -1155,6 +1190,7 @@ function showStep(n) {
 function applyOptionLangs() {
   const en = lang() === 'en';
   document.querySelectorAll('select option[data-en]').forEach(o => { o.textContent = en ? o.dataset.en : o.dataset.zh; });
+  document.querySelectorAll('select optgroup[data-en]').forEach(g => { g.label = en ? g.dataset.en : g.dataset.zh; });
 }
 
 /* ── Choropleth map (Leaflet + topojson-client, vendored) — country switcher.
@@ -1195,6 +1231,10 @@ const MAP_CFG = {
         pm: '/data/pm25/us-admin1-pm25.json' },
   in: { geojson: '/data/geo/in-admin1.geojson', codeProp: 'code', layers: ['pm25'],
         prevMetric: PREV_IN, pm: '/data/pm25/in-admin1-pm25.json' },
+  ...Object.fromEntries(['th', 'vn', 'id', 'ph', 'my', 'pk', 'bd', 'mm', 'gb', 'de', 'fr',
+    'it', 'es', 'pl', 'ca', 'br', 'mx', 'au', 'nz', 'tr', 'ir'].map(cc => [cc,
+    { geojson: `/data/geo/${cc}-admin1.geojson`, codeProp: 'code', layers: ['pm25'],
+      pm: `/data/pm25/${cc}-admin1-pm25.json` }])),
 };
 function curPrev() { return MAP_CFG[mapCountry].prevMetric || PREV_TW; }
 
