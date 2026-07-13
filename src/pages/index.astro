@@ -64,6 +64,7 @@ import T from '../../components/T.astro';
                 <option value="secondary" data-zh="高中職" data-en="Secondary (high school)">高中職</option>
                 <option value="primary" data-zh="國中以下" data-en="Primary or less">國中以下</option>
               </select>
+              <small class="field-hint"><T zh="指早年正規教育年數；只有「國中以下」才計為風險。終身學習也能累積認知存量" en="Early-life schooling; only 'primary or less' counts as a risk. Lifelong learning also builds reserve" /></small>
             </label>
           </div>
         </div>
@@ -128,6 +129,7 @@ import T from '../../components/T.astro';
                 <option value="treated" data-zh="有，已矯治／戴助聽器" data-en="Yes, treated / aids">有，已矯治／戴助聽器</option>
                 <option value="unknown" data-zh="不確定" data-en="Not sure">不確定</option>
               </select>
+              <small class="field-hint"><T zh="「未矯治」= 聽得吃力／需調大音量但沒戴助聽器。矯治後風險大幅下降" en="'Untreated' = struggle to hear but no hearing aid. Treating it lowers the risk a lot" /></small>
             </label>
             <label class="form-field">
               <span><T zh="視力損失" en="Vision loss" /></span>
@@ -137,6 +139,7 @@ import T from '../../components/T.astro';
                 <option value="treated" data-zh="有，已矯治（眼鏡／手術）" data-en="Yes, corrected">有，已矯治（眼鏡／手術）</option>
                 <option value="unknown" data-zh="不確定" data-en="Not sure">不確定</option>
               </select>
+              <small class="field-hint"><T zh="「未矯治」= 可治療的視力問題（如白內障）未處理。戴眼鏡／手術矯正即算已矯治" en="'Untreated' = treatable vision loss (e.g. cataract) left uncorrected. Glasses/surgery count as corrected" /></small>
             </label>
           </div>
 
@@ -149,6 +152,7 @@ import T from '../../components/T.astro';
                 <option value="yes" data-zh="有" data-en="Yes">有</option>
                 <option value="unknown" data-zh="不確定" data-en="Not sure">不確定</option>
               </select>
+              <small class="field-hint"><T zh="經診斷高血壓，或血壓 ≥ 140/90 mmHg（中年高血壓與失智關聯最強）" en="Diagnosed, or BP ≥ 140/90 mmHg (midlife hypertension matters most)" /></small>
             </label>
             <label class="form-field">
               <span><T zh="糖尿病" en="Diabetes" /></span>
@@ -157,6 +161,7 @@ import T from '../../components/T.astro';
                 <option value="yes" data-zh="有" data-en="Yes">有</option>
                 <option value="unknown" data-zh="不確定" data-en="Not sure">不確定</option>
               </select>
+              <small class="field-hint"><T zh="經診斷，或 HbA1c ≥ 6.5% / 空腹血糖 ≥ 126 mg/dL" en="Diagnosed, or HbA1c ≥ 6.5% / fasting glucose ≥ 126 mg/dL" /></small>
             </label>
             <label class="form-field">
               <span><T zh="體位（BMI）" en="Body weight (BMI)" /></span>
@@ -166,17 +171,26 @@ import T from '../../components/T.astro';
                 <option value="obese" data-zh="肥胖（BMI ≥ 30）" data-en="Obese (BMI ≥ 30)">肥胖（BMI ≥ 30）</option>
                 <option value="unknown" data-zh="不確定" data-en="Not sure">不確定</option>
               </select>
+              <small class="field-hint"><T zh="台灣：過重 BMI 24–27、肥胖 ≥ 27（國際肥胖為 ≥ 30）。中年肥胖較相關" en="Overweight BMI 24–27, obese ≥ 27 (Taiwan); ≥ 30 is the international obesity cutoff" /></small>
             </label>
             <label class="form-field">
-              <span><T zh="膽固醇" en="Cholesterol" /></span>
+              <span><T zh="膽固醇（LDL 高不高）" en="Cholesterol (is LDL high)" /></span>
               <select id="in-cholesterol">
                 <option value="normal" data-zh="正常或不確定" data-en="Normal or unsure">正常或不確定</option>
                 <option value="high" data-zh="LDL 偏高" data-en="High LDL">LDL 偏高</option>
               </select>
+              <small class="field-hint"><T zh="不知道數值就用這裡；建議 LDL < 130 mg/dL" en="Use this if you don't know your number; aim for LDL < 130 mg/dL" /></small>
             </label>
             <label class="form-field">
-              <span><T zh="LDL 數值" en="LDL value" /> <em><T zh="（mmol/L，選填，更精準）" en="(mmol/L, optional)" /></em></span>
-              <input type="number" id="in-ldl" placeholder="—" min="1" max="8" step="0.1" />
+              <span><T zh="LDL 數值（選填，更精準）" en="LDL value (optional, more precise)" /></span>
+              <div class="ldl-row">
+                <input type="number" id="in-ldl" placeholder="130" min="40" max="300" step="1" />
+                <select id="in-ldl-unit" class="ldl-unit">
+                  <option value="mgdl" data-zh="mg/dL" data-en="mg/dL">mg/dL</option>
+                  <option value="mmol" data-zh="mmol/L" data-en="mmol/L">mmol/L</option>
+                </select>
+              </div>
+              <small class="field-hint"><T zh="建議 < 130 mg/dL（≈ 3.36 mmol/L）；心血管高風險者目標更低。台灣／美國檢驗單多為 mg/dL" en="Aim for < 130 mg/dL (≈ 3.36 mmol/L); lower if high cardiovascular risk. TW/US labs report mg/dL" /></small>
             </label>
             <label class="form-field">
               <span><T zh="身體活動" en="Physical activity" /></span>
@@ -184,6 +198,7 @@ import T from '../../components/T.astro';
                 <option value="active" data-zh="每週規律運動" data-en="Regularly active">每週規律運動</option>
                 <option value="inactive" data-zh="很少運動" data-en="Rarely active">很少運動</option>
               </select>
+              <small class="field-hint"><T zh="「規律」≈ 每週 ≥ 150 分鐘中等強度（如快走）。低於此算很少運動" en="'Regular' ≈ ≥ 150 min/week moderate (e.g. brisk walking); below that counts as rarely active" /></small>
             </label>
           </div>
 
@@ -196,6 +211,7 @@ import T from '../../components/T.astro';
                 <option value="yes" data-zh="有（曾被診斷）" data-en="Yes (diagnosed)">有（曾被診斷）</option>
                 <option value="unknown" data-zh="不確定" data-en="Not sure">不確定</option>
               </select>
+              <small class="field-hint"><T zh="曾被醫療診斷憂鬱症，或長期情緒低落／就醫用藥。偶爾心情不好不算" en="Diagnosed depression, or persistent low mood / treatment. Occasional low mood doesn't count" /></small>
             </label>
           </div>
 
@@ -208,6 +224,7 @@ import T from '../../components/T.astro';
                 <option value="isolated" data-zh="較少與人往來" data-en="Socially isolated">較少與人往來</option>
                 <option value="unknown" data-zh="不確定" data-en="Not sure">不確定</option>
               </select>
+              <small class="field-hint"><T zh="獨居、很少與家人朋友往來、缺乏規律社交活動 → 較孤立" en="Living alone, little contact with family/friends, few regular social activities → isolated" /></small>
             </label>
           </div>
 
@@ -220,6 +237,7 @@ import T from '../../components/T.astro';
                 <option value="former" data-zh="已戒菸" data-en="Former smoker">已戒菸</option>
                 <option value="current" data-zh="目前吸菸" data-en="Current smoker">目前吸菸</option>
               </select>
+              <small class="field-hint"><T zh="任何時候戒菸都有幫助；戒菸後風險會隨時間下降" en="Quitting helps at any age; risk keeps falling after you stop" /></small>
             </label>
             <label class="form-field">
               <span><T zh="飲酒" en="Alcohol" /></span>
@@ -227,6 +245,7 @@ import T from '../../components/T.astro';
                 <option value="moderate" data-zh="不喝或適量" data-en="None or moderate">不喝或適量</option>
                 <option value="heavy" data-zh="過量（每週 &gt; 21 份）" data-en="Heavy (&gt; 21 units/wk)">過量（每週 &gt; 21 份）</option>
               </select>
+              <small class="field-hint"><T zh="過量 ≈ 每週 > 21 英制單位（≈ 每週 > 10 杯酒／2 瓶紅酒）" en="Heavy ≈ > 21 UK units/week (≈ > 10 drinks / 2 bottles of wine a week)" /></small>
             </label>
             <label class="form-field">
               <span><T zh="頭部外傷" en="Head injury (TBI)" /></span>
@@ -234,6 +253,7 @@ import T from '../../components/T.astro';
                 <option value="no" data-zh="沒有" data-en="No">沒有</option>
                 <option value="yes" data-zh="曾有明顯頭部外傷" data-en="Yes, significant TBI">曾有明顯頭部外傷</option>
               </select>
+              <small class="field-hint"><T zh="曾因撞擊昏迷／就醫的明顯腦部外傷（如車禍、跌倒、運動撞擊）" en="A significant TBI with loss of consciousness / medical care (crash, fall, sports impact)" /></small>
             </label>
           </div>
         </div>
@@ -270,7 +290,7 @@ import T from '../../components/T.astro';
 
         <div class="result-exposome" id="out-exposome"></div>
 
-        <p class="calc-subheading"><T zh="你可以做的事" en="What you can do" /></p>
+        <p class="calc-subheading"><T zh="你的風險因子：說明與建議" en="Your flagged factors: what they mean & what to do" /></p>
         <ul class="action-list" id="out-actions"></ul>
 
         <div class="wizard-nav">
@@ -378,6 +398,11 @@ import T from '../../components/T.astro';
     font-family: var(--font-sans);
   }
   .form-field input:focus, .form-field select:focus { border-color: var(--color-accent); outline: none; }
+  .field-hint { display: block; font-weight: 400; font-size: 0.72rem; line-height: 1.4; color: var(--color-text-muted); margin-top: 0.1rem; }
+  /* LDL value + unit selector on one row */
+  .ldl-row { display: flex; gap: 0.4rem; }
+  .ldl-row input { flex: 1 1 auto; min-width: 0; }
+  .ldl-row .ldl-unit { flex: 0 0 5.2rem; }
   .calc-subheading { font-size: 0.95rem; font-weight: 700; margin: 1.5rem 0 0.8rem; }
   .calc-subheading:first-child { margin-top: 0; }
 
@@ -534,13 +559,26 @@ import T from '../../components/T.astro';
   }
   .result-exposome strong { color: var(--color-text); }
 
+  /* the <li> and their inner nodes are injected via innerHTML → target with :global
+     under the static .action-list so the scope stays on the parent. */
   .action-list { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0.5rem; }
-  .action-list li {
+  .action-list :global(li) {
     font-size: 0.88rem; line-height: 1.6; padding: 0.7rem 1rem 0.7rem 2rem; position: relative;
     background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-sm);
   }
-  .action-list li::before { content: "→"; position: absolute; left: 0.9rem; color: var(--color-accent); font-weight: 700; }
-  .action-list .act-cat { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted); display: block; margin-bottom: 0.15rem; }
+  .action-list :global(li)::before { content: "→"; position: absolute; left: 0.9rem; top: 0.7rem; color: var(--color-accent); font-weight: 700; }
+  .action-list :global(li.act-none)::before { content: "✓"; }
+  .action-list :global(.act-cat) { font-size: 0.72rem; text-transform: uppercase; letter-spacing: 0.05em; color: var(--color-text-muted); display: block; margin-bottom: 0.15rem; }
+  .action-list :global(.act-head) { display: flex; align-items: baseline; gap: 0.5rem; flex-wrap: wrap; }
+  .action-list :global(.act-head strong) { font-size: 0.95rem; }
+  .action-list :global(.act-you) {
+    font-size: 0.74rem; font-weight: 600; color: var(--color-accent);
+    background: var(--color-surface); border: 1px solid var(--color-border);
+    border-radius: 999px; padding: 0.05rem 0.5rem; white-space: nowrap;
+  }
+  .action-list :global(.act-ref) { font-size: 0.78rem; color: var(--color-text-muted); margin-top: 0.2rem; }
+  .action-list :global(.act-why) { font-size: 0.85rem; margin-top: 0.25rem; }
+  .action-list :global(.act-do) { margin-top: 0.5rem; padding-top: 0.5rem; border-top: 1px dashed var(--color-border); }
 
   .ref-list { font-size: 0.82rem; line-height: 1.8; color: var(--color-text-muted); padding-left: 1.2rem; }
   .calc-method { margin-top: var(--spacing-lg); }
@@ -607,7 +645,8 @@ const RR = {
 };
 const RR_SMOKING_FORMER = Math.exp(0.5 * Math.log(RR.smokingCurrent)); // ~1.26, halfway on log axis
 const LDL_RR_PER_MMOL = 1.08;   // per +1 mmol/L LDL-C (Lancet 2024 meta of 3 UK cohorts)
-const LDL_REF = 2.6;            // mmol/L reference
+const LDL_REF = 2.6;            // mmol/L reference (≈ 100 mg/dL)
+const LDL_MGDL_TO_MMOL = 0.0259; // mg/dL → mmol/L (TW/US labs report mg/dL)
 const PM_REF = 5;              // WHO 2021 guideline µg/m³
 const PM_RR_PER_5 = 1.08;      // per +5 µg/m³
 const LAMBDA = 0.6;            // overlap shrinkage (approximates the Commission's communality adjustment)
@@ -801,11 +840,17 @@ function computeResult() {
   if (val('in-bmi') === 'obese') add('cardio', RR.obesity, 'obesity');
   if (val('in-inactive') === 'inactive') add('cardio', RR.inactive, 'inactive');
 
-  // LDL: per-mmol/L if a value is given, else categorical proxy for "high"
+  // LDL: continuous per-mmol/L if a value is given (mg/dL converted), else categorical "high"
   const ldlNum = parseFloat(val('in-ldl'));
-  let ldlRR = 1;
-  if (!isNaN(ldlNum) && ldlNum > 0) ldlRR = Math.pow(LDL_RR_PER_MMOL, Math.max(0, ldlNum - LDL_REF));
-  else if (val('in-cholesterol') === 'high') ldlRR = LDL_RR_PER_MMOL; // ~ +1 mmol/L above reference
+  const ldlUnit = val('in-ldl-unit') || 'mgdl';
+  let ldlRR = 1, ldl = null;
+  if (!isNaN(ldlNum) && ldlNum > 0) {
+    const ldlMmol = ldlUnit === 'mmol' ? ldlNum : ldlNum * LDL_MGDL_TO_MMOL;
+    if (ldlMmol > 0.5 && ldlMmol < 15) {   // plausibility guard (ignore mis-typed values)
+      ldlRR = Math.pow(LDL_RR_PER_MMOL, Math.max(0, ldlMmol - LDL_REF));
+      ldl = { num: ldlNum, unit: ldlUnit, mmol: ldlMmol };
+    }
+  } else if (val('in-cholesterol') === 'high') ldlRR = LDL_RR_PER_MMOL; // ~ +1 mmol/L above reference
   add('cardio', ldlRR, 'ldl');
 
   if (val('in-depression') === 'yes') add('mental', RR.depression, 'depression');
@@ -836,7 +881,7 @@ function computeResult() {
   const count = factors.length;
   const band = count <= 2 ? 'few' : count <= 5 ? 'several' : 'many';
 
-  return { factors, meanPM, res, dMid, dLo, dHi, capped, count, band,
+  return { factors, meanPM, res, ldl, dMid, dLo, dHi, capped, count, band,
            rrProd: Math.exp(lnSum), rrEff: Math.exp(lnEff), lambda: LAMBDA, tDouble: T_DOUBLE };
 }
 
@@ -881,6 +926,41 @@ const FACTOR_LABELS = {
   isolation: ['社交孤立', 'Social isolation'], smoking: ['目前吸菸', 'Current smoking'],
   'smoking-former': ['已戒菸', 'Former smoking'], alcohol: ['過量飲酒', 'Excessive alcohol'],
   tbi: ['頭部外傷', 'Traumatic brain injury'], pm25: ['空氣污染 PM2.5', 'Air pollution PM2.5'],
+};
+
+/* per-factor plain-language explanation shown in the results: [常模/reference, why it matters]
+   (RR values quoted are the same ones used in the calculation above) */
+const FACTOR_INFO = {
+  education: ['常模：高中職以上教育', 'Reference: high-school education or above',
+    '早年教育建立「認知存量」，較能延緩症狀出現；終身學習也有幫助。', 'Early education builds cognitive reserve that delays symptoms; lifelong learning helps too.'],
+  hearing: ['常模：聽力正常，或已配戴助聽器', 'Reference: normal hearing, or aids used',
+    '未矯治聽損減少大腦輸入、使人社交退縮（RR≈1.4）；配戴助聽器可降低風險。', 'Untreated hearing loss cuts brain input and social contact (RR≈1.4); aids lower the risk.'],
+  vision: ['常模：視力正常或已矯治', 'Reference: normal or corrected vision',
+    '未矯治的可治療視力損失同樣減少感官輸入（RR≈1.5）。', 'Untreated but treatable vision loss also reduces sensory input (RR≈1.5).'],
+  htn: ['常模：血壓 < 130/80 mmHg', 'Reference: BP < 130/80 mmHg',
+    '中年高血壓長期傷害腦部血管，增加失智風險（RR≈1.6）。', 'Midlife hypertension damages brain blood vessels over time (RR≈1.6).'],
+  diabetes: ['常模：HbA1c < 5.7% / 空腹血糖 < 100 mg/dL', 'Reference: HbA1c < 5.7% / fasting glucose < 100 mg/dL',
+    '高血糖傷害腦部小血管與代謝（RR≈1.5）。', 'High blood sugar harms small brain vessels and metabolism (RR≈1.5).'],
+  obesity: ['常模：BMI < 24（台灣）', 'Reference: BMI < 24 (Taiwan) / < 25',
+    '中年肥胖伴隨代謝與血管風險（RR≈1.6）。', 'Midlife obesity carries metabolic and vascular risk (RR≈1.6).'],
+  inactive: ['常模：每週 ≥ 150 分鐘中等強度運動', 'Reference: ≥ 150 min/week moderate activity',
+    '運動改善腦血流與代謝，也降低多項其他風險（RR≈1.4）。', 'Exercise improves brain blood flow and lowers several other risks (RR≈1.4).'],
+  ldl: ['常模：LDL < 130 mg/dL（≈ 3.36 mmol/L）', 'Reference: LDL < 130 mg/dL (≈ 3.36 mmol/L)',
+    'LDL 越高與失智風險關聯越強（每 +1 mmol/L 約 +8%）。', 'The higher the LDL, the stronger the association (≈ +8% per +1 mmol/L).'],
+  depression: ['常模：無憂鬱診斷', 'Reference: no depression diagnosis',
+    '憂鬱與失智雙向相關（RR≈2.0），有時也是早期表現。', 'Depression and dementia are bidirectionally linked (RR≈2.0) and can be an early sign.'],
+  isolation: ['常模：有規律的社交往來', 'Reference: regular social contact',
+    '社交孤立減少認知刺激與支持（RR≈1.6）。', 'Isolation reduces cognitive stimulation and support (RR≈1.6).'],
+  smoking: ['常模：不吸菸', 'Reference: non-smoker',
+    '吸菸的血管傷害與氧化壓力影響大腦（RR≈1.6）；戒菸後風險下降。', 'Smoking harms the brain via vascular damage and oxidative stress (RR≈1.6); quitting lowers it.'],
+  'smoking-former': ['常模：不吸菸', 'Reference: non-smoker',
+    '已戒菸，風險介於吸菸與從不吸菸之間並持續下降。', 'As a former smoker your risk sits between current and never, and keeps falling.'],
+  alcohol: ['常模：不喝或適量（每週 ≤ 14 單位）', 'Reference: none or ≤ 14 units/week',
+    '過量飲酒會直接毒害神經（RR≈1.2）。', 'Heavy drinking is directly neurotoxic (RR≈1.2).'],
+  tbi: ['常模：無明顯頭部外傷', 'Reference: no significant head injury',
+    '明顯腦部外傷增加後續神經退化風險（RR≈1.8）。', 'A significant TBI raises later neurodegeneration risk (RR≈1.8).'],
+  pm25: ['常模：WHO 建議年均 ≤ 5 µg/m³', 'Reference: WHO annual guideline ≤ 5 µg/m³',
+    '長期 PM2.5 引發腦部發炎與血管傷害（每 +5 µg/m³ 約 +8%）。', 'Long-term PM2.5 drives brain inflammation and vascular damage (≈ +8% per +5 µg/m³).'],
 };
 
 /* ── Result visuals: radar (category profile) + gauge (brain-age) — inline SVG, no deps ── */
@@ -1035,9 +1115,24 @@ function renderResults(r) {
   // 5) actions
   const seen = new Set();
   const items = r.factors.map(f => f.key).filter(k => { if (seen.has(k) || !ACTIONS[k]) return false; seen.add(k); return true; });
+  const yourVal = (k) => {
+    if (k === 'pm25' && r.meanPM != null) return `${r.meanPM.toFixed(1)} µg/m³`;
+    if (k === 'ldl' && r.ldl) return `${r.ldl.num} ${r.ldl.unit === 'mmol' ? 'mmol/L' : 'mg/dL'}`;
+    return '';
+  };
   $('out-actions').innerHTML = items.length === 0
-    ? `<li>${L('沒有需要優先處理的可調整因子 — 繼續保持健康的生活型態與環境。', 'No priority modifiable factors — keep up a healthy lifestyle and environment.')}</li>`
-    : items.map(k => { const a = ACTIONS[k]; return `<li><span class="act-cat">${L(a[0], a[1])}</span>${L(a[2], a[3])}</li>`; }).join('');
+    ? `<li class="act-none">${L('沒有需要優先處理的可調整因子 — 繼續保持健康的生活型態與環境。', 'No priority modifiable factors — keep up a healthy lifestyle and environment.')}</li>`
+    : items.map(k => {
+        const a = ACTIONS[k], info = FACTOR_INFO[k];
+        const name = FACTOR_LABELS[k] ? L(FACTOR_LABELS[k][0], FACTOR_LABELS[k][1]) : k;
+        const you = yourVal(k);
+        return `<li>
+          <div class="act-head"><strong>${name}</strong>${you ? `<span class="act-you">${L('你的值', 'yours')}: ${you}</span>` : ''}</div>
+          ${info ? `<div class="act-ref">${L(info[0], info[1])}</div>` : ''}
+          ${info ? `<div class="act-why">${L(info[2], info[3])}</div>` : ''}
+          <div class="act-do"><span class="act-cat">${L(a[0], a[1])}</span>${L(a[2], a[3])}</div>
+        </li>`;
+      }).join('');
 }
 
 /* ── Wizard navigation ── */
@@ -1203,6 +1298,24 @@ async function initMap() {
 function relabelMap() { if (map && geoLayer) applyMode(); }
 
 /* ── Init ── */
+/* LDL unit: mg/dL (default) vs mmol/L — update the input's range/placeholder, and
+   convert the typed value when the unit changes so the number stays meaningful. */
+const LDL_MMOL_COUNTRIES = new Set(['GB', 'HK', 'AU', 'NZ', 'CA', 'IE']);
+function applyLdlUnit() {
+  const sel = $('in-ldl-unit'), inp = $('in-ldl');
+  if (!sel || !inp) return;
+  if (sel.value === 'mmol') { inp.min = '1'; inp.max = '8'; inp.step = '0.1'; inp.placeholder = '3.4'; }
+  else { inp.min = '40'; inp.max = '300'; inp.step = '1'; inp.placeholder = '130'; }
+}
+function onLdlUnitChange() {
+  const sel = $('in-ldl-unit'), inp = $('in-ldl');
+  const v = parseFloat(inp.value);
+  if (!isNaN(v) && v > 0) {   // sel.value is the NEW unit → convert from the old one
+    inp.value = sel.value === 'mmol' ? (v * LDL_MGDL_TO_MMOL).toFixed(2) : String(Math.round(v / LDL_MGDL_TO_MMOL));
+  }
+  applyLdlUnit();
+}
+
 async function init() {
   document.querySelectorAll('[data-goto]').forEach(b => b.addEventListener('click', () => showStep(+b.dataset.goto)));
   document.querySelectorAll('.cat-view-btn').forEach(b => b.addEventListener('click', () => { catView = b.dataset.view; applyCatView(); }));
@@ -1236,6 +1349,13 @@ async function init() {
   }
   if (residences[0].country === 'TW' && !COUNTY_LIST.some(c => c[0] === residences[0].place)) {
     residences[0].place = (COUNTY_LIST[0] || ['63000'])[0];
+  }
+  // LDL unit: default to mmol/L for countries that report it, else mg/dL; wire the toggle.
+  const ldlUnitSel = $('in-ldl-unit');
+  if (ldlUnitSel) {
+    if (detectedIso && LDL_MMOL_COUNTRIES.has(String(detectedIso).toUpperCase())) ldlUnitSel.value = 'mmol';
+    ldlUnitSel.addEventListener('change', onLdlUnitChange);
+    applyLdlUnit();
   }
 
   applyOptionLangs();
