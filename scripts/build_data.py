@@ -54,10 +54,20 @@ ALL_BBOX = dict(lon_min=118.0, lon_max=154.0, lat_min=21.0, lat_max=46.5)
 TATLAS_TGZ = "https://registry.npmjs.org/taiwan-atlas/-/taiwan-atlas-2021.9.20.tgz"
 NE_ADMIN1 = ("https://raw.githubusercontent.com/nvkelso/natural-earth-vector/"
              "master/geojson/ne_10m_admin_1_states_provinces.geojson")
-# Other-country sub-national PM2.5 maps (boundaries: Natural Earth admin-1).
+# Other-country sub-national PM2.5 maps (boundaries: Natural Earth admin-1, ACAG zonal).
+# bbox = the grid crop for that country (centroid-filtered so far-flung units — e.g. US
+# Alaska/Hawaii — are dropped for a clean contiguous map). Signed lon (-180..180).
 COUNTRY_MAPS = {
-    "jp": {"admin": "Japan", "name": "Japan", "nameZh": "日本"},
-    "kr": {"admin": "South Korea", "name": "South Korea", "nameZh": "南韓"},
+    "jp": {"admin": "Japan", "name": "Japan", "nameZh": "日本",
+           "bbox": dict(lon_min=122.0, lon_max=154.0, lat_min=24.0, lat_max=46.5)},
+    "kr": {"admin": "South Korea", "name": "South Korea", "nameZh": "南韓",
+           "bbox": dict(lon_min=124.0, lon_max=132.0, lat_min=33.0, lat_max=39.0)},
+    "cn": {"admin": "China", "name": "China", "nameZh": "中國",
+           "bbox": dict(lon_min=73.0, lon_max=135.5, lat_min=17.0, lat_max=54.0)},
+    "us": {"admin": "United States of America", "name": "United States (contiguous)", "nameZh": "美國（本土）",
+           "bbox": dict(lon_min=-125.0, lon_max=-66.5, lat_min=24.0, lat_max=49.5)},
+    "in": {"admin": "India", "name": "India", "nameZh": "印度",
+           "bbox": dict(lon_min=68.0, lon_max=97.5, lat_min=6.0, lat_max=37.5)},
 }
 
 # NHRI 2020-2023 age-band dementia prevalence (share of that age band)
@@ -196,6 +206,7 @@ def load_pm25_years():
                 sub_lon = np.asarray(lon[li[2]:li[3]])
             pm = ds.variables["PM25"][li[0]:li[1], li[2]:li[3]]
             arr = np.ma.filled(np.ma.masked_invalid(pm).astype("float64"), np.nan)
+            arr[(arr < 0) | (arr > 1000)] = np.nan   # drop fill/NoData (e.g. -999 over ocean)
             stack.append(arr)
             ds.close()
             os.remove(path)  # keep peak disk tiny
@@ -209,12 +220,61 @@ def load_pm25_years():
 
 
 def load_ne_admin1():
-    log("Fetching Natural Earth admin-1 (JP/KR provinces)…")
+    log("Fetching Natural Earth admin-1 (provinces/states)…")
     return json.loads(http_get(NE_ADMIN1).decode("utf-8", "replace"))
 
 
-def ne_units(ne_geojson, admin_name):
-    """Return [{code, name, nameLocal, geom}] for one country's admin-1 units."""
+def load_pm25_recent_cached(recent=3):
+    """Download the recent-N ACAG annual files once to a tmpdir (kept), so every
+       country's admin-1 crop reuses them. Returns (years, tmpdir, {year: path})."""
+    years = list(range(YEAR1 - recent + 1, YEAR1 + 1))
+    tmpdir = tempfile.mkdtemp(prefix="acag_recent_")
+    paths = {}
+    for y in years:
+        p = os.path.join(tmpdir, f"{y}.nc")
+        log(f"  ACAG {y} (recent, global) …")
+        with open(p, "wb") as fh:
+            fh.write(http_get(S3.format(y=y)))
+        paths[y] = p
+    return years, tmpdir, paths
+
+
+def crop_recent(years, paths, bbox):
+    """Crop the cached recent files to bbox → (lat, lon, grid[recent, lat, lon]).
+       Returns lon in signed -180..180 to match the Natural Earth polygons, whatever
+       convention the source grid uses."""
+    import netCDF4
+    li = None
+    sub_lat = sub_lon = None
+    stack = []
+    for y in years:
+        ds = netCDF4.Dataset(paths[y])
+        lat = np.asarray(ds.variables["lat"][:])
+        lon = np.asarray(ds.variables["lon"][:])
+        if li is None:
+            is360 = float(lon.max()) > 180.5
+            lo_min, lo_max = bbox["lon_min"], bbox["lon_max"]
+            if is360 and lo_min < 0:            # grid is 0..360, bbox is signed
+                lo_min += 360.0
+                lo_max += 360.0
+            la = np.where((lat >= bbox["lat_min"]) & (lat <= bbox["lat_max"]))[0]
+            lo = np.where((lon >= lo_min) & (lon <= lo_max))[0]
+            li = (la.min(), la.max() + 1, lo.min(), lo.max() + 1)
+            sub_lat = np.asarray(lat[li[0]:li[1]])
+            sub_lon = np.asarray(lon[li[2]:li[3]])
+            sub_lon = np.where(sub_lon > 180.0, sub_lon - 360.0, sub_lon)  # → signed
+        pm = ds.variables["PM25"][li[0]:li[1], li[2]:li[3]]
+        arr = np.ma.filled(np.ma.masked_invalid(pm).astype("float64"), np.nan)
+        arr[(arr < 0) | (arr > 1000)] = np.nan   # drop fill/NoData (e.g. -999 over ocean)
+        stack.append(arr)
+        ds.close()
+    return sub_lat, sub_lon, np.stack(stack)
+
+
+def ne_units(ne_geojson, admin_name, bbox=None):
+    """Return [{code, name, nameLocal, geom}] for one country's admin-1 units.
+       If bbox is given, keep only units whose centroid falls inside it (drops
+       far-flung pieces we have no grid for, e.g. US Alaska/Hawaii)."""
     out = []
     for f in ne_geojson["features"]:
         p = f["properties"]
@@ -223,9 +283,16 @@ def ne_units(ne_geojson, admin_name):
         geom = shape(f["geometry"])
         if not geom.is_valid:
             geom = geom.buffer(0)
+        if bbox is not None:
+            cen = geom.centroid
+            if not (bbox["lon_min"] <= cen.x <= bbox["lon_max"] and
+                    bbox["lat_min"] <= cen.y <= bbox["lat_max"]):
+                continue
         code = p.get("iso_3166_2") or p.get("adm1_code") or p.get("name")
+        # name_local may pack several scripts as "傳統|简体"; keep the first (traditional) form
+        name_local = (p.get("name_local") or p.get("name") or "").split("|")[0].strip()
         out.append({"code": code, "name": p.get("name"),
-                    "nameLocal": p.get("name_local") or p.get("name"), "geom": geom})
+                    "nameLocal": name_local or p.get("name"), "geom": geom})
     return out
 
 
@@ -541,25 +608,39 @@ def main():
     log("Boundaries -> geo/tw-districts.topo.json …")
     write_json("geo/tw-districts.topo.json", towns_topo)
 
-    log("Japan & Korea sub-national PM2.5 (Natural Earth admin-1 + ACAG zonal) …")
+    log("Sub-national PM2.5 maps (Natural Earth admin-1 + ACAG zonal): JP/KR/CN/US/IN …")
     ne = load_ne_admin1()
-    for key, cfg in COUNTRY_MAPS.items():
-        units = ne_units(ne, cfg["admin"])
-        pm, period = admin1_recent_pm(units, years, lat, lon, grid)
-        write_json(f"pm25/{key}-admin1-pm25.json", {
-            "meta": {"source": "ACAG SatPM2.5 V6.GL.03 (0.1deg annual)", "period": period,
-                     "method": "mean of grid cells within each admin-1 polygon",
-                     "units": "ug/m3", "country": cfg["name"],
-                     "citation": "Shen et al. 2024; van Donkelaar et al. 2021",
-                     "license": "CC BY 4.0", "built": BUILD_DATE},
-            "units": pm})
-        write_json(f"geo/{key}-admin1.geojson", units_geojson(units))
-        vv = [v for v in pm.values() if v is not None]
-        log(f"  {cfg['name']}: {len(units)} units, PM2.5 {min(vv):.1f}–{max(vv):.1f} ug/m3")
-        # Prevalence layer builds only if the owner dropped population (+rates) CSVs.
-        if not build_admin_prevalence(key, cfg["name"]):
-            log(f"  {cfg['name']}: no _data_in/{key}-admin1-pop.csv -> prevalence layer pending "
-                f"(see data-download-points.md)")
+    ryears, rtmp, rpaths = load_pm25_recent_cached(recent=3)
+    try:
+        for key, cfg in COUNTRY_MAPS.items():
+            units = ne_units(ne, cfg["admin"], bbox=cfg["bbox"])
+            rlat, rlon, rgrid = crop_recent(ryears, rpaths, cfg["bbox"])
+            pm, period = admin1_recent_pm(units, ryears, rlat, rlon, rgrid, recent=len(ryears))
+            write_json(f"pm25/{key}-admin1-pm25.json", {
+                "meta": {"source": "ACAG SatPM2.5 V6.GL.03 (0.1deg annual)", "period": period,
+                         "method": "mean of grid cells within each admin-1 polygon",
+                         "units": "ug/m3", "country": cfg["name"],
+                         "citation": "Shen et al. 2024; van Donkelaar et al. 2021",
+                         "license": "CC BY 4.0", "built": BUILD_DATE},
+                "units": pm})
+            write_json(f"geo/{key}-admin1.geojson", units_geojson(units))
+            vv = [v for v in pm.values() if v is not None]
+            log(f"  {cfg['name']}: {len(units)} units, PM2.5 "
+                f"{min(vv):.1f}–{max(vv):.1f} ug/m3" if vv else f"  {cfg['name']}: {len(units)} units, no data")
+            # Prevalence layer builds only if the owner dropped population (+rates) CSVs.
+            if not build_admin_prevalence(key, cfg["name"]):
+                log(f"  {cfg['name']}: no _data_in/{key}-admin1-pop.csv -> prevalence layer pending "
+                    f"(see data-download-points.md)")
+    finally:
+        for p in rpaths.values():
+            try:
+                os.remove(p)
+            except OSError:
+                pass
+        try:
+            os.rmdir(rtmp)
+        except OSError:
+            pass
 
     write_json("manifest.json", {
         "built": BUILD_DATE,
@@ -569,13 +650,19 @@ def main():
             "pm25/world-country-pm25.json": "ACAG V6.GL.03 country x year PM2.5, pop-weighted (CC BY 4.0)",
             "pm25/jp-admin1-pm25.json": "ACAG V6.GL.03 Japan prefecture PM2.5 (CC BY 4.0)",
             "pm25/kr-admin1-pm25.json": "ACAG V6.GL.03 Korea province PM2.5 (CC BY 4.0)",
+            "pm25/cn-admin1-pm25.json": "ACAG V6.GL.03 China province PM2.5 (CC BY 4.0)",
+            "pm25/us-admin1-pm25.json": "ACAG V6.GL.03 US state (contiguous) PM2.5 (CC BY 4.0)",
+            "pm25/in-admin1-pm25.json": "ACAG V6.GL.03 India state PM2.5 (CC BY 4.0)",
             "geo/tw-districts.topo.json": "taiwan-atlas / MOI #7441 boundaries (OGDL-Taiwan-1.0)",
             "geo/jp-admin1.geojson": "Natural Earth admin-1 (Japan), public domain",
             "geo/kr-admin1.geojson": "Natural Earth admin-1 (Korea), public domain",
+            "geo/cn-admin1.geojson": "Natural Earth admin-1 (China), public domain",
+            "geo/us-admin1.geojson": "Natural Earth admin-1 (USA, contiguous), public domain",
+            "geo/in-admin1.geojson": "Natural Earth admin-1 (India), public domain",
             "dementia/tw-dementia-modelled.json": "modelled prevalence, NHRI 2020-23 x MOI pop"},
         "attribution": ["PM2.5 © ACAG/WashU (Shen 2024; van Donkelaar 2021), CC BY 4.0",
                         "台灣界線 © 內政部NLSC / taiwan-atlas, OGDL-Taiwan-1.0",
-                        "JP/KR 界線: Natural Earth (public domain)",
+                        "JP/KR/CN/US/IN 界線: Natural Earth (public domain)",
                         "人口 © 內政部 (MOI)", "失智盛行率為模型估計值 (NHRI 2020-2023)"]})
     log("== DONE ==")
 

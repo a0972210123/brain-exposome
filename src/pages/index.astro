@@ -280,10 +280,10 @@ import T from '../../components/T.astro';
       </section>
     </div>
 
-    <!-- Regional map (Taiwan / Japan / Korea) -->
+    <!-- Regional map (Taiwan / Japan / Korea / China / USA / India) -->
     <section class="calc-section map-section">
       <p class="section-heading"><T zh="地圖：空污與失智概況" en="Map: air pollution & dementia" /></p>
-      <p class="calc-section-desc"><T zh="切換國家與圖層，看各行政區近年的 PM2.5。台灣另有縣市層級的失智盛行「模型估計值」。把游標移到區域上看數值。" en="Switch country and layer to see recent PM2.5 by district. Taiwan also has a county-level MODELLED dementia-prevalence estimate. Hover a district for values." /></p>
+      <p class="calc-section-desc"><T zh="切換國家（台灣、日本、南韓、中國、美國、印度）與圖層，看各行政區近年的 PM2.5；色階以 WHO 標準（≤5 µg/m³）為基準，可跨國比較。台灣另有縣市層級的失智盛行「模型估計值」。把游標移到區域上看數值。" en="Switch country (Taiwan, Japan, Korea, China, USA, India) and layer to see recent PM2.5 by district, on a WHO-anchored scale (≤5 µg/m³) that's comparable across countries. Taiwan also has a county-level MODELLED dementia-prevalence estimate. Hover a district for values." /></p>
       <div class="map-controls">
         <label class="map-country-wrap">
           <span class="map-country-label"><T zh="國家／地區" en="Country / region" /></span>
@@ -291,6 +291,9 @@ import T from '../../components/T.astro';
             <option value="tw" data-zh="臺灣（縣市／鄉鎮）" data-en="Taiwan (county / town)">臺灣（縣市／鄉鎮）</option>
             <option value="jp" data-zh="日本（都道府県）" data-en="Japan (prefectures)">日本（都道府県）</option>
             <option value="kr" data-zh="南韓（道／市）" data-en="South Korea (provinces)">南韓（道／市）</option>
+            <option value="cn" data-zh="中國（省級）" data-en="China (provinces)">中國（省級）</option>
+            <option value="us" data-zh="美國（州級・本土）" data-en="United States (states, contiguous)">美國（州級・本土）</option>
+            <option value="in" data-zh="印度（邦級）" data-en="India (states)">印度（邦級）</option>
           </select>
         </label>
         <div class="map-toggle">
@@ -299,11 +302,11 @@ import T from '../../components/T.astro';
         </div>
       </div>
       <p id="map-prev-note" class="map-prev-note" style="display:none">
-        <T zh="※ 日本／南韓的失智盛行率地圖需政府人口與調查資料（目前政策封鎖，見 data-download-points.md），本輪僅顯示 PM2.5。" en="※ Japan/Korea dementia-prevalence maps need government population & survey data (currently blocked — see data-download-points.md); this round shows PM2.5 only." />
+        <T zh="※ 台灣以外的失智盛行率地圖需各國政府人口與調查資料（目前政策封鎖，見 data-download-points.md），本輪僅顯示 PM2.5。" en="※ Dementia-prevalence maps outside Taiwan need each country's government population & survey data (currently blocked — see data-download-points.md); this round shows PM2.5 only." />
       </p>
       <div id="map" class="tw-map"></div>
       <p class="map-note">
-        <T zh="※ 失智盛行率為縣市層級模型估計（NHRI 2020–2023 年齡別盛行率 × 內政部人口），非實測；鄉鎮市區層級版本可用 scripts/build_data.py 以政府年齡別人口重新產生。PM2.5 為 ACAG 衛星資料（V6.GL.03）；日本／南韓為各行政區的衛星網格平均值。" en="※ Dementia prevalence is a county-level modelled estimate (NHRI 2020–2023 age-band rates × MOI population), not measured; a town-level version can be regenerated via scripts/build_data.py with government population data. PM2.5 is ACAG satellite data (V6.GL.03); Japan/Korea values are grid means per admin-1 unit." />
+        <T zh="※ 失智盛行率為縣市層級模型估計（NHRI 2020–2023 年齡別盛行率 × 內政部人口），非實測；鄉鎮市區層級版本可用 scripts/build_data.py 以政府年齡別人口重新產生。PM2.5 為 ACAG 衛星資料（V6.GL.03）；台灣以外為各行政區（Natural Earth 界線）的衛星網格平均值。美國為本土 48 州＋DC（不含阿拉斯加／夏威夷）。" en="※ Dementia prevalence is a county-level modelled estimate (NHRI 2020–2023 age-band rates × MOI population), not measured; a town-level version can be regenerated via scripts/build_data.py with government population data. PM2.5 is ACAG satellite data (V6.GL.03); outside Taiwan, values are grid means per admin-1 unit (Natural Earth boundaries). USA shows the contiguous 48 states + DC (Alaska/Hawaii excluded)." />
       </p>
     </section>
 
@@ -1068,7 +1071,9 @@ let GEO = null;                    // current FeatureCollection
 let VAL = { prev: {}, pm: {} };    // current country: code -> value
 let NAMES = {};                    // current country: code -> {zh, en}
 const PREV_BINS = [12, 14, 16, 18, 20];   // modelled dementia per 1,000 residents
-const PM_BINS = [12, 15, 18, 21, 24];      // PM2.5 µg/m³
+// WHO-aligned global scale (AQG 5; interim targets 10/15/25/35) so clean East Asia
+// and heavily polluted China/India are both legible on one comparable ramp.
+const PM_BINS = [5, 10, 15, 25, 35];       // PM2.5 µg/m³
 const RAMP = ['#ffeda0', '#fed976', '#feb24c', '#fd8d3c', '#f03b20', '#bd0026'];
 const MAP_CFG = {
   tw: { topo: '/data/geo/tw-districts.topo.json', topoObject: 'towns', codeProp: 'TOWNCODE',
@@ -1078,6 +1083,12 @@ const MAP_CFG = {
         pm: '/data/pm25/jp-admin1-pm25.json' },
   kr: { geojson: '/data/geo/kr-admin1.geojson', codeProp: 'code', layers: ['pm25'],
         pm: '/data/pm25/kr-admin1-pm25.json' },
+  cn: { geojson: '/data/geo/cn-admin1.geojson', codeProp: 'code', layers: ['pm25'],
+        pm: '/data/pm25/cn-admin1-pm25.json' },
+  us: { geojson: '/data/geo/us-admin1.geojson', codeProp: 'code', layers: ['pm25'],
+        pm: '/data/pm25/us-admin1-pm25.json' },
+  in: { geojson: '/data/geo/in-admin1.geojson', codeProp: 'code', layers: ['pm25'],
+        pm: '/data/pm25/in-admin1-pm25.json' },
 };
 
 function codeOf(f) { return f.properties[MAP_CFG[mapCountry].codeProp]; }
