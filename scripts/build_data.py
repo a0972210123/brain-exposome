@@ -427,25 +427,71 @@ def town_recent_pm(towns, years, lat, lon, grid, recent=3):
 
 
 # ---------- population -> modelled prevalence ----------
-def fetch_population():
-    """Try the official MOI #77132 API; on failure use the committed county snapshot.
-       Returns (granularity, pop_by_county{name:(total, share65)})."""
-    api = "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP014/11305"
+def _rollup_77132_town(yyymm="11312"):
+    """MOI #77132 (村里 single-year-age population) -> per-town (8-digit TOWNCODE, the
+       taiwan-atlas boundary key) six NHRI age bands + total. Sums both sexes and every
+       村里 within a 鄉鎮市區. Returns {code: {'total':N,'65-69':n,...,'90+':n}} or None."""
+    base = "https://www.ris.gov.tw/rs-opendata/api/v1/datastore/ODRP014/%s?page=%d"
+
+    def band(a):
+        return ("65-69" if a <= 69 else "70-74" if a <= 74 else "75-79" if a <= 79
+                else "80-84" if a <= 84 else "85-89" if a <= 89 else "90+")
+
+    town = {}
+
+    def ingest(d):
+        for row in d.get("responseData", []):
+            code = (row.get("district_code") or "")[:8]  # 村里 code -> 鄉鎮市區 (first 8)
+            if len(code) < 8:
+                continue
+            t = town.setdefault(code, {"total": 0.0, "65-69": 0.0, "70-74": 0.0,
+                                       "75-79": 0.0, "80-84": 0.0, "85-89": 0.0, "90+": 0.0})
+            t["total"] += float(row.get("people_total") or 0)
+            for a in range(65, 100):
+                t[band(a)] += (float(row.get(f"people_age_{a:03d}_m") or 0)
+                               + float(row.get(f"people_age_{a:03d}_f") or 0))
+            t["90+"] += float(row.get("people_age_100up_m") or 0) + float(row.get("people_age_100up_f") or 0)
+
     try:
-        r = requests.get(api, timeout=30,
-                         headers={"User-Agent": "mattye-exposome-build/1.0"})
-        if r.status_code == 200 and r.headers.get("content-type", "").startswith("application/json"):
-            # NOTE: parsing/rollup to the six age bands would go here for the
-            # authoritative 鄉鎮市區-level version. Left as the gov-access path.
-            log("  MOI #77132 reachable — implement village->town age rollup here.")
+        first = json.loads(http_get(base % (yyymm, 1)).decode("utf-8"))
     except Exception as e:
-        log(f"  MOI population API not reachable ({e}); using committed county snapshot.")
+        log(f"  MOI #77132 not reachable ({e})")
+        return None
+    ingest(first)
+    for pg in range(2, int(first.get("totalPage", 1)) + 1):
+        ingest(json.loads(http_get(base % (yyymm, pg)).decode("utf-8")))
+    return town or None
+
+
+def fetch_population(yyymm="11312"):
+    """Authoritative town-level MOI #77132 rollup if the API is reachable (this session's
+       job); else the committed county snapshot. Returns (granularity, pop)."""
+    town = _rollup_77132_town(yyymm)
+    if town:
+        log(f"  MOI #77132 {yyymm}: single-year age rolled up -> {len(town)} 鄉鎮市區")
+        return "town", town
+    log("  using committed county snapshot (county-level estimate).")
     return "county", EMBEDDED_COUNTY_POP
 
 
 def modelled_prevalence(towns, granularity, pop):
-    """County crude dementia rate per 1,000 residents = share65 * RBAR * 1000.
-       Every town in a county inherits its county rate (county-level estimate)."""
+    """Town granularity (MOI #77132): each 鄉鎮市區 gets its OWN rate from its real
+       age structure — cases = Σ band_pop × NHRI band rate; rate/1,000 = cases/total×1000.
+       County fallback: crude county rate = share65 × RBAR × 1000, inherited by its towns."""
+    if granularity == "town":
+        rows, by_town = [], {}
+        for code, rec in pop.items():
+            total = rec.get("total", 0.0)
+            if not total:
+                continue
+            pop65 = sum(rec[b] for b in NHRI_RATES)
+            cases = sum(rec[b] * NHRI_RATES[b] for b in NHRI_RATES)
+            rate = round(cases / total * 1000, 1)
+            by_town[code] = rate
+            rows.append({"townCode": code, "pop_total": int(round(total)),
+                         "pop_65plus": int(round(pop65)), "modelled_cases": int(round(cases)),
+                         "rate_per_1000": rate})
+        return rows, by_town
     county_rate, county_rows = {}, []
     for name, (total, share65) in pop.items():
         pop65 = total * share65
@@ -672,20 +718,29 @@ def main():
 
     log("Modelled prevalence …")
     granularity, pop = fetch_population()
-    county_rows, by_town = modelled_prevalence(towns, granularity, pop)
-    write_json("dementia/tw-dementia-modelled.json", {
-        "meta": {"title": "Modelled dementia prevalence (ESTIMATE)",
-                 "granularity": granularity,
-                 "method": ("national NHRI 2020-2023 age-band rates x county 65+ population "
-                            "(national within-65+ age structure); towns inherit county rate"),
-                 "disclaimer": ("MODELLED COUNTY-LEVEL ESTIMATE, not measured. Taiwan publishes no "
-                                "sub-national dementia prevalence. Re-run build_data.py with MOI "
-                                "#77132 access for the authoritative town-level version."),
-                 "rates_source": "NHRI community dementia survey 2020-2023",
-                 "population_source": "MOI 2023 county snapshot (approx.)",
+    rows, by_town = modelled_prevalence(towns, granularity, pop)
+    if granularity == "town":
+        meta = {"title": "Modelled dementia prevalence (ESTIMATE)", "granularity": "town",
+                "method": ("MOI #77132 single-year-age population per 鄉鎮市區 × NHRI 2020-2023 "
+                           "age-band prevalence — each town's own within-65+ age structure"),
+                "disclaimer": ("MODELLED TOWN-LEVEL ESTIMATE, not measured. Taiwan publishes no "
+                               "sub-national dementia prevalence; national age-band rates are "
+                               "applied to each 鄉鎮市區's real single-year age structure."),
+                "population_source": "MOI #77132 鄉鎮市區單一年齡人口 (內政部戶政司)"}
+        rows_key = "towns"
+    else:
+        meta = {"title": "Modelled dementia prevalence (ESTIMATE)", "granularity": "county",
+                "method": ("national NHRI 2020-2023 age-band rates x county 65+ population "
+                           "(national within-65+ age structure); towns inherit county rate"),
+                "disclaimer": ("MODELLED COUNTY-LEVEL ESTIMATE, not measured. Taiwan publishes no "
+                               "sub-national dementia prevalence. Re-run build_data.py with MOI "
+                               "#77132 access for the authoritative town-level version."),
+                "population_source": "MOI 2023 county snapshot (approx.)"}
+        rows_key = "counties"
+    meta.update({"rates_source": "NHRI community dementia survey 2020-2023",
                  "metric": "modelled dementia cases per 1,000 residents (all ages)",
-                 "license": "OGDL-Taiwan-1.0", "built": BUILD_DATE},
-        "counties": county_rows, "byTown": by_town})
+                 "license": "OGDL-Taiwan-1.0", "built": BUILD_DATE})
+    write_json("dementia/tw-dementia-modelled.json", {"meta": meta, rows_key: rows, "byTown": by_town})
 
     log("World country PM2.5 (residence dropdown) …")
     world_pm = build_world_country_pm25()
