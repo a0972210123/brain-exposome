@@ -742,7 +742,9 @@ def main():
         "pm25/tw-district-pm25.json": "ACAG V6.GL.03 per-town recent PM2.5 (CC BY 4.0)",
         "pm25/world-country-pm25.json": "ACAG V6.GL.03 country x year PM2.5, pop-weighted (CC BY 4.0)",
         "geo/tw-districts.topo.json": "taiwan-atlas / MOI #7441 boundaries (OGDL-Taiwan-1.0)",
-        "dementia/tw-dementia-modelled.json": "modelled prevalence, NHRI 2020-23 x MOI pop"}
+        "dementia/tw-dementia-modelled.json": "modelled prevalence, NHRI 2020-23 x MOI pop",
+        "dementia/cn-modelled.json": "China provincial dementia prevalence, Liu/Gao 2024 (CHARLS 2018) — modelled estimate",
+        "dementia/in-modelled.json": "India state dementia prevalence, Lee et al. 2023 (LASI-DAD) — modelled estimate"}
     for key, cfg in COUNTRY_MAPS.items():   # admin-1 PM2.5 (+ boundaries) per country
         assets[f"pm25/{key}-admin1-pm25.json"] = f"ACAG V6.GL.03 {cfg['name']} admin-1 PM2.5 (CC BY 4.0)"
         assets[f"geo/{key}-admin1.geojson"] = f"Natural Earth admin-1 ({cfg['name']}), public domain"
@@ -751,7 +753,9 @@ def main():
         "attribution": ["PM2.5 © ACAG/WashU (Shen 2024; van Donkelaar 2021), CC BY 4.0",
                         "台灣界線 © 內政部NLSC / taiwan-atlas, OGDL-Taiwan-1.0",
                         "其他國家界線: Natural Earth (public domain)",
-                        "人口 © 內政部 (MOI)", "失智盛行率為模型估計值 (NHRI 2020-2023)"]})
+                        "人口 © 內政部 (MOI)", "失智盛行率為模型估計值 (NHRI 2020-2023)",
+                        "中國省級失智盛行率 © Liu/Gao et al. 2024, Lancet Reg Health – W Pac (CHARLS 2018) — 模型估計",
+                        "印度邦級失智盛行率 © Lee et al. 2023, Alzheimer's & Dementia (LASI-DAD) — 模型估計"]})
     log("== DONE ==")
 
 
