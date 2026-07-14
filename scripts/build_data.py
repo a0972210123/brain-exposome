@@ -427,7 +427,7 @@ def town_recent_pm(towns, years, lat, lon, grid, recent=3):
 
 
 # ---------- population -> modelled prevalence ----------
-def _rollup_77132_town(yyymm="11312"):
+def _rollup_77132_town(yyymm="11506"):
     """MOI #77132 (村里 single-year-age population) -> per-town (8-digit TOWNCODE, the
        taiwan-atlas boundary key) six NHRI age bands + total. Sums both sexes and every
        村里 within a 鄉鎮市區. Returns {code: {'total':N,'65-69':n,...,'90+':n}} or None."""
@@ -463,7 +463,7 @@ def _rollup_77132_town(yyymm="11312"):
     return town or None
 
 
-def fetch_population(yyymm="11312"):
+def fetch_population(yyymm="11506"):
     """Authoritative town-level MOI #77132 rollup if the API is reachable (this session's
        job); else the committed county snapshot. Returns (granularity, pop)."""
     town = _rollup_77132_town(yyymm)
@@ -524,7 +524,7 @@ def write_tw_modelled(rows, by_town, granularity):
     if granularity == "town":
         meta = {"title": "Modelled dementia prevalence among residents aged 65+ (ESTIMATE)",
                 "granularity": "town",
-                "method": ("MOI #77132 single-year-age population per 鄉鎮市區 × NHRI 2020-2023 "
+                "method": ("MOI #77132 single-year-age population per 鄉鎮市區 × NHRI 112年(2023) "
                            "age-band prevalence; each town = Σ(age-band pop × band rate) ÷ its 65+ "
                            "population = prevalence among residents aged 65+"),
                 "disclaimer": ("MODELLED TOWN-LEVEL ESTIMATE, not measured. Taiwan publishes no "
@@ -542,8 +542,8 @@ def write_tw_modelled(rows, by_town, granularity):
                                "#77132 access for the authoritative town-level version."),
                 "population_source": "MOI 2023 county snapshot (approx.)"}
         rows_key = "counties"
-    meta.update({"rates_source": ("NHRI community dementia survey 2020-2023; age-band rates per "
-                                  "Sun Y, et al. PLoS ONE 2014 (doi:10.1371/journal.pone.0100303)"),
+    meta.update({"rates_source": ("NHRI 112年(2023) 全國社區失智症流行病學調查 (age-band prevalence); "
+                                  "method per Sun Y, et al. PLoS ONE 2014 (doi:10.1371/journal.pone.0100303)"),
                  "metric": "modelled dementia prevalence among residents aged 65+ (%)",
                  "age_group": "65+", "national_prevalence_65plus_pct": nat_pct, "age_bands": age_bands,
                  "license": "OGDL-Taiwan-1.0", "built": BUILD_DATE})
@@ -832,7 +832,7 @@ def build_pop_rate_prev60(cc, name, gbd_country, units, pop):
     if not pop or not all(b in rates for b in POP60_BANDS):
         return False
     codes = {u["code"] for u in units}
-    by_unit = {}
+    by_unit, nat_cases, nat_pop = {}, 0.0, 0.0
     for code, p in pop.items():
         if code not in codes:
             continue
@@ -841,14 +841,18 @@ def build_pop_rate_prev60(cc, name, gbd_country, units, pop):
             continue
         cases = sum(p[b] * rates[b] for b in POP60_BANDS)
         by_unit[code] = round(cases / pop60 * 100, 2)
+        nat_cases += cases
+        nat_pop += pop60
     if not by_unit:
         return False
+    age_bands = [{"band": b, "prevalence_pct": round(rates[b] * 100, 2)} for b in POP60_BANDS]
     write_json(f"dementia/{cc}-modelled.json", {
         "meta": {"metric": "modelled dementia prevalence among residents aged 60+ (%)",
                  "age_group": "60+",
                  "source": f"GBD 2023 age-specific rates × {name} official population by age",
                  "note": "MODELLED estimate; GBD 2023 (IHME, non-commercial) × national statistics office population",
-                 "built": BUILD_DATE},
+                 "national_prevalence_60plus_pct": round(nat_cases / nat_pop * 100, 1) if nat_pop else None,
+                 "age_bands": age_bands, "built": BUILD_DATE},
         "byTown": by_unit})
     log(f"  {name}: pop×rate prevalence (60+) for {len(by_unit)} units")
     return True
