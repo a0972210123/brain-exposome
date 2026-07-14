@@ -361,8 +361,9 @@ import T from '../../components/T.astro';
       </p>
       <div id="map" class="tw-map"></div>
       <p class="map-note">
-        <T zh="※ 失智盛行率為縣市層級模型估計（NHRI 2020–2023 年齡別盛行率 × 內政部人口），非實測；鄉鎮市區層級版本可用 scripts/build_data.py 以政府年齡別人口重新產生。PM2.5 為 ACAG 衛星資料（V6.GL.03）；台灣以外為各行政區（Natural Earth 界線）的衛星網格平均值。美國為本土 48 州＋DC（不含阿拉斯加／夏威夷）。" en="※ Dementia prevalence is a county-level modelled estimate (NHRI 2020–2023 age-band rates × MOI population), not measured; a town-level version can be regenerated via scripts/build_data.py with government population data. PM2.5 is ACAG satellite data (V6.GL.03); outside Taiwan, values are grid means per admin-1 unit (Natural Earth boundaries). USA shows the contiguous 48 states + DC (Alaska/Hawaii excluded)." />
+        <T zh="※ 台灣失智盛行率為鄉鎮市區層級「65 歲以上盛行率」的模型估計（NHRI 年齡別盛行率 × 內政部 #77132 各區單一年齡人口，見下方說明表），非實測。PM2.5 為 ACAG 衛星資料（V6.GL.03）；台灣以外為各行政區（Natural Earth 界線）的衛星網格平均值。美國為本土 48 州＋DC（不含阿拉斯加／夏威夷）。" en="※ Taiwan dementia prevalence is a township-level modelled estimate of prevalence among residents aged 65+ (NHRI age-band rates × MOI #77132 single-year-age population per township — see the method table below), not measured. PM2.5 is ACAG satellite data (V6.GL.03); outside Taiwan, values are grid means per admin-1 unit (Natural Earth boundaries). USA shows the contiguous 48 states + DC (Alaska/Hawaii excluded)." />
       </p>
+      <div id="prev-method" class="prev-method" style="display:none"></div>
     </section>
 
     <!-- How it's calculated -->
@@ -686,6 +687,15 @@ import T from '../../components/T.astro';
   }
   .tw-map { height: 460px; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); }
   .map-note { font-size: 0.78rem; color: var(--color-text-muted); margin-top: 0.6rem; line-height: 1.6; }
+  .prev-method { margin-top: 0.8rem; padding: 0.8rem 1rem; border: 1px solid var(--color-border); border-radius: var(--radius-md); background: var(--color-surface); }
+  .prev-method-h { font-size: 0.95rem; font-weight: 700; margin: 0 0 0.4rem; }
+  .prev-method-p { font-size: 0.8rem; color: var(--color-text-muted); line-height: 1.6; margin: 0 0 0.6rem; }
+  .prev-method-table { width: 100%; border-collapse: collapse; font-size: 0.82rem; }
+  .prev-method-table th, .prev-method-table td { padding: 0.3rem 0.5rem; border-bottom: 1px solid var(--color-border); text-align: left; }
+  .prev-method-table th { color: var(--color-text-muted); font-weight: 600; }
+  .prev-method-table th:last-child, .prev-method-table td:last-child { text-align: right; font-variant-numeric: tabular-nums; }
+  .prev-method-total td { font-weight: 700; border-top: 2px solid var(--color-border); border-bottom: none; }
+  .prev-method-src { font-size: 0.72rem; color: var(--color-text-muted); margin: 0.6rem 0 0; line-height: 1.6; }
   .map-fail { padding: 2rem; text-align: center; color: var(--color-text-muted); }
   .tw-map :global(.leaflet-container) { background: var(--color-surface); font-family: var(--font-sans); font-size: 0.8rem; }
   .tw-map :global(.map-legend), .tw-map :global(.leaflet-tooltip) {
@@ -1245,15 +1255,14 @@ let mapCountry = 'tw', mapMode = 'prevalence';
 let GEO = null;                    // current FeatureCollection
 let VAL = { prev: {}, pm: {} };    // current country: code -> value
 let NAMES = {};                    // current country: code -> {zh, en}
-const PREV_BINS = [12, 14, 16, 18, 20];   // modelled dementia per 1,000 residents
 // WHO-aligned global scale (AQG 5; interim targets 10/15/25/35) so clean East Asia
 // and heavily polluted China/India are both legible on one comparable ramp.
 const PM_BINS = [5, 10, 15, 25, 35];       // PM2.5 µg/m³
 const RAMP = ['#ffeda0', '#fed976', '#feb24c', '#fd8d3c', '#f03b20', '#bd0026'];
-// Prevalence metrics differ by source (all "modelled estimate"): TW = cases per 1,000
-// all-ages; CN/IN = published % among 50+/60+. Each country carries its own label + bins.
-const PREV_TW = { bins: PREV_BINS, tipZh: '失智盛行（估計）', tipEn: 'Dementia (modelled)',
-  unitZh: '／千人', unitEn: 'per 1,000', legendZh: '失智／千人', legendEn: 'dementia /1,000', decimals: 1 };
+// Prevalence metrics differ by source (all "modelled estimate"): TW = % among 65+ (national ≈ 7.8%);
+// CN/IN = published % among 50+/60+. Each country carries its own label + bins (not cross-comparable).
+const PREV_TW = { bins: [7, 7.5, 8, 8.5, 9], tipZh: '失智盛行率（65+）', tipEn: 'Dementia prevalence (65+)',
+  unitZh: '%', unitEn: '%', legendZh: '失智盛行率 65+ %', legendEn: 'prevalence 65+ %', decimals: 1 };
 const PREV_CN = { bins: [3, 5, 7, 9, 11], tipZh: '失智盛行率（50+）', tipEn: 'Dementia prevalence (50+)',
   unitZh: '%', unitEn: '%', legendZh: '失智盛行率 50+ %', legendEn: 'prevalence 50+ %', decimals: 1 };
 const PREV_IN = { bins: [5, 6, 7, 8, 9], tipZh: '失智盛行率（60+）', tipEn: 'Dementia prevalence (60+)',
@@ -1341,10 +1350,10 @@ function applyMode() {
 }
 async function loadCountryData(cc) {
   const cfg = MAP_CFG[cc];
-  let geo, prev = {}, pm = {}, names = {};
+  let geo, prev = {}, pm = {}, names = {}, prevMeta = null;
   if (cfg.topo) { const t = await fetch(cfg.topo).then(r => r.json()); geo = window.topojson.feature(t, t.objects[cfg.topoObject]); }
   else { geo = await fetch(cfg.geojson).then(r => r.json()); }
-  if (cfg.prev) { const p = await fetch(cfg.prev).then(r => r.ok ? r.json() : null).catch(() => null); if (p) Object.assign(prev, p.byTown || {}); }
+  if (cfg.prev) { const p = await fetch(cfg.prev).then(r => r.ok ? r.json() : null).catch(() => null); if (p) { Object.assign(prev, p.byTown || {}); prevMeta = p.meta || null; } }
   if (cfg.pm) {
     const d = await fetch(cfg.pm).then(r => r.json());
     if (d.districts) for (const [k, v] of Object.entries(d.districts)) pm[k] = v.pm25;
@@ -1356,11 +1365,33 @@ async function loadCountryData(cc) {
       ? { zh: (p.COUNTYNAME || '') + p.TOWNNAME, en: (p.TOWNENG || p.TOWNNAME) + (p.COUNTYENG ? ', ' + p.COUNTYENG : '') }
       : { zh: p.nameLocal || p.name || code, en: p.name || code };
   });
-  return { geo, prev, pm, names, cfg };
+  return { geo, prev, pm, names, cfg, prevMeta };
+}
+// When Taiwan is selected, show a method table below the map: national age-band rates + the
+// weighted 65+ overall, so readers see exactly how each area's prevalence is computed.
+function renderPrevTable(cc, meta) {
+  const box = $('prev-method');
+  if (!box) return;
+  if (cc !== 'tw' || !meta || !Array.isArray(meta.age_bands)) { box.style.display = 'none'; box.innerHTML = ''; return; }
+  const lab = { '65-69': '65–69', '70-74': '70–74', '75-79': '75–79', '80-84': '80–84', '85-89': '85–89', '90+': '90+' };
+  const bandRows = meta.age_bands.map(b => `<tr><td>${lab[b.band] || b.band}</td><td>${(+b.prevalence_pct).toFixed(1)}%</td></tr>`).join('');
+  const nat = meta.national_prevalence_65plus_pct;
+  box.style.display = '';
+  box.innerHTML =
+    `<h3 class="prev-method-h">${L('台灣失智盛行率怎麼算？', "How is Taiwan's dementia prevalence estimated?")}</h3>`
+    + `<p class="prev-method-p">${L(
+        '地圖顯示各鄉鎮市區「65 歲以上人口」的失智盛行率。做法：用內政部 #77132 各區單一年齡人口，乘上下列全國年齡別盛行率、加總，再除以該區 65 歲以上人口。差異來自各區的高齡年齡結構。',
+        "The map shows dementia prevalence among residents aged 65+ in each township. Method: each area's single-year-age population (MOI #77132) × the national age-band rates below, summed, ÷ its 65+ population — so differences reflect each area's elderly age structure.")}</p>`
+    + `<table class="prev-method-table"><thead><tr><th>${L('年齡層', 'Age group')}</th><th>${L('年齡別失智盛行率', 'Age-band prevalence')}</th></tr></thead><tbody>`
+    + bandRows
+    + `<tr class="prev-method-total"><td>${L('全國 65+ 整體（加權平均）', 'Overall 65+ (national, weighted)')}</td><td>${nat != null ? (+nat).toFixed(1) + '%' : '—'}</td></tr>`
+    + `</tbody></table>`
+    + `<p class="prev-method-src">${L('資料來源：', 'Sources: ')}${L('失智率', 'rates')} NHRI 2020–2023 · Sun Y, et al. <em>PLoS ONE</em> 2014 <a href="https://doi.org/10.1371/journal.pone.0100303" target="_blank" rel="noopener">doi:10.1371/journal.pone.0100303</a>｜${L('人口', 'population')} MOI #77132｜${L('模型估計，非實測', 'modelled estimate, not measured')}</p>`;
 }
 async function drawCountry(cc) {
   const d = await loadCountryData(cc);
   mapCountry = cc; GEO = d.geo; VAL = { prev: d.prev, pm: d.pm }; NAMES = d.names;
+  renderPrevTable(cc, d.prevMeta);
   if (!d.cfg.layers.includes(mapMode)) mapMode = d.cfg.layers[0];
   if (geoLayer) { map.removeLayer(geoLayer); geoLayer = null; }
   geoLayer = window.L.geoJSON(GEO, {
