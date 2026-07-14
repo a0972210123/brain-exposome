@@ -144,7 +144,12 @@ EMBEDDED_COUNTY_POP = {
 
 
 def log(*a):
-    print(*a, flush=True)
+    msg = " ".join(str(x) for x in a)
+    try:
+        print(msg, flush=True)
+    except UnicodeEncodeError:      # Windows cp950 console can't encode e.g. Türkiye's 'ü'
+        enc = sys.stdout.encoding or "utf-8"
+        print(msg.encode(enc, "replace").decode(enc), flush=True)
 
 
 def http_get(url, tries=4, timeout=120):
@@ -726,8 +731,12 @@ def build_gbd_direct(cc, name, units, aliases=None):
 # GBD has no sub-national data for JP/KR, so we model each prefecture/province's % among 60+ from its
 # OWN age structure: prevalence = Σ(age-band pop × GBD national age-band rate) / 60+ population.
 POP60_BANDS = ["60_64", "65_69", "70_74", "75_79", "80_84", "85p"]
+# band -> GBD age_name. Includes both an 85+ split (85p, used by JP/KR e-Stat/KOSIS) and an 80+ top
+# band (80p, used by WorldPop whose oldest band is 80+); build_pop_rate_prev60 uses whichever the
+# population dict actually carries.
 GBD_AGE_NAME = {"60_64": "60-64 years", "65_69": "65-69 years", "70_74": "70-74 years",
-                "75_79": "75-79 years", "80_84": "80-84 years", "85p": "85+ years"}
+                "75_79": "75-79 years", "80_84": "80-84 years", "85p": "85+ years",
+                "80p": "80+ years"}
 
 
 def load_gbd_rates(country):
@@ -831,37 +840,112 @@ def load_kosis_kr_pop():
     return out or None
 
 
-def build_pop_rate_prev60(cc, name, gbd_country, units, pop):
+def build_pop_rate_prev60(cc, name, gbd_country, units, pop, pop_source=None):
     """Model admin-1 dementia prevalence among 60+ (%) = Σ(band pop × GBD band rate) / 60+ pop.
-       `pop` = {unit_code: {band: n}}; rates come from GBD national. -> dementia/{cc}-modelled.json."""
+       Age bands are read from the pop dict (keys minus 'total'), so this serves both the JP/KR
+       e-Stat/KOSIS path (…80_84, 85p) and the WorldPop path (…75_79, 80p). -> {cc}-modelled.json."""
     rates = load_gbd_rates(gbd_country)
-    if not pop or not all(b in rates for b in POP60_BANDS):
+    if not pop:
         return False
+    bands = [b for b in next(iter(pop.values())) if b != "total"]
+    if not all(b in rates for b in bands):
+        return False
+    src = pop_source or f"{name} official population by age"
     codes = {u["code"] for u in units}
     by_unit, nat_cases, nat_pop = {}, 0.0, 0.0
     for code, p in pop.items():
         if code not in codes:
             continue
-        pop60 = sum(p[b] for b in POP60_BANDS)
+        pop60 = sum(p[b] for b in bands)
         if not pop60:
             continue
-        cases = sum(p[b] * rates[b] for b in POP60_BANDS)
+        cases = sum(p[b] * rates[b] for b in bands)
         by_unit[code] = round(cases / pop60 * 100, 2)
         nat_cases += cases
         nat_pop += pop60
     if not by_unit:
         return False
-    age_bands = [{"band": b, "prevalence_pct": round(rates[b] * 100, 2)} for b in POP60_BANDS]
+    national = round(nat_cases / nat_pop * 100, 1) if nat_pop else None
+    # Some population products (WorldPop for most high-income countries) apply a single national
+    # age-proportion surface, so every admin-1 unit resolves to the same age composition and the
+    # "% among 60+" is spatially flat. When the sub-national range is negligible we honestly present
+    # one national value rather than a fake choropleth. Real sub-national data (JP/KR census, and
+    # WorldPop for countries with sub-national age inputs) keeps its per-unit spread.
+    vals = list(by_unit.values())
+    resolution = "admin1"
+    if national is not None and max(vals) - min(vals) < 0.15:
+        resolution = "national"
+        by_unit = {c: national for c in by_unit}
+    note = f"MODELLED estimate; GBD 2023 (IHME, non-commercial) × {src}"
+    if resolution == "national":
+        note += ("; sub-national age structure not resolved by this population product "
+                 "— single national estimate shown")
+    age_bands = [{"band": b, "prevalence_pct": round(rates[b] * 100, 2)} for b in bands]
     write_json(f"dementia/{cc}-modelled.json", {
         "meta": {"metric": "modelled dementia prevalence among residents aged 60+ (%)",
                  "age_group": "60+",
-                 "source": f"GBD 2023 age-specific rates × {name} official population by age",
-                 "note": "MODELLED estimate; GBD 2023 (IHME, non-commercial) × national statistics office population",
-                 "national_prevalence_60plus_pct": round(nat_cases / nat_pop * 100, 1) if nat_pop else None,
+                 "resolution": resolution,
+                 "source": f"GBD 2023 age-specific rates × {src}",
+                 "note": note,
+                 "national_prevalence_60plus_pct": national,
                  "age_bands": age_bands, "built": BUILD_DATE},
         "byTown": by_unit})
-    log(f"  {name}: pop×rate prevalence (60+) for {len(by_unit)} units")
+    log(f"  {name}: pop×rate prevalence (60+, {len(bands)} bands, {resolution}) for {len(by_unit)} units")
     return True
+
+
+# 18 remaining countries with no sub-national GBD data: GBD national rate × WorldPop admin-1 pop.
+# cc -> (WorldPop/ISO3, GBD national location name).
+WORLDPOP = {
+    "th": ("THA", "Thailand"), "vn": ("VNM", "Viet Nam"), "id": ("IDN", "Indonesia"),
+    "ph": ("PHL", "Philippines"), "my": ("MYS", "Malaysia"), "pk": ("PAK", "Pakistan"),
+    "bd": ("BGD", "Bangladesh"), "mm": ("MMR", "Myanmar"), "gb": ("GBR", "United Kingdom"),
+    "de": ("DEU", "Germany"), "fr": ("FRA", "France"), "it": ("ITA", "Italy"),
+    "es": ("ESP", "Spain"), "pl": ("POL", "Poland"), "ca": ("CAN", "Canada"),
+    "au": ("AUS", "Australia"), "nz": ("NZL", "New Zealand"), "tr": ("TUR", "Türkiye"),
+}
+WORLDPOP_DIR = os.path.join(DATA_IN, "WorldPop")
+WP_BANDS_AGE = {"60_64": "60", "65_69": "65", "70_74": "70", "75_79": "75", "80p": "80"}  # band->age code
+
+
+def load_worldpop_pop(cc, iso3):
+    """WorldPop 1km unconstrained 2020 age/sex rasters (cached in _data_in/WorldPop/{ISO3}/) zonal-
+       summed onto the committed {cc}-admin1.geojson -> {unit_code: {band: pop, 'total': pop}} (m+f).
+       80p = WorldPop's 80+ top band. Downloads any missing raster; None if rasterstats absent or a
+       fetch fails."""
+    try:
+        from rasterstats import zonal_stats
+    except ImportError:
+        log("  rasterstats not installed; WorldPop path skipped")
+        return None
+    geo_path = os.path.join(OUT, "geo", f"{cc}-admin1.geojson")
+    if not os.path.exists(geo_path):
+        return None
+    feats = json.load(open(geo_path, encoding="utf-8"))["features"]
+    codes = [f["properties"]["code"] for f in feats]
+    wp_dir = os.path.join(WORLDPOP_DIR, iso3)
+    os.makedirs(wp_dir, exist_ok=True)
+    base = ("https://data.worldpop.org/GIS/AgeSex_structures/Global_2000_2020_1km/"
+            f"unconstrained/2020/{iso3}")
+    pop = {c: {b: 0.0 for b in WP_BANDS_AGE} for c in codes}
+    for band, age in WP_BANDS_AGE.items():
+        for sex in ("m", "f"):
+            fn = f"{iso3.lower()}_{sex}_{age}_2020_1km.tif"
+            fp = os.path.join(wp_dir, fn)
+            if not os.path.exists(fp):
+                data = http_get(f"{base}/{fn}")
+                if not data:
+                    log(f"  WorldPop fetch failed: {fn}")
+                    return None
+                with open(fp, "wb") as f:
+                    f.write(data)
+            # all_touched: count any pixel intersecting the polygon so small islands / tiny units
+            # (e.g. Philippine island provinces) aren't dropped for having no pixel centre inside.
+            for c, z in zip(codes, zonal_stats(feats, fp, stats="sum", all_touched=True)):
+                pop[c][band] += (z["sum"] or 0.0)
+    for c in pop:
+        pop[c]["total"] = sum(pop[c][b] for b in WP_BANDS_AGE)
+    return pop
 
 
 def build_direct_prevalence(cc, name, units, meta_extra=None):
@@ -1016,6 +1100,11 @@ def main():
             done = key in GBD_DIRECT and build_gbd_direct(key, cfg["name"], units, GBD_DIRECT[key])
             if not done and pop_rate:
                 done = build_pop_rate_prev60(key, cfg["name"], pop_rate[0], units, pop_rate[1]())
+            if not done and key in WORLDPOP:
+                iso3, gbd_name = WORLDPOP[key]
+                done = build_pop_rate_prev60(key, cfg["name"], gbd_name, units,
+                                             load_worldpop_pop(key, iso3),
+                                             pop_source="WorldPop 2020 1km age/sex population")
             if not done and not build_direct_prevalence(key, cfg["name"], units, prev_meta) \
                     and not build_admin_prevalence(key, cfg["name"]):
                 log(f"  {cfg['name']}: no _data_in/{key}-admin1-prevalence.csv or -pop.csv -> "
@@ -1048,6 +1137,11 @@ def main():
     for key, cfg in COUNTRY_MAPS.items():   # admin-1 PM2.5 (+ boundaries) per country
         assets[f"pm25/{key}-admin1-pm25.json"] = f"ACAG V6.GL.03 {cfg['name']} admin-1 PM2.5 (CC BY 4.0)"
         assets[f"geo/{key}-admin1.geojson"] = f"Natural Earth admin-1 ({cfg['name']}), public domain"
+    for key, (iso3, gname) in WORLDPOP.items():   # admin-1 prevalence via GBD rate × WorldPop pop
+        if not os.path.exists(os.path.join(OUT, "dementia", f"{key}-modelled.json")):
+            continue   # rasters not yet downloaded for this country → JSON absent, don't list it
+        assets[f"dementia/{key}-modelled.json"] = (f"{gname} admin-1 dementia prevalence 60+, "
+                                                   "GBD 2023 rates × WorldPop 2020 pop — modelled estimate")
     write_json("manifest.json", {
         "built": BUILD_DATE, "assets": assets,
         "attribution": ["PM2.5 © ACAG/WashU (Shen 2024; van Donkelaar 2021), CC BY 4.0",
@@ -1058,7 +1152,8 @@ def main():
                         "印度邦級失智盛行率 © Lee et al. 2023, Alzheimer's & Dementia (LASI-DAD) — 模型估計",
                         "美國／巴西／墨西哥／伊朗各州省失智盛行率 © GBD 2023, IHME — 模型估計，非商業授權 (attribution)",
                         "日本都道府県失智盛行率 © GBD 2023 (IHME) 年齡別率 × e-Stat 都道府県人口 — 模型估計",
-                        "韓國市道失智盛行率 © GBD 2023 (IHME) 年齡別率 × KOSIS 시도人口 — 模型估計"]})
+                        "韓國市道失智盛行率 © GBD 2023 (IHME) 年齡別率 × KOSIS 시도人口 — 模型估計",
+                        "其餘各國 admin-1 失智盛行率 © GBD 2023 (IHME) 年齡別率 × WorldPop 2020 人口 (CC BY 4.0) — 模型估計"]})
     log("== DONE ==")
 
 
