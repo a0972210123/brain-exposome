@@ -418,7 +418,7 @@ import T from '../../components/T.astro';
       <ul class="ref-list">
         <li><T zh="台灣人口：內政部戶政司 #77132 鄉鎮市區單一年齡人口（資料月份 2026-06）。" en="Taiwan population: MOI #77132 township single-year-age population (data 2026-06)." /> <a href="https://data.gov.tw/dataset/77132" target="_blank" rel="noopener">data.gov.tw/77132</a></li>
         <li><T zh="日本人口：總務省統計局 e-Stat 都道府県・年齡別人口（資料 2024）。韓國人口：統計廳 KOSIS 시도・연령별 인구（資料 2026）。" en="Japan population: Statistics Bureau e-Stat, prefecture × age (data 2024). Korea population: Statistics Korea KOSIS, Si-do × age (data 2026)." /> <a href="https://www.e-stat.go.jp/en" target="_blank" rel="noopener">e-stat.go.jp</a> · <a href="https://kosis.kr/eng" target="_blank" rel="noopener">kosis.kr</a></li>
-        <li><T zh="跨國盛行率模型的人口分母：" en="Population denominators for cross-country prevalence modelling: " />WorldPop (<a href="https://www.worldpop.org" target="_blank" rel="noopener">worldpop.org</a>, CC BY 4.0) · UN World Population Prospects (<a href="https://population.un.org/wpp/" target="_blank" rel="noopener">population.un.org/wpp</a>).</li>
+        <li><T zh="其餘各國 admin-1 人口分母：WorldPop 2020 1km 年齡／性別網格（資料 2020，CC BY 4.0）；UN World Population Prospects 為國家別校準。部分高所得國家 WorldPop 年齡結構在區間近乎一致，故以全國估計值呈現。" en="Admin-1 population denominator for the remaining countries: WorldPop 2020 1km age/sex grids (data 2020, CC BY 4.0); UN World Population Prospects for national calibration. For some high-income countries WorldPop's age structure is near-uniform across areas, so a single national estimate is shown." /> <a href="https://www.worldpop.org" target="_blank" rel="noopener">worldpop.org</a> · <a href="https://population.un.org/wpp/" target="_blank" rel="noopener">population.un.org/wpp</a></li>
         <li>WHO. <T zh="失智症全球公共衛生應對現況報告，2021（全球失智人口 55M → 78M（2030）→ 139M（2050））。" en="Global status report on the public health response to dementia, 2021 (55M now → 78M by 2030 → 139M by 2050)." /> <a href="https://www.who.int/publications/i/item/9789240033245" target="_blank" rel="noopener">who.int</a></li>
       </ul>
     </section>
@@ -1274,6 +1274,11 @@ const PREV_IN = { bins: [5, 6, 7, 8, 9], tipZh: '失智盛行率（60+）', tipE
 // pop-by-age). One harmonised source → these ARE comparable to each other. Scale spans ~3–8%.
 const PREV_60 = { bins: [4, 5, 6, 7, 8], tipZh: '失智盛行率（60+）', tipEn: 'Dementia prevalence (60+)',
   unitZh: '%', unitEn: '%', legendZh: '失智盛行率 60+ %（GBD）', legendEn: 'prevalence 60+ % (GBD)', decimals: 1 };
+// Same GBD 60+ metric, but a low-range scale for the SE-Asian WorldPop countries (younger 60+
+// populations → national prevalence ~1.6–3.7%, which the 4–8% PREV_60 scale renders as one flat
+// colour). A tuned scale makes their real sub-national gradient visible; per-country legend shows it.
+const PREV_60_SEA = { bins: [2, 2.4, 2.8, 3.2, 3.6], tipZh: '失智盛行率（60+）', tipEn: 'Dementia prevalence (60+)',
+  unitZh: '%', unitEn: '%', legendZh: '失智盛行率 60+ %（GBD）', legendEn: 'prevalence 60+ % (GBD)', decimals: 1 };
 const MAP_CFG = {
   tw: { topo: '/data/geo/tw-districts.topo.json', topoObject: 'towns', codeProp: 'TOWNCODE',
         layers: ['prevalence', 'pm25'], fit: [[21.9, 119.3], [25.35, 122.05]], prevMetric: PREV_TW,
@@ -1298,10 +1303,18 @@ const MAP_CFG = {
         prevMetric: PREV_60, prev: '/data/dementia/ir-modelled.json', pm: '/data/pm25/ir-admin1-pm25.json' },
   in: { geojson: '/data/geo/in-admin1.geojson', codeProp: 'code', layers: ['prevalence', 'pm25'],
         prevMetric: PREV_IN, prev: '/data/dementia/in-modelled.json', pm: '/data/pm25/in-admin1-pm25.json' },
-  ...Object.fromEntries(['th', 'vn', 'id', 'ph', 'my', 'pk', 'bd', 'mm', 'gb', 'de', 'fr',
-    'it', 'es', 'pl', 'ca', 'au', 'nz', 'tr'].map(cc => [cc,
-    { geojson: `/data/geo/${cc}-admin1.geojson`, codeProp: 'code', layers: ['pm25'],
-      pm: `/data/pm25/${cc}-admin1-pm25.json` }])),
+  // 14 downloaded WorldPop×GBD countries: admin-1 prevalence = GBD 2023 national age-band rates ×
+  // WorldPop 2020 pop-by-age. Each JSON's meta.resolution drives the method-box wording.
+  // Sub-national SE-Asian set (values ~1.6–3.7%) → low-range PREV_60_SEA scale so their gradient shows.
+  ...Object.fromEntries(['th', 'vn', 'id', 'ph', 'my', 'bd', 'mm'].map(cc => [cc,
+    { geojson: `/data/geo/${cc}-admin1.geojson`, codeProp: 'code', layers: ['prevalence', 'pm25'],
+      prevMetric: PREV_60_SEA, prev: `/data/dementia/${cc}-modelled.json`, pm: `/data/pm25/${cc}-admin1-pm25.json` }])),
+  // Standard-range set (~4–8%) → PREV_60 scale. Resolution (sub-national gradient vs single national
+  // value) is auto-detected per country from WorldPop's age surface and drives the method-box label:
+  // CA/AU/NZ resolve sub-nationally; PK/GB/DE/FR/IT/ES/PL/TR collapse to one national value.
+  ...Object.fromEntries(['pk', 'gb', 'de', 'fr', 'it', 'es', 'pl', 'ca', 'au', 'nz', 'tr'].map(cc => [cc,
+    { geojson: `/data/geo/${cc}-admin1.geojson`, codeProp: 'code', layers: ['prevalence', 'pm25'],
+      prevMetric: PREV_60, prev: `/data/dementia/${cc}-modelled.json`, pm: `/data/pm25/${cc}-admin1-pm25.json` }])),
 };
 function curPrev() { return MAP_CFG[mapCountry].prevMetric || PREV_TW; }
 
@@ -1417,6 +1430,16 @@ PREV_METHOD.br = PREV_METHOD.us; PREV_METHOD.mx = PREV_METHOD.us;
 PREV_METHOD.ir = { mZh: '各省失智盛行率（60 歲以上）直接採用 GBD 2023 (IHME) 的省級估計值。東／西亞塞拜然省 GBD 無單獨資料，維持灰色。',
   mEn: 'Provincial prevalence (60+) taken directly from GBD 2023 (IHME) sub-national estimates. East/West Azarbaijan are not separately in GBD and stay grey.',
   sZh: PREV_METHOD.us.sZh, sEn: PREV_METHOD.us.sEn };
+// The downloaded WorldPop×GBD countries share one method description (the age-band rate table +
+// national come from each country's modelled.json meta; renderPrevTable swaps in national-estimate
+// wording when meta.resolution === 'national').
+['th', 'vn', 'id', 'ph', 'my', 'pk', 'bd', 'mm', 'gb', 'de', 'fr', 'it', 'es', 'pl', 'ca', 'au', 'nz', 'tr'].forEach(cc => {
+  PREV_METHOD[cc] = {
+    mZh: '各行政區失智盛行率（60 歲以上）：用 WorldPop 2020 各區年齡別人口，乘上下列 GBD 2023 全國年齡別率、加總，再除以該區 60+ 人口。差異來自各區的年齡結構。',
+    mEn: 'Admin-1 prevalence (60+): WorldPop 2020 age-structured population per unit × the national GBD 2023 age-band rates below, summed, ÷ its 60+ population.',
+    sZh: '率 GBD 2023 (IHME)；人口 WorldPop 2020 1km 年齡／性別網格（CC BY 4.0）',
+    sEn: 'rates: GBD 2023 (IHME); population: WorldPop 2020 1km age/sex grids (CC BY 4.0)' };
+});
 function renderPrevTable(cc, meta) {
   const box = $('prev-method');
   if (!box) return;
@@ -1424,10 +1447,15 @@ function renderPrevTable(cc, meta) {
   if (!m) { box.style.display = 'none'; box.innerHTML = ''; return; }
   const opt = document.querySelector(`#map-country option[value="${cc}"]`);
   const country = opt ? L(opt.dataset.zh, opt.dataset.en) : cc.toUpperCase();
+  let methodText = L(m.mZh, m.mEn);
+  if (meta && meta.resolution === 'national') {
+    methodText = L('此國 WorldPop 的年齡結構在各行政區間幾乎一致，無法解析次國家層級的高齡結構差異，因此以單一「全國估計值」（60 歲以上）呈現：GBD 2023 全國年齡別率，依全國 60+ 年齡結構加權。',
+      'For this country, WorldPop’s modelled age structure is near-uniform across areas, so sub-national differences can’t be resolved — a single national estimate (60+) is shown: GBD 2023 age-band rates weighted by the national 60+ age structure.');
+  }
   let html = `<h3 class="prev-method-h">${country}：${L('失智盛行率怎麼算？', 'how is prevalence estimated?')}</h3>`
-    + `<p class="prev-method-p">${L(m.mZh, m.mEn)}</p>`;
+    + `<p class="prev-method-p">${methodText}</p>`;
   if (meta && Array.isArray(meta.age_bands)) {
-    const lab = { '60_64': '60–64', '65_69': '65–69', '70_74': '70–74', '75_79': '75–79', '80_84': '80–84', '85p': '85+',
+    const lab = { '60_64': '60–64', '65_69': '65–69', '70_74': '70–74', '75_79': '75–79', '80p': '80+', '80_84': '80–84', '85p': '85+',
       '65-69': '65–69', '70-74': '70–74', '75-79': '75–79', '80-84': '80–84', '85-89': '85–89', '90+': '90+' };
     const rows = meta.age_bands.map(b => `<tr><td>${lab[b.band] || b.band}</td><td>${(+b.prevalence_pct).toFixed(1)}%</td></tr>`).join('');
     const nat = meta.national_prevalence_65plus_pct != null ? meta.national_prevalence_65plus_pct : meta.national_prevalence_60plus_pct;
