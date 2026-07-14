@@ -1260,13 +1260,17 @@ let NAMES = {};                    // current country: code -> {zh, en}
 const PM_BINS = [5, 10, 15, 25, 35];       // PM2.5 µg/m³
 const RAMP = ['#ffeda0', '#fed976', '#feb24c', '#fd8d3c', '#f03b20', '#bd0026'];
 // Prevalence metrics differ by source (all "modelled estimate"): TW = % among 65+ (national ≈ 7.8%);
-// CN/IN = published % among 50+/60+. Each country carries its own label + bins (not cross-comparable).
+// CN = % 50+ (Liu/Gao 2024); IN = % 60+ (Lee 2023); US/BR/MX = % 60+ (GBD 2023). Each country
+// carries its own label + bins — compare colours only within the same source, not across.
 const PREV_TW = { bins: [7, 7.5, 8, 8.5, 9], tipZh: '失智盛行率（65+）', tipEn: 'Dementia prevalence (65+)',
   unitZh: '%', unitEn: '%', legendZh: '失智盛行率 65+ %', legendEn: 'prevalence 65+ %', decimals: 1 };
 const PREV_CN = { bins: [3, 5, 7, 9, 11], tipZh: '失智盛行率（50+）', tipEn: 'Dementia prevalence (50+)',
   unitZh: '%', unitEn: '%', legendZh: '失智盛行率 50+ %', legendEn: 'prevalence 50+ %', decimals: 1 };
 const PREV_IN = { bins: [5, 6, 7, 8, 9], tipZh: '失智盛行率（60+）', tipEn: 'Dementia prevalence (60+)',
   unitZh: '%', unitEn: '%', legendZh: '失智盛行率 60+ %', legendEn: 'prevalence 60+ %', decimals: 1 };
+// GBD 2023 % among 60+ (US, Brazil, Mexico) — one source, so these three ARE comparable to each other.
+const PREV_60 = { bins: [4, 4.5, 5, 5.5, 6], tipZh: '失智盛行率（60+）', tipEn: 'Dementia prevalence (60+)',
+  unitZh: '%', unitEn: '%', legendZh: '失智盛行率 60+ %（GBD）', legendEn: 'prevalence 60+ % (GBD)', decimals: 1 };
 const MAP_CFG = {
   tw: { topo: '/data/geo/tw-districts.topo.json', topoObject: 'towns', codeProp: 'TOWNCODE',
         layers: ['prevalence', 'pm25'], fit: [[21.9, 119.3], [25.35, 122.05]], prevMetric: PREV_TW,
@@ -1280,12 +1284,17 @@ const MAP_CFG = {
   // so not cross-country comparable; units absent from each study stay unshaded.
   cn: { geojson: '/data/geo/cn-admin1.geojson', codeProp: 'code', layers: ['prevalence', 'pm25'],
         prevMetric: PREV_CN, prev: '/data/dementia/cn-modelled.json', pm: '/data/pm25/cn-admin1-pm25.json' },
-  us: { geojson: '/data/geo/us-admin1.geojson', codeProp: 'code', layers: ['pm25'],
-        pm: '/data/pm25/us-admin1-pm25.json' },
+  // US / Brazil / Mexico: admin-1 prevalence straight from the GBD 2023 export (% among 60+, PREV_60).
+  us: { geojson: '/data/geo/us-admin1.geojson', codeProp: 'code', layers: ['prevalence', 'pm25'],
+        prevMetric: PREV_60, prev: '/data/dementia/us-modelled.json', pm: '/data/pm25/us-admin1-pm25.json' },
+  br: { geojson: '/data/geo/br-admin1.geojson', codeProp: 'code', layers: ['prevalence', 'pm25'],
+        prevMetric: PREV_60, prev: '/data/dementia/br-modelled.json', pm: '/data/pm25/br-admin1-pm25.json' },
+  mx: { geojson: '/data/geo/mx-admin1.geojson', codeProp: 'code', layers: ['prevalence', 'pm25'],
+        prevMetric: PREV_60, prev: '/data/dementia/mx-modelled.json', pm: '/data/pm25/mx-admin1-pm25.json' },
   in: { geojson: '/data/geo/in-admin1.geojson', codeProp: 'code', layers: ['prevalence', 'pm25'],
         prevMetric: PREV_IN, prev: '/data/dementia/in-modelled.json', pm: '/data/pm25/in-admin1-pm25.json' },
   ...Object.fromEntries(['th', 'vn', 'id', 'ph', 'my', 'pk', 'bd', 'mm', 'gb', 'de', 'fr',
-    'it', 'es', 'pl', 'ca', 'br', 'mx', 'au', 'nz', 'tr', 'ir'].map(cc => [cc,
+    'it', 'es', 'pl', 'ca', 'au', 'nz', 'tr', 'ir'].map(cc => [cc,
     { geojson: `/data/geo/${cc}-admin1.geojson`, codeProp: 'code', layers: ['pm25'],
       pm: `/data/pm25/${cc}-admin1-pm25.json` }])),
 };

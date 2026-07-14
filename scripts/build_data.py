@@ -650,6 +650,72 @@ def _norm_name(s):
     return (s or "").strip().lower().replace(".", "").replace("&", "and").replace("-", " ")
 
 
+# ---------- GBD 2023 direct admin-1 prevalence (owner's login-export in _data_in/GBD/) ----------
+# The GBD Results tool is login-gated, so the owner downloads the CSV once (Alzheimer's & other
+# dementias, Prevalence, by location/age/sex) into scripts/_data_in/GBD/ (gitignored). For the
+# countries GBD covers sub-nationally that match our Natural Earth admin-1 names, we can read the
+# per-unit "% among 60+" directly — no population×rate modelling. Aliases bridge accent/long-name
+# differences (GBD "Piaui" vs boundary "Piauí", etc.).
+GBD_DIR = os.path.join(DATA_IN, "GBD")
+GBD_DIRECT = {
+    "us": {},
+    "br": {"Piauí": "Piaui"},
+    "mx": {"Veracruz": "Veracruz de Ignacio de la Llave", "Michoacán": "Michoacán de Ocampo"},
+}
+_GBD_PREV60 = None
+
+
+def load_gbd_prev60():
+    """{location_name: prevalence fraction among 60+} from GBD 2023 export (Prevalence, Percent,
+       age '60+ years'). Cached. Returns {} if no CSV present."""
+    global _GBD_PREV60
+    if _GBD_PREV60 is not None:
+        return _GBD_PREV60
+    import csv
+    import glob
+    out = {}
+    files = sorted(glob.glob(os.path.join(GBD_DIR, "*.csv")))
+    if files:
+        with open(files[0], newline="", encoding="utf-8-sig") as f:
+            for row in csv.DictReader(f):
+                if (row.get("measure_name") == "Prevalence" and row.get("metric_name") == "Percent"
+                        and row.get("age_name") == "60+ years"):
+                    try:
+                        out[row["location_name"]] = float(row["val"])
+                    except (TypeError, ValueError, KeyError):
+                        pass
+    _GBD_PREV60 = out
+    return out
+
+
+def build_gbd_direct(cc, name, units, aliases=None):
+    """Admin-1 dementia prevalence among 60+ (%) straight from the GBD 2023 export: match each
+       boundary name (or alias) to a GBD location -> dementia/{cc}-modelled.json. True if built."""
+    prev = load_gbd_prev60()
+    if not prev:
+        return False
+    aliases = aliases or {}
+    by_unit, unmatched = {}, []
+    for u in units:
+        nm = u.get("name")
+        loc = nm if nm in prev else aliases.get(nm) or aliases.get(u.get("code"))
+        if loc and loc in prev:
+            by_unit[u["code"]] = round(prev[loc] * 100, 2)
+        elif nm:
+            unmatched.append(nm)
+    if not by_unit:
+        return False
+    write_json(f"dementia/{cc}-modelled.json", {
+        "meta": {"metric": "modelled dementia prevalence among residents aged 60+ (%)",
+                 "age_group": "60+", "source": "GBD 2023 (IHME), Alzheimer's disease & other dementias",
+                 "note": "MODELLED estimate from GBD 2023; IHME Free-of-Charge Non-Commercial licence",
+                 "built": BUILD_DATE},
+        "byTown": by_unit})
+    log(f"  {name}: GBD-direct prevalence (60+) for {len(by_unit)} units"
+        + (f"  (UNMATCHED: {unmatched})" if unmatched else ""))
+    return True
+
+
 def build_direct_prevalence(cc, name, units, meta_extra=None):
     """Published per-admin prevalence (e.g. China Liu/Gao 2024 provinces, India Lee 2023
        states): the study already gives a final value per unit — no rates×pop modelling.
@@ -797,7 +863,8 @@ def main():
             # (direct), else rates×population; else pending (owner downloads — see the doc).
             prev_meta = {"cn": {"age_group": "50+", "source": "Liu/Gao 2024 (CHARLS 2018)"},
                          "in": {"age_group": "60+", "source": "Lee et al. 2023 (LASI-DAD)"}}.get(key)
-            if not build_direct_prevalence(key, cfg["name"], units, prev_meta) \
+            gbd_done = key in GBD_DIRECT and build_gbd_direct(key, cfg["name"], units, GBD_DIRECT[key])
+            if not gbd_done and not build_direct_prevalence(key, cfg["name"], units, prev_meta) \
                     and not build_admin_prevalence(key, cfg["name"]):
                 log(f"  {cfg['name']}: no _data_in/{key}-admin1-prevalence.csv or -pop.csv -> "
                     f"prevalence layer pending (see data-download-points.md)")
@@ -819,7 +886,10 @@ def main():
         "geo/tw-districts.topo.json": "taiwan-atlas / MOI #7441 boundaries (OGDL-Taiwan-1.0)",
         "dementia/tw-dementia-modelled.json": "modelled prevalence, NHRI 2020-23 x MOI pop",
         "dementia/cn-modelled.json": "China provincial dementia prevalence, Liu/Gao 2024 (CHARLS 2018) — modelled estimate",
-        "dementia/in-modelled.json": "India state dementia prevalence, Lee et al. 2023 (LASI-DAD) — modelled estimate"}
+        "dementia/in-modelled.json": "India state dementia prevalence, Lee et al. 2023 (LASI-DAD) — modelled estimate",
+        "dementia/us-modelled.json": "US state dementia prevalence 60+, GBD 2023 (IHME) — modelled estimate",
+        "dementia/br-modelled.json": "Brazil state dementia prevalence 60+, GBD 2023 (IHME) — modelled estimate",
+        "dementia/mx-modelled.json": "Mexico state dementia prevalence 60+, GBD 2023 (IHME) — modelled estimate"}
     for key, cfg in COUNTRY_MAPS.items():   # admin-1 PM2.5 (+ boundaries) per country
         assets[f"pm25/{key}-admin1-pm25.json"] = f"ACAG V6.GL.03 {cfg['name']} admin-1 PM2.5 (CC BY 4.0)"
         assets[f"geo/{key}-admin1.geojson"] = f"Natural Earth admin-1 ({cfg['name']}), public domain"
@@ -830,7 +900,8 @@ def main():
                         "其他國家界線: Natural Earth (public domain)",
                         "人口 © 內政部 (MOI)", "失智盛行率為模型估計值 (NHRI 2020-2023)",
                         "中國省級失智盛行率 © Liu/Gao et al. 2024, Lancet Reg Health – W Pac (CHARLS 2018) — 模型估計",
-                        "印度邦級失智盛行率 © Lee et al. 2023, Alzheimer's & Dementia (LASI-DAD) — 模型估計"]})
+                        "印度邦級失智盛行率 © Lee et al. 2023, Alzheimer's & Dementia (LASI-DAD) — 模型估計",
+                        "美國／巴西／墨西哥各州失智盛行率 © GBD 2023, IHME — 模型估計，非商業授權 (attribution)"]})
     log("== DONE ==")
 
 
