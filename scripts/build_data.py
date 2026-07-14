@@ -475,38 +475,79 @@ def fetch_population(yyymm="11312"):
 
 
 def modelled_prevalence(towns, granularity, pop):
-    """Town granularity (MOI #77132): each 鄉鎮市區 gets its OWN rate from its real
-       age structure — cases = Σ band_pop × NHRI band rate; rate/1,000 = cases/total×1000.
-       County fallback: crude county rate = share65 × RBAR × 1000, inherited by its towns."""
+    """Town granularity (MOI #77132): each 鄉鎮市區 gets its OWN prevalence among 65+ from its
+       real age structure — cases = Σ band_pop × NHRI band rate; prevalence% = cases / 65+ pop.
+       County fallback: uniform RBAR (no within-65+ structure), inherited by its towns."""
     if granularity == "town":
+        # Metric: dementia prevalence AMONG THE ELDERLY (65+) = modelled cases / 65+ population.
+        # NHRI_RATES are age-band rates for 65+, so this is the exact population-weighted mean of
+        # those rates for each town's real 65+ age structure — no extra assumption, and the
+        # national value ≈ Taiwan's officially reported ~8% of 65+. (A 60+/55+ denominator would
+        # additionally need a 60-64 / 55-59 dementia rate that the current inputs don't provide.)
         rows, by_town = [], {}
         for code, rec in pop.items():
-            total = rec.get("total", 0.0)
-            if not total:
-                continue
             pop65 = sum(rec[b] for b in NHRI_RATES)
+            if not pop65:
+                continue
             cases = sum(rec[b] * NHRI_RATES[b] for b in NHRI_RATES)
-            rate = round(cases / total * 1000, 1)
-            by_town[code] = rate
-            rows.append({"townCode": code, "pop_total": int(round(total)),
+            prev_pct = round(cases / pop65 * 100, 1)
+            by_town[code] = prev_pct
+            rows.append({"townCode": code, "pop_total": int(round(rec.get("total", 0.0))),
                          "pop_65plus": int(round(pop65)), "modelled_cases": int(round(cases)),
-                         "rate_per_1000": rate})
+                         "prevalence_65plus_pct": prev_pct})
         return rows, by_town
     county_rate, county_rows = {}, []
     for name, (total, share65) in pop.items():
         pop65 = total * share65
-        cases = int(round(pop65 * RBAR))
-        rate_per_1000 = round(share65 * RBAR * 1000, 1)
-        county_rate[name] = rate_per_1000
+        cases = pop65 * RBAR
+        prev_pct = round(RBAR * 100, 1)  # county fallback lacks within-65+ structure -> uniform RBAR
+        county_rate[name] = prev_pct
         county_rows.append({"countyName": name, "pop_total": total,
                             "pop_65plus": int(round(pop65)),
-                            "modelled_cases": cases,
-                            "rate_per_1000": rate_per_1000})
+                            "modelled_cases": int(round(cases)),
+                            "prevalence_65plus_pct": prev_pct})
     by_town = {}
     for t in towns:
         p = t["props"]
         by_town[p["TOWNCODE"]] = county_rate.get(p["COUNTYNAME"])
     return county_rows, by_town
+
+
+def write_tw_modelled(rows, by_town, granularity):
+    """Write dementia/tw-dementia-modelled.json — metric = prevalence among residents aged 65+ (%),
+       plus the national overall and the NHRI age-band rate table (drives the on-page method table).
+       Shared by main() and offline regeneration so the committed asset matches a full build."""
+    nat_cases = sum(r["modelled_cases"] for r in rows)
+    nat_pop65 = sum(r["pop_65plus"] for r in rows)
+    nat_pct = round(nat_cases / nat_pop65 * 100, 1) if nat_pop65 else None
+    age_bands = [{"band": b, "prevalence_pct": round(NHRI_RATES[b] * 100, 2)} for b in NHRI_RATES]
+    if granularity == "town":
+        meta = {"title": "Modelled dementia prevalence among residents aged 65+ (ESTIMATE)",
+                "granularity": "town",
+                "method": ("MOI #77132 single-year-age population per 鄉鎮市區 × NHRI 2020-2023 "
+                           "age-band prevalence; each town = Σ(age-band pop × band rate) ÷ its 65+ "
+                           "population = prevalence among residents aged 65+"),
+                "disclaimer": ("MODELLED TOWN-LEVEL ESTIMATE, not measured. Taiwan publishes no "
+                               "sub-national dementia prevalence; national age-band rates are "
+                               "applied to each 鄉鎮市區's real single-year age structure."),
+                "population_source": "MOI #77132 鄉鎮市區單一年齡人口 (內政部戶政司)"}
+        rows_key = "towns"
+    else:
+        meta = {"title": "Modelled dementia prevalence among residents aged 65+ (ESTIMATE)",
+                "granularity": "county",
+                "method": ("national NHRI 2020-2023 age-band rates × county 65+ population; the "
+                           "county fallback lacks within-65+ structure so every area ≈ the national rate"),
+                "disclaimer": ("MODELLED COUNTY-LEVEL ESTIMATE, not measured. Taiwan publishes no "
+                               "sub-national dementia prevalence. Re-run build_data.py with MOI "
+                               "#77132 access for the authoritative town-level version."),
+                "population_source": "MOI 2023 county snapshot (approx.)"}
+        rows_key = "counties"
+    meta.update({"rates_source": ("NHRI community dementia survey 2020-2023; age-band rates per "
+                                  "Sun Y, et al. PLoS ONE 2014 (doi:10.1371/journal.pone.0100303)"),
+                 "metric": "modelled dementia prevalence among residents aged 65+ (%)",
+                 "age_group": "65+", "national_prevalence_65plus_pct": nat_pct, "age_bands": age_bands,
+                 "license": "OGDL-Taiwan-1.0", "built": BUILD_DATE})
+    write_json("dementia/tw-dementia-modelled.json", {"meta": meta, rows_key: rows, "byTown": by_town})
 
 
 # ---------- generic modelled prevalence from owner-downloaded CSVs (_data_in) ----------
@@ -607,6 +648,72 @@ def build_admin_prevalence(cc, name):
 
 def _norm_name(s):
     return (s or "").strip().lower().replace(".", "").replace("&", "and").replace("-", " ")
+
+
+# ---------- GBD 2023 direct admin-1 prevalence (owner's login-export in _data_in/GBD/) ----------
+# The GBD Results tool is login-gated, so the owner downloads the CSV once (Alzheimer's & other
+# dementias, Prevalence, by location/age/sex) into scripts/_data_in/GBD/ (gitignored). For the
+# countries GBD covers sub-nationally that match our Natural Earth admin-1 names, we can read the
+# per-unit "% among 60+" directly — no population×rate modelling. Aliases bridge accent/long-name
+# differences (GBD "Piaui" vs boundary "Piauí", etc.).
+GBD_DIR = os.path.join(DATA_IN, "GBD")
+GBD_DIRECT = {
+    "us": {},
+    "br": {"Piauí": "Piaui"},
+    "mx": {"Veracruz": "Veracruz de Ignacio de la Llave", "Michoacán": "Michoacán de Ocampo"},
+}
+_GBD_PREV60 = None
+
+
+def load_gbd_prev60():
+    """{location_name: prevalence fraction among 60+} from GBD 2023 export (Prevalence, Percent,
+       age '60+ years'). Cached. Returns {} if no CSV present."""
+    global _GBD_PREV60
+    if _GBD_PREV60 is not None:
+        return _GBD_PREV60
+    import csv
+    import glob
+    out = {}
+    files = sorted(glob.glob(os.path.join(GBD_DIR, "*.csv")))
+    if files:
+        with open(files[0], newline="", encoding="utf-8-sig") as f:
+            for row in csv.DictReader(f):
+                if (row.get("measure_name") == "Prevalence" and row.get("metric_name") == "Percent"
+                        and row.get("age_name") == "60+ years"):
+                    try:
+                        out[row["location_name"]] = float(row["val"])
+                    except (TypeError, ValueError, KeyError):
+                        pass
+    _GBD_PREV60 = out
+    return out
+
+
+def build_gbd_direct(cc, name, units, aliases=None):
+    """Admin-1 dementia prevalence among 60+ (%) straight from the GBD 2023 export: match each
+       boundary name (or alias) to a GBD location -> dementia/{cc}-modelled.json. True if built."""
+    prev = load_gbd_prev60()
+    if not prev:
+        return False
+    aliases = aliases or {}
+    by_unit, unmatched = {}, []
+    for u in units:
+        nm = u.get("name")
+        loc = nm if nm in prev else aliases.get(nm) or aliases.get(u.get("code"))
+        if loc and loc in prev:
+            by_unit[u["code"]] = round(prev[loc] * 100, 2)
+        elif nm:
+            unmatched.append(nm)
+    if not by_unit:
+        return False
+    write_json(f"dementia/{cc}-modelled.json", {
+        "meta": {"metric": "modelled dementia prevalence among residents aged 60+ (%)",
+                 "age_group": "60+", "source": "GBD 2023 (IHME), Alzheimer's disease & other dementias",
+                 "note": "MODELLED estimate from GBD 2023; IHME Free-of-Charge Non-Commercial licence",
+                 "built": BUILD_DATE},
+        "byTown": by_unit})
+    log(f"  {name}: GBD-direct prevalence (60+) for {len(by_unit)} units"
+        + (f"  (UNMATCHED: {unmatched})" if unmatched else ""))
+    return True
 
 
 def build_direct_prevalence(cc, name, units, meta_extra=None):
@@ -719,28 +826,7 @@ def main():
     log("Modelled prevalence …")
     granularity, pop = fetch_population()
     rows, by_town = modelled_prevalence(towns, granularity, pop)
-    if granularity == "town":
-        meta = {"title": "Modelled dementia prevalence (ESTIMATE)", "granularity": "town",
-                "method": ("MOI #77132 single-year-age population per 鄉鎮市區 × NHRI 2020-2023 "
-                           "age-band prevalence — each town's own within-65+ age structure"),
-                "disclaimer": ("MODELLED TOWN-LEVEL ESTIMATE, not measured. Taiwan publishes no "
-                               "sub-national dementia prevalence; national age-band rates are "
-                               "applied to each 鄉鎮市區's real single-year age structure."),
-                "population_source": "MOI #77132 鄉鎮市區單一年齡人口 (內政部戶政司)"}
-        rows_key = "towns"
-    else:
-        meta = {"title": "Modelled dementia prevalence (ESTIMATE)", "granularity": "county",
-                "method": ("national NHRI 2020-2023 age-band rates x county 65+ population "
-                           "(national within-65+ age structure); towns inherit county rate"),
-                "disclaimer": ("MODELLED COUNTY-LEVEL ESTIMATE, not measured. Taiwan publishes no "
-                               "sub-national dementia prevalence. Re-run build_data.py with MOI "
-                               "#77132 access for the authoritative town-level version."),
-                "population_source": "MOI 2023 county snapshot (approx.)"}
-        rows_key = "counties"
-    meta.update({"rates_source": "NHRI community dementia survey 2020-2023",
-                 "metric": "modelled dementia cases per 1,000 residents (all ages)",
-                 "license": "OGDL-Taiwan-1.0", "built": BUILD_DATE})
-    write_json("dementia/tw-dementia-modelled.json", {"meta": meta, rows_key: rows, "byTown": by_town})
+    write_tw_modelled(rows, by_town, granularity)
 
     log("World country PM2.5 (residence dropdown) …")
     world_pm = build_world_country_pm25()
@@ -777,7 +863,8 @@ def main():
             # (direct), else rates×population; else pending (owner downloads — see the doc).
             prev_meta = {"cn": {"age_group": "50+", "source": "Liu/Gao 2024 (CHARLS 2018)"},
                          "in": {"age_group": "60+", "source": "Lee et al. 2023 (LASI-DAD)"}}.get(key)
-            if not build_direct_prevalence(key, cfg["name"], units, prev_meta) \
+            gbd_done = key in GBD_DIRECT and build_gbd_direct(key, cfg["name"], units, GBD_DIRECT[key])
+            if not gbd_done and not build_direct_prevalence(key, cfg["name"], units, prev_meta) \
                     and not build_admin_prevalence(key, cfg["name"]):
                 log(f"  {cfg['name']}: no _data_in/{key}-admin1-prevalence.csv or -pop.csv -> "
                     f"prevalence layer pending (see data-download-points.md)")
@@ -799,7 +886,10 @@ def main():
         "geo/tw-districts.topo.json": "taiwan-atlas / MOI #7441 boundaries (OGDL-Taiwan-1.0)",
         "dementia/tw-dementia-modelled.json": "modelled prevalence, NHRI 2020-23 x MOI pop",
         "dementia/cn-modelled.json": "China provincial dementia prevalence, Liu/Gao 2024 (CHARLS 2018) — modelled estimate",
-        "dementia/in-modelled.json": "India state dementia prevalence, Lee et al. 2023 (LASI-DAD) — modelled estimate"}
+        "dementia/in-modelled.json": "India state dementia prevalence, Lee et al. 2023 (LASI-DAD) — modelled estimate",
+        "dementia/us-modelled.json": "US state dementia prevalence 60+, GBD 2023 (IHME) — modelled estimate",
+        "dementia/br-modelled.json": "Brazil state dementia prevalence 60+, GBD 2023 (IHME) — modelled estimate",
+        "dementia/mx-modelled.json": "Mexico state dementia prevalence 60+, GBD 2023 (IHME) — modelled estimate"}
     for key, cfg in COUNTRY_MAPS.items():   # admin-1 PM2.5 (+ boundaries) per country
         assets[f"pm25/{key}-admin1-pm25.json"] = f"ACAG V6.GL.03 {cfg['name']} admin-1 PM2.5 (CC BY 4.0)"
         assets[f"geo/{key}-admin1.geojson"] = f"Natural Earth admin-1 ({cfg['name']}), public domain"
@@ -810,7 +900,8 @@ def main():
                         "其他國家界線: Natural Earth (public domain)",
                         "人口 © 內政部 (MOI)", "失智盛行率為模型估計值 (NHRI 2020-2023)",
                         "中國省級失智盛行率 © Liu/Gao et al. 2024, Lancet Reg Health – W Pac (CHARLS 2018) — 模型估計",
-                        "印度邦級失智盛行率 © Lee et al. 2023, Alzheimer's & Dementia (LASI-DAD) — 模型估計"]})
+                        "印度邦級失智盛行率 © Lee et al. 2023, Alzheimer's & Dementia (LASI-DAD) — 模型估計",
+                        "美國／巴西／墨西哥各州失智盛行率 © GBD 2023, IHME — 模型估計，非商業授權 (attribution)"]})
     log("== DONE ==")
 
 
