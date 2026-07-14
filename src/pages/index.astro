@@ -382,6 +382,7 @@ import T from '../../components/T.astro';
     <section class="calc-section calc-refs">
       <p class="section-heading"><T zh="資料來源與參考文獻" en="Sources & references" /></p>
       <p class="calc-section-desc"><T zh="本工具整合以下公開文獻、政府與國際組織資料庫。所有失智盛行率與腦齡數字皆為教育性模型估計，非醫療診斷。" en="This tool builds on the public literature, government, and international datasets below. All dementia-prevalence and brain-age figures are educational modelled estimates, not medical diagnoses." /></p>
+      <p class="calc-section-desc" style="font-size:0.78rem"><T zh="※ 資料庫類來源（GBD、內政部戶政司 #77132、日本 e-Stat、韓國 KOSIS、ACAG）均於 2026-07-14 存取；各條標註所用資料年份。" en="※ Database sources (GBD, MOI #77132, Japan e-Stat, Korea KOSIS, ACAG) were accessed 2026-07-14; each entry notes the data year used." /></p>
 
       <p class="ref-cat"><T zh="① 失智風險與腦齡模型" en="① Dementia risk & brain-age model" /></p>
       <ul class="ref-list">
@@ -393,8 +394,8 @@ import T from '../../components/T.astro';
 
       <p class="ref-cat"><T zh="② 失智盛行率調查與資料庫" en="② Dementia-prevalence surveys & databases" /></p>
       <ul class="ref-list">
-        <li><T zh="台灣：國家衛生研究院（NHRI）全國社區失智症流行病學調查，2020–2023（年齡別盛行率）；年齡別盛行率參考 Sun Y, et al. PLoS ONE 2014。" en="Taiwan: National Health Research Institutes (NHRI) nationwide community dementia survey, 2020–2023 (age-band prevalence); age-specific rates per Sun Y, et al. PLoS ONE 2014." /> <a href="https://projects.nhri.edu.tw/spdc/" target="_blank" rel="noopener">NHRI</a> · <a href="https://doi.org/10.1371/journal.pone.0100303" target="_blank" rel="noopener">doi:10.1371/journal.pone.0100303</a></li>
-        <li>IHME Global Burden of Disease (GBD 2021) — Alzheimer's disease &amp; other dementias, prevalence. <a href="https://vizhub.healthdata.org/gbd-results/" target="_blank" rel="noopener">vizhub.healthdata.org/gbd-results</a></li>
+        <li><T zh="台灣：國家衛生研究院（NHRI）112年(2023)全國社區失智症流行病學調查（年齡別盛行率）；年齡別盛行率方法參 Sun Y, et al. PLoS ONE 2014。" en="Taiwan: NHRI 2023 nationwide community dementia survey (age-band prevalence); method per Sun Y, et al. PLoS ONE 2014." /> <a href="https://projects.nhri.edu.tw/spdc/" target="_blank" rel="noopener">NHRI</a> · <a href="https://doi.org/10.1371/journal.pone.0100303" target="_blank" rel="noopener">doi:10.1371/journal.pone.0100303</a></li>
+        <li><T zh="美／巴／墨（州級）與日／韓（全國費率）失智盛行率之骨幹：" en="Rate backbone for US/BR/MX (sub-national) and JP/KR (national rates): " />IHME Global Burden of Disease <strong>GBD 2023</strong> — Alzheimer's disease &amp; other dementias, prevalence（<T zh="資料年份 2023" en="data year 2023" />）. <a href="https://vizhub.healthdata.org/gbd-results/" target="_blank" rel="noopener">vizhub.healthdata.org/gbd-results</a></li>
         <li><T zh="中國：" en="China: " />Jia L, et al. Prevalence of dementia in China (CCAS). <em>Lancet Public Health</em> 2020. <a href="https://doi.org/10.1016/S2468-2667(20)30185-7" target="_blank" rel="noopener">doi:10.1016/S2468-2667(20)30185-7</a> · Liu, Gao, et al. Geographical variation in dementia prevalence across China (per-province). <em>Lancet Reg Health – West Pac</em> 2024. <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11225804/" target="_blank" rel="noopener">PMC11225804</a></li>
         <li><T zh="印度：" en="India: " />Lee J, et al. Prevalence of dementia in India: national and state estimates (LASI-DAD). <em>Alzheimer's &amp; Dementia</em> 2023. <a href="https://doi.org/10.1002/alz.12928" target="_blank" rel="noopener">doi:10.1002/alz.12928</a></li>
         <li><T zh="日本：" en="Japan: " />Ninomiya T, et al. <T zh="久山町研究（37 年趨勢，年齡別盛行率）" en="Hisayama Study (37-year trends, age-specific prevalence)" />. <em>Alzheimer's Research &amp; Therapy</em> 2025. <a href="https://doi.org/10.1186/s13195-025-01909-1" target="_blank" rel="noopener">doi:10.1186/s13195-025-01909-1</a> · <T zh="厚生労働省 全國認知症・MCI 高齡者推計（Ninomiya 研究班，2024）" en="MHLW nationwide dementia &amp; MCI estimates (Ninomiya group, 2024)" /> <a href="https://www.mhlw.go.jp/" target="_blank" rel="noopener">mhlw.go.jp</a></li>
@@ -415,8 +416,8 @@ import T from '../../components/T.astro';
 
       <p class="ref-cat"><T zh="⑤ 人口與國際報告" en="⑤ Population & international reports" /></p>
       <ul class="ref-list">
-        <li><T zh="台灣人口：內政部戶政司單一年齡人口統計。" en="Taiwan population: Ministry of the Interior (MOI) single-year-age population statistics." /> <a href="https://data.gov.tw/dataset/77132" target="_blank" rel="noopener">data.gov.tw/77132</a></li>
-        <li><T zh="日本人口：總務省統計局 e-Stat 都道府県・年齡別人口。韓國人口：統計廳 KOSIS 시도・연령별 인구。" en="Japan population: Statistics Bureau e-Stat (prefecture × age). Korea population: Statistics Korea KOSIS (Si-do × age)." /> <a href="https://www.e-stat.go.jp/en" target="_blank" rel="noopener">e-stat.go.jp</a> · <a href="https://kosis.kr/eng" target="_blank" rel="noopener">kosis.kr</a></li>
+        <li><T zh="台灣人口：內政部戶政司 #77132 鄉鎮市區單一年齡人口（資料月份 2026-06）。" en="Taiwan population: MOI #77132 township single-year-age population (data 2026-06)." /> <a href="https://data.gov.tw/dataset/77132" target="_blank" rel="noopener">data.gov.tw/77132</a></li>
+        <li><T zh="日本人口：總務省統計局 e-Stat 都道府県・年齡別人口（資料 2024）。韓國人口：統計廳 KOSIS 시도・연령별 인구（資料 2026）。" en="Japan population: Statistics Bureau e-Stat, prefecture × age (data 2024). Korea population: Statistics Korea KOSIS, Si-do × age (data 2026)." /> <a href="https://www.e-stat.go.jp/en" target="_blank" rel="noopener">e-stat.go.jp</a> · <a href="https://kosis.kr/eng" target="_blank" rel="noopener">kosis.kr</a></li>
         <li><T zh="跨國盛行率模型的人口分母：" en="Population denominators for cross-country prevalence modelling: " />WorldPop (<a href="https://www.worldpop.org" target="_blank" rel="noopener">worldpop.org</a>, CC BY 4.0) · UN World Population Prospects (<a href="https://population.un.org/wpp/" target="_blank" rel="noopener">population.un.org/wpp</a>).</li>
         <li>WHO. <T zh="失智症全球公共衛生應對現況報告，2021（全球失智人口 55M → 78M（2030）→ 139M（2050））。" en="Global status report on the public health response to dementia, 2021 (55M now → 78M by 2030 → 139M by 2050)." /> <a href="https://www.who.int/publications/i/item/9789240033245" target="_blank" rel="noopener">who.int</a></li>
       </ul>
@@ -1380,24 +1381,58 @@ async function loadCountryData(cc) {
 }
 // When Taiwan is selected, show a method table below the map: national age-band rates + the
 // weighted 65+ overall, so readers see exactly how each area's prevalence is computed.
+// Per-country "how is this calculated?" text + sources (with data year + our access date). The
+// age-band rate table + national overall come from the country's modelled.json meta where present
+// (TW/JP/KR = rate×population; CN/IN/US/BR/MX = published/GBD per-admin values, no age table).
+const DATA_ACCESSED = '2026-07-14';
+const PREV_METHOD = {
+  tw: { mZh: '各鄉鎮市區「65 歲以上人口」的失智盛行率：用內政部 #77132 各區單一年齡人口，乘上下列 NHRI 全國年齡別盛行率、加總，再除以該區 65+ 人口。差異來自各區的高齡年齡結構。',
+        mEn: 'Prevalence among residents aged 65+ in each township: each area’s single-year-age population (MOI #77132) × the national NHRI age-band rates below, summed, ÷ its 65+ population.',
+        sZh: '失智率 NHRI 112年(2023) 全國社區失智症流行病學調查（方法參 Sun 2014 <a href="https://doi.org/10.1371/journal.pone.0100303" target="_blank" rel="noopener">doi</a>）；人口 內政部戶政司 #77132（2026-06）',
+        sEn: 'rates: NHRI 2023 nationwide community survey (method per Sun 2014, <a href="https://doi.org/10.1371/journal.pone.0100303" target="_blank" rel="noopener">doi</a>); population: MOI #77132 (2026-06)' },
+  cn: { mZh: '各省失智盛行率（50 歲以上）直接採用 Liu/Gao 2024 已發表的每省模型估計值（CHARLS 2018 全國調查）。西藏／寧夏／海南不在研究內，維持灰色。',
+        mEn: 'Provincial prevalence (50+) taken directly from Liu/Gao 2024 published per-province estimates (CHARLS 2018). Tibet/Ningxia/Hainan are outside the study.',
+        sZh: 'Liu/Gao et al. 2024《Lancet Reg Health – W Pac》<a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11225804/" target="_blank" rel="noopener">PMC11225804</a>（資料 2018）',
+        sEn: 'Liu/Gao et al. 2024, Lancet Reg Health – W Pac <a href="https://pmc.ncbi.nlm.nih.gov/articles/PMC11225804/" target="_blank" rel="noopener">PMC11225804</a> (data 2018)' },
+  in: { mZh: '各邦失智盛行率（60 歲以上）直接採用 Lee 2023 已發表的每邦估計值（LASI-DAD）。未列出的邦維持灰色。',
+        mEn: 'State prevalence (60+) taken directly from Lee 2023 published per-state estimates (LASI-DAD). States not listed stay grey.',
+        sZh: 'Lee et al. 2023《Alzheimer’s & Dementia》<a href="https://doi.org/10.1002/alz.12928" target="_blank" rel="noopener">doi:10.1002/alz.12928</a>（LASI-DAD, 2017–19）',
+        sEn: 'Lee et al. 2023, Alzheimer’s & Dementia <a href="https://doi.org/10.1002/alz.12928" target="_blank" rel="noopener">doi:10.1002/alz.12928</a> (LASI-DAD, 2017–19)' },
+  us: { mZh: '各州失智盛行率（60 歲以上）直接採用 GBD 2023 (IHME) 的州級估計值。',
+        mEn: 'State prevalence (60+) taken directly from GBD 2023 (IHME) sub-national estimates.',
+        sZh: 'GBD 2023 (IHME) 州級盛行率 <a href="https://vizhub.healthdata.org/gbd-results/" target="_blank" rel="noopener">GBD Results</a>（資料 2023）',
+        sEn: 'GBD 2023 (IHME) state-level prevalence <a href="https://vizhub.healthdata.org/gbd-results/" target="_blank" rel="noopener">GBD Results</a> (data 2023)' },
+  jp: { mZh: '各都道府県失智盛行率（60 歲以上）：用 e-Stat 各縣年齡別人口，乘上下列 GBD 2023 全國年齡別率、加總，再除以該區 60+ 人口。',
+        mEn: 'Prefecture prevalence (60+): e-Stat age-structured population × the national GBD 2023 age-band rates below, summed, ÷ its 60+ population.',
+        sZh: '率 GBD 2023 (IHME)；人口 總務省統計局 e-Stat 都道府県別（資料 2024）',
+        sEn: 'rates: GBD 2023 (IHME); population: Statistics Bureau e-Stat by prefecture (data 2024)' },
+  kr: { mZh: '各市道失智盛行率（60 歲以上）：用 KOSIS 各道年齡別人口，乘上下列 GBD 2023 全國年齡別率、加總，再除以該區 60+ 人口。',
+        mEn: 'Province prevalence (60+): KOSIS age-structured population × the national GBD 2023 age-band rates below, summed, ÷ its 60+ population.',
+        sZh: '率 GBD 2023 (IHME)；人口 統計廳 KOSIS 시도별（資料 2026）',
+        sEn: 'rates: GBD 2023 (IHME); population: Statistics Korea KOSIS by province (data 2026)' },
+};
+PREV_METHOD.br = PREV_METHOD.us; PREV_METHOD.mx = PREV_METHOD.us;
 function renderPrevTable(cc, meta) {
   const box = $('prev-method');
   if (!box) return;
-  if (cc !== 'tw' || !meta || !Array.isArray(meta.age_bands)) { box.style.display = 'none'; box.innerHTML = ''; return; }
-  const lab = { '65-69': '65–69', '70-74': '70–74', '75-79': '75–79', '80-84': '80–84', '85-89': '85–89', '90+': '90+' };
-  const bandRows = meta.age_bands.map(b => `<tr><td>${lab[b.band] || b.band}</td><td>${(+b.prevalence_pct).toFixed(1)}%</td></tr>`).join('');
-  const nat = meta.national_prevalence_65plus_pct;
+  const m = PREV_METHOD[cc];
+  if (!m) { box.style.display = 'none'; box.innerHTML = ''; return; }
+  const opt = document.querySelector(`#map-country option[value="${cc}"]`);
+  const country = opt ? L(opt.dataset.zh, opt.dataset.en) : cc.toUpperCase();
+  let html = `<h3 class="prev-method-h">${country}：${L('失智盛行率怎麼算？', 'how is prevalence estimated?')}</h3>`
+    + `<p class="prev-method-p">${L(m.mZh, m.mEn)}</p>`;
+  if (meta && Array.isArray(meta.age_bands)) {
+    const lab = { '60_64': '60–64', '65_69': '65–69', '70_74': '70–74', '75_79': '75–79', '80_84': '80–84', '85p': '85+',
+      '65-69': '65–69', '70-74': '70–74', '75-79': '75–79', '80-84': '80–84', '85-89': '85–89', '90+': '90+' };
+    const rows = meta.age_bands.map(b => `<tr><td>${lab[b.band] || b.band}</td><td>${(+b.prevalence_pct).toFixed(1)}%</td></tr>`).join('');
+    const nat = meta.national_prevalence_65plus_pct != null ? meta.national_prevalence_65plus_pct : meta.national_prevalence_60plus_pct;
+    const natLabel = meta.age_group === '65+' ? L('全國 65+ 整體（加權）', 'Overall 65+ (national)') : L('全國 60+ 整體（加權）', 'Overall 60+ (national)');
+    html += `<table class="prev-method-table"><thead><tr><th>${L('年齡層', 'Age group')}</th><th>${L('年齡別失智盛行率', 'Age-band prevalence')}</th></tr></thead><tbody>`
+      + rows + `<tr class="prev-method-total"><td>${natLabel}</td><td>${nat != null ? (+nat).toFixed(1) + '%' : '—'}</td></tr></tbody></table>`;
+  }
+  html += `<p class="prev-method-src">${L('資料來源：', 'Sources: ')}${L(m.sZh, m.sEn)}｜${L('存取日', 'accessed')} ${DATA_ACCESSED}｜${L('模型估計，非實測', 'modelled estimate, not measured')}</p>`;
   box.style.display = '';
-  box.innerHTML =
-    `<h3 class="prev-method-h">${L('台灣失智盛行率怎麼算？', "How is Taiwan's dementia prevalence estimated?")}</h3>`
-    + `<p class="prev-method-p">${L(
-        '地圖顯示各鄉鎮市區「65 歲以上人口」的失智盛行率。做法：用內政部 #77132 各區單一年齡人口，乘上下列全國年齡別盛行率、加總，再除以該區 65 歲以上人口。差異來自各區的高齡年齡結構。',
-        "The map shows dementia prevalence among residents aged 65+ in each township. Method: each area's single-year-age population (MOI #77132) × the national age-band rates below, summed, ÷ its 65+ population — so differences reflect each area's elderly age structure.")}</p>`
-    + `<table class="prev-method-table"><thead><tr><th>${L('年齡層', 'Age group')}</th><th>${L('年齡別失智盛行率', 'Age-band prevalence')}</th></tr></thead><tbody>`
-    + bandRows
-    + `<tr class="prev-method-total"><td>${L('全國 65+ 整體（加權平均）', 'Overall 65+ (national, weighted)')}</td><td>${nat != null ? (+nat).toFixed(1) + '%' : '—'}</td></tr>`
-    + `</tbody></table>`
-    + `<p class="prev-method-src">${L('資料來源：', 'Sources: ')}${L('失智率', 'rates')} NHRI 2020–2023 · Sun Y, et al. <em>PLoS ONE</em> 2014 <a href="https://doi.org/10.1371/journal.pone.0100303" target="_blank" rel="noopener">doi:10.1371/journal.pone.0100303</a>｜${L('人口', 'population')} MOI #77132｜${L('模型估計，非實測', 'modelled estimate, not measured')}</p>`;
+  box.innerHTML = html;
 }
 async function drawCountry(cc) {
   const d = await loadCountryData(cc);
