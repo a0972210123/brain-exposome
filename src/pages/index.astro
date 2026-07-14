@@ -416,6 +416,7 @@ import T from '../../components/T.astro';
       <p class="ref-cat"><T zh="⑤ 人口與國際報告" en="⑤ Population & international reports" /></p>
       <ul class="ref-list">
         <li><T zh="台灣人口：內政部戶政司單一年齡人口統計。" en="Taiwan population: Ministry of the Interior (MOI) single-year-age population statistics." /> <a href="https://data.gov.tw/dataset/77132" target="_blank" rel="noopener">data.gov.tw/77132</a></li>
+        <li><T zh="日本人口：總務省統計局 e-Stat 都道府県・年齡別人口。韓國人口：統計廳 KOSIS 시도・연령별 인구。" en="Japan population: Statistics Bureau e-Stat (prefecture × age). Korea population: Statistics Korea KOSIS (Si-do × age)." /> <a href="https://www.e-stat.go.jp/en" target="_blank" rel="noopener">e-stat.go.jp</a> · <a href="https://kosis.kr/eng" target="_blank" rel="noopener">kosis.kr</a></li>
         <li><T zh="跨國盛行率模型的人口分母：" en="Population denominators for cross-country prevalence modelling: " />WorldPop (<a href="https://www.worldpop.org" target="_blank" rel="noopener">worldpop.org</a>, CC BY 4.0) · UN World Population Prospects (<a href="https://population.un.org/wpp/" target="_blank" rel="noopener">population.un.org/wpp</a>).</li>
         <li>WHO. <T zh="失智症全球公共衛生應對現況報告，2021（全球失智人口 55M → 78M（2030）→ 139M（2050））。" en="Global status report on the public health response to dementia, 2021 (55M now → 78M by 2030 → 139M by 2050)." /> <a href="https://www.who.int/publications/i/item/9789240033245" target="_blank" rel="noopener">who.int</a></li>
       </ul>
@@ -1268,17 +1269,18 @@ const PREV_CN = { bins: [3, 5, 7, 9, 11], tipZh: '失智盛行率（50+）', tip
   unitZh: '%', unitEn: '%', legendZh: '失智盛行率 50+ %', legendEn: 'prevalence 50+ %', decimals: 1 };
 const PREV_IN = { bins: [5, 6, 7, 8, 9], tipZh: '失智盛行率（60+）', tipEn: 'Dementia prevalence (60+)',
   unitZh: '%', unitEn: '%', legendZh: '失智盛行率 60+ %', legendEn: 'prevalence 60+ %', decimals: 1 };
-// GBD 2023 % among 60+ (US, Brazil, Mexico) — one source, so these three ARE comparable to each other.
-const PREV_60 = { bins: [4, 4.5, 5, 5.5, 6], tipZh: '失智盛行率（60+）', tipEn: 'Dementia prevalence (60+)',
+// GBD 2023 % among 60+: US/BR/MX (GBD sub-national) + JP/KR (GBD national rates × e-Stat/KOSIS
+// pop-by-age). One harmonised source → these ARE comparable to each other. Scale spans ~3–8%.
+const PREV_60 = { bins: [4, 5, 6, 7, 8], tipZh: '失智盛行率（60+）', tipEn: 'Dementia prevalence (60+)',
   unitZh: '%', unitEn: '%', legendZh: '失智盛行率 60+ %（GBD）', legendEn: 'prevalence 60+ % (GBD)', decimals: 1 };
 const MAP_CFG = {
   tw: { topo: '/data/geo/tw-districts.topo.json', topoObject: 'towns', codeProp: 'TOWNCODE',
         layers: ['prevalence', 'pm25'], fit: [[21.9, 119.3], [25.35, 122.05]], prevMetric: PREV_TW,
         prev: '/data/dementia/tw-dementia-modelled.json', pm: '/data/pm25/tw-district-pm25.json' },
-  jp: { geojson: '/data/geo/jp-admin1.geojson', codeProp: 'code', layers: ['pm25'],
-        pm: '/data/pm25/jp-admin1-pm25.json' },
-  kr: { geojson: '/data/geo/kr-admin1.geojson', codeProp: 'code', layers: ['pm25'],
-        pm: '/data/pm25/kr-admin1-pm25.json' },
+  jp: { geojson: '/data/geo/jp-admin1.geojson', codeProp: 'code', layers: ['prevalence', 'pm25'],
+        prevMetric: PREV_60, prev: '/data/dementia/jp-modelled.json', pm: '/data/pm25/jp-admin1-pm25.json' },
+  kr: { geojson: '/data/geo/kr-admin1.geojson', codeProp: 'code', layers: ['prevalence', 'pm25'],
+        prevMetric: PREV_60, prev: '/data/dementia/kr-modelled.json', pm: '/data/pm25/kr-admin1-pm25.json' },
   // CN/IN carry published per-admin prevalence (China: Liu/Gao 2024, % among 50+; India:
   // Lee 2023, % among 60+) via PREV_CN/PREV_IN — a different denominator from TW's cases/1,000,
   // so not cross-country comparable; units absent from each study stay unshaded.

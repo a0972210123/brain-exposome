@@ -716,6 +716,144 @@ def build_gbd_direct(cc, name, units, aliases=None):
     return True
 
 
+# ---------- Japan / Korea admin-1 prevalence: national e-Stat/KOSIS pop-by-age × GBD rates ----------
+# GBD has no sub-national data for JP/KR, so we model each prefecture/province's % among 60+ from its
+# OWN age structure: prevalence = Σ(age-band pop × GBD national age-band rate) / 60+ population.
+POP60_BANDS = ["60_64", "65_69", "70_74", "75_79", "80_84", "85p"]
+GBD_AGE_NAME = {"60_64": "60-64 years", "65_69": "65-69 years", "70_74": "70-74 years",
+                "75_79": "75-79 years", "80_84": "80-84 years", "85p": "85+ years"}
+
+
+def load_gbd_rates(country):
+    """{band: fraction} GBD 2023 dementia Prevalence(Percent) for `country`, bands 60-64..85+."""
+    import csv
+    import glob
+    files = sorted(glob.glob(os.path.join(GBD_DIR, "*.csv")))
+    if not files:
+        return {}
+    want = {v: k for k, v in GBD_AGE_NAME.items()}
+    out = {}
+    with open(files[0], newline="", encoding="utf-8-sig") as f:
+        for row in csv.DictReader(f):
+            if (row.get("location_name") == country and row.get("measure_name") == "Prevalence"
+                    and row.get("metric_name") == "Percent" and row.get("age_name") in want):
+                try:
+                    out[want[row["age_name"]]] = float(row["val"])
+                except (TypeError, ValueError):
+                    pass
+    return out
+
+
+def load_estat_jp_pop():
+    """Japan e-Stat 社会・人口統計体系 xlsx in _data_in/Japan Population/ -> {JP-NN: {total, bands}}.
+       80-84 = A1418(80+) − A1420(85+); 85p = A1420(85+); 60-64..75-79 = A1213..A1216."""
+    import glob
+    try:
+        import pandas as pd
+    except ImportError:
+        return None
+    files = glob.glob(os.path.join(DATA_IN, "Japan Population", "*.xlsx"))
+    if not files:
+        return None
+    df = pd.ExcelFile(files[0]).parse("1", header=None)
+    codes = df.iloc[7]
+    col = {str(codes[c]).strip(): c for c in range(3, df.shape[1])}
+
+    def num(row, code):
+        v = str(row[col[code]]).replace(",", "")
+        return float(v) if v not in ("nan", "-", "") else 0.0
+
+    out = {}
+    for r in range(10, df.shape[0]):
+        area = str(df.iloc[r, 0]).strip()
+        if not area.isdigit() or area == "00000":
+            continue
+        row = df.iloc[r]
+        out["JP-%02d" % int(area[:2])] = {
+            "total": num(row, "A1101"), "60_64": num(row, "A1213"), "65_69": num(row, "A1214"),
+            "70_74": num(row, "A1215"), "75_79": num(row, "A1216"),
+            "80_84": num(row, "A1418") - num(row, "A1420"), "85p": num(row, "A1420")}
+    return out or None
+
+
+def load_kosis_kr_pop():
+    """Korea KOSIS DT_1B04005N xlsx in _data_in/Korea Population/ -> {KR-NN: {total, bands}}.
+       Uses the latest month column block; 85p = 85-89+90-94+95-99+100+."""
+    import glob
+    try:
+        import pandas as pd
+    except ImportError:
+        return None
+    files = glob.glob(os.path.join(DATA_IN, "Korea Population", "*.xlsx"))
+    if not files:
+        return None
+    df = pd.ExcelFile(files[0]).parse("Data", header=None)
+    labels = df.iloc[1]
+
+    def kcol(label):
+        idxs = [c for c in range(df.shape[1]) if str(labels[c]).strip() == label]
+        return idxs[-1] if idxs else None
+
+    age = {"60_64": "60-64 Years old", "65_69": "65-69 Years old", "70_74": "70-74 Years old",
+           "75_79": "75-79 Years old", "80_84": "80-84 Years old", "85_89": "85-89 Years old",
+           "90_94": "90-94 Years old", "95_99": "95-99 Years old", "100p": "100 Years old & over"}
+    kc = {k: kcol(v) for k, v in age.items()}
+    kmap = [("Seoul", "KR-11"), ("Busan", "KR-26"), ("Daegu", "KR-27"), ("Incheon", "KR-28"),
+            ("Gwangju", "KR-29"), ("Daejeon", "KR-30"), ("Ulsan", "KR-31"), ("Sejong", "KR-50"),
+            ("Gyeonggi", "KR-41"), ("Gangwon", "KR-42"), ("Chungcheongbuk", "KR-43"),
+            ("Chungcheongnam", "KR-44"), ("Jeollabuk", "KR-45"), ("Jeollanam", "KR-46"),
+            ("Gyeongsangbuk", "KR-47"), ("Gyeongsangnam", "KR-48"), ("Jeju", "KR-49")]
+
+    def num(row, c):
+        v = str(row[c]).replace(",", "")
+        return float(v) if v not in ("nan", "-", "") else 0.0
+
+    out = {}
+    for r in range(2, df.shape[0]):
+        if str(df.iloc[r, 1]).strip() != "Population (Person)":
+            continue
+        name = str(df.iloc[r, 0]).strip()
+        code = next((c for key, c in kmap if key.lower() in name.lower()), None)
+        if not code:
+            continue
+        row = df.iloc[r]
+        out[code] = {"60_64": num(row, kc["60_64"]), "65_69": num(row, kc["65_69"]),
+                     "70_74": num(row, kc["70_74"]), "75_79": num(row, kc["75_79"]),
+                     "80_84": num(row, kc["80_84"]),
+                     "85p": num(row, kc["85_89"]) + num(row, kc["90_94"]) + num(row, kc["95_99"]) + num(row, kc["100p"])}
+        out[code]["total"] = sum(out[code][b] for b in POP60_BANDS)
+    return out or None
+
+
+def build_pop_rate_prev60(cc, name, gbd_country, units, pop):
+    """Model admin-1 dementia prevalence among 60+ (%) = Σ(band pop × GBD band rate) / 60+ pop.
+       `pop` = {unit_code: {band: n}}; rates come from GBD national. -> dementia/{cc}-modelled.json."""
+    rates = load_gbd_rates(gbd_country)
+    if not pop or not all(b in rates for b in POP60_BANDS):
+        return False
+    codes = {u["code"] for u in units}
+    by_unit = {}
+    for code, p in pop.items():
+        if code not in codes:
+            continue
+        pop60 = sum(p[b] for b in POP60_BANDS)
+        if not pop60:
+            continue
+        cases = sum(p[b] * rates[b] for b in POP60_BANDS)
+        by_unit[code] = round(cases / pop60 * 100, 2)
+    if not by_unit:
+        return False
+    write_json(f"dementia/{cc}-modelled.json", {
+        "meta": {"metric": "modelled dementia prevalence among residents aged 60+ (%)",
+                 "age_group": "60+",
+                 "source": f"GBD 2023 age-specific rates × {name} official population by age",
+                 "note": "MODELLED estimate; GBD 2023 (IHME, non-commercial) × national statistics office population",
+                 "built": BUILD_DATE},
+        "byTown": by_unit})
+    log(f"  {name}: pop×rate prevalence (60+) for {len(by_unit)} units")
+    return True
+
+
 def build_direct_prevalence(cc, name, units, meta_extra=None):
     """Published per-admin prevalence (e.g. China Liu/Gao 2024 provinces, India Lee 2023
        states): the study already gives a final value per unit — no rates×pop modelling.
@@ -863,8 +1001,12 @@ def main():
             # (direct), else rates×population; else pending (owner downloads — see the doc).
             prev_meta = {"cn": {"age_group": "50+", "source": "Liu/Gao 2024 (CHARLS 2018)"},
                          "in": {"age_group": "60+", "source": "Lee et al. 2023 (LASI-DAD)"}}.get(key)
-            gbd_done = key in GBD_DIRECT and build_gbd_direct(key, cfg["name"], units, GBD_DIRECT[key])
-            if not gbd_done and not build_direct_prevalence(key, cfg["name"], units, prev_meta) \
+            pop_rate = {"jp": ("Japan", load_estat_jp_pop),
+                        "kr": ("Republic of Korea", load_kosis_kr_pop)}.get(key)
+            done = key in GBD_DIRECT and build_gbd_direct(key, cfg["name"], units, GBD_DIRECT[key])
+            if not done and pop_rate:
+                done = build_pop_rate_prev60(key, cfg["name"], pop_rate[0], units, pop_rate[1]())
+            if not done and not build_direct_prevalence(key, cfg["name"], units, prev_meta) \
                     and not build_admin_prevalence(key, cfg["name"]):
                 log(f"  {cfg['name']}: no _data_in/{key}-admin1-prevalence.csv or -pop.csv -> "
                     f"prevalence layer pending (see data-download-points.md)")
@@ -889,7 +1031,9 @@ def main():
         "dementia/in-modelled.json": "India state dementia prevalence, Lee et al. 2023 (LASI-DAD) — modelled estimate",
         "dementia/us-modelled.json": "US state dementia prevalence 60+, GBD 2023 (IHME) — modelled estimate",
         "dementia/br-modelled.json": "Brazil state dementia prevalence 60+, GBD 2023 (IHME) — modelled estimate",
-        "dementia/mx-modelled.json": "Mexico state dementia prevalence 60+, GBD 2023 (IHME) — modelled estimate"}
+        "dementia/mx-modelled.json": "Mexico state dementia prevalence 60+, GBD 2023 (IHME) — modelled estimate",
+        "dementia/jp-modelled.json": "Japan prefecture dementia prevalence 60+, GBD 2023 rates × e-Stat pop — modelled estimate",
+        "dementia/kr-modelled.json": "Korea province dementia prevalence 60+, GBD 2023 rates × KOSIS pop — modelled estimate"}
     for key, cfg in COUNTRY_MAPS.items():   # admin-1 PM2.5 (+ boundaries) per country
         assets[f"pm25/{key}-admin1-pm25.json"] = f"ACAG V6.GL.03 {cfg['name']} admin-1 PM2.5 (CC BY 4.0)"
         assets[f"geo/{key}-admin1.geojson"] = f"Natural Earth admin-1 ({cfg['name']}), public domain"
@@ -901,7 +1045,9 @@ def main():
                         "人口 © 內政部 (MOI)", "失智盛行率為模型估計值 (NHRI 2020-2023)",
                         "中國省級失智盛行率 © Liu/Gao et al. 2024, Lancet Reg Health – W Pac (CHARLS 2018) — 模型估計",
                         "印度邦級失智盛行率 © Lee et al. 2023, Alzheimer's & Dementia (LASI-DAD) — 模型估計",
-                        "美國／巴西／墨西哥各州失智盛行率 © GBD 2023, IHME — 模型估計，非商業授權 (attribution)"]})
+                        "美國／巴西／墨西哥各州失智盛行率 © GBD 2023, IHME — 模型估計，非商業授權 (attribution)",
+                        "日本都道府県失智盛行率 © GBD 2023 (IHME) 年齡別率 × e-Stat 都道府県人口 — 模型估計",
+                        "韓國市道失智盛行率 © GBD 2023 (IHME) 年齡別率 × KOSIS 시도人口 — 模型估計"]})
     log("== DONE ==")
 
 
