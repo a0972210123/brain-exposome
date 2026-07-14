@@ -661,6 +661,12 @@ GBD_DIRECT = {
     "us": {},
     "br": {"Piauí": "Piaui"},
     "mx": {"Veracruz": "Veracruz de Ignacio de la Llave", "Michoacán": "Michoacán de Ocampo"},
+    # Iran (GBD has province-level values); aliases bridge transliteration. The two Azarbaijan
+    # provinces stay grey — GBD only has "Azerbaijan" (the country), not the Iranian provinces.
+    "ir": {"Esfahan": "Isfahan", "Kordestan": "Kurdistan", "Razavi Khorasan": "Khorasan-e-Razavi",
+           "Sistan and Baluchestan": "Sistan and Baluchistan",
+           "Chahar Mahall and Bakhtiari": "Chahar Mahaal and Bakhtiari",
+           "Kohgiluyeh and Buyer Ahmad": "Kohgiluyeh and Boyer-Ahmad"},
 }
 _GBD_PREV60 = None
 
@@ -1036,6 +1042,7 @@ def main():
         "dementia/us-modelled.json": "US state dementia prevalence 60+, GBD 2023 (IHME) — modelled estimate",
         "dementia/br-modelled.json": "Brazil state dementia prevalence 60+, GBD 2023 (IHME) — modelled estimate",
         "dementia/mx-modelled.json": "Mexico state dementia prevalence 60+, GBD 2023 (IHME) — modelled estimate",
+        "dementia/ir-modelled.json": "Iran province dementia prevalence 60+, GBD 2023 (IHME) — modelled estimate",
         "dementia/jp-modelled.json": "Japan prefecture dementia prevalence 60+, GBD 2023 rates × e-Stat pop — modelled estimate",
         "dementia/kr-modelled.json": "Korea province dementia prevalence 60+, GBD 2023 rates × KOSIS pop — modelled estimate"}
     for key, cfg in COUNTRY_MAPS.items():   # admin-1 PM2.5 (+ boundaries) per country
@@ -1049,7 +1056,7 @@ def main():
                         "人口 © 內政部 (MOI)", "失智盛行率為模型估計值 (NHRI 2020-2023)",
                         "中國省級失智盛行率 © Liu/Gao et al. 2024, Lancet Reg Health – W Pac (CHARLS 2018) — 模型估計",
                         "印度邦級失智盛行率 © Lee et al. 2023, Alzheimer's & Dementia (LASI-DAD) — 模型估計",
-                        "美國／巴西／墨西哥各州失智盛行率 © GBD 2023, IHME — 模型估計，非商業授權 (attribution)",
+                        "美國／巴西／墨西哥／伊朗各州省失智盛行率 © GBD 2023, IHME — 模型估計，非商業授權 (attribution)",
                         "日本都道府県失智盛行率 © GBD 2023 (IHME) 年齡別率 × e-Stat 都道府県人口 — 模型估計",
                         "韓國市道失智盛行率 © GBD 2023 (IHME) 年齡別率 × KOSIS 시도人口 — 模型估計"]})
     log("== DONE ==")

@@ -1294,10 +1294,12 @@ const MAP_CFG = {
         prevMetric: PREV_60, prev: '/data/dementia/br-modelled.json', pm: '/data/pm25/br-admin1-pm25.json' },
   mx: { geojson: '/data/geo/mx-admin1.geojson', codeProp: 'code', layers: ['prevalence', 'pm25'],
         prevMetric: PREV_60, prev: '/data/dementia/mx-modelled.json', pm: '/data/pm25/mx-admin1-pm25.json' },
+  ir: { geojson: '/data/geo/ir-admin1.geojson', codeProp: 'code', layers: ['prevalence', 'pm25'],
+        prevMetric: PREV_60, prev: '/data/dementia/ir-modelled.json', pm: '/data/pm25/ir-admin1-pm25.json' },
   in: { geojson: '/data/geo/in-admin1.geojson', codeProp: 'code', layers: ['prevalence', 'pm25'],
         prevMetric: PREV_IN, prev: '/data/dementia/in-modelled.json', pm: '/data/pm25/in-admin1-pm25.json' },
   ...Object.fromEntries(['th', 'vn', 'id', 'ph', 'my', 'pk', 'bd', 'mm', 'gb', 'de', 'fr',
-    'it', 'es', 'pl', 'ca', 'au', 'nz', 'tr', 'ir'].map(cc => [cc,
+    'it', 'es', 'pl', 'ca', 'au', 'nz', 'tr'].map(cc => [cc,
     { geojson: `/data/geo/${cc}-admin1.geojson`, codeProp: 'code', layers: ['pm25'],
       pm: `/data/pm25/${cc}-admin1-pm25.json` }])),
 };
@@ -1412,6 +1414,9 @@ const PREV_METHOD = {
         sEn: 'rates: GBD 2023 (IHME); population: Statistics Korea KOSIS by province (data 2026)' },
 };
 PREV_METHOD.br = PREV_METHOD.us; PREV_METHOD.mx = PREV_METHOD.us;
+PREV_METHOD.ir = { mZh: '各省失智盛行率（60 歲以上）直接採用 GBD 2023 (IHME) 的省級估計值。東／西亞塞拜然省 GBD 無單獨資料，維持灰色。',
+  mEn: 'Provincial prevalence (60+) taken directly from GBD 2023 (IHME) sub-national estimates. East/West Azarbaijan are not separately in GBD and stay grey.',
+  sZh: PREV_METHOD.us.sZh, sEn: PREV_METHOD.us.sEn };
 function renderPrevTable(cc, meta) {
   const box = $('prev-method');
   if (!box) return;
