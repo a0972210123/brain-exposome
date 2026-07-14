@@ -353,7 +353,16 @@ import T from '../../components/T.astro';
         </label>
         <div class="map-toggle">
           <button type="button" class="map-btn is-active" data-mode="prevalence"><T zh="失智盛行（估計）" en="Dementia (modelled)" /></button>
+          <button type="button" class="map-btn" data-mode="composite"><T zh="可調控風險 PAF" en="Modifiable risk (PAF)" /></button>
           <button type="button" class="map-btn" data-mode="pm25"><T zh="PM2.5（近 3 年）" en="PM2.5 (recent)" /></button>
+          <select id="map-factor" class="map-factor" aria-label="single risk factor PAF">
+            <option value="" data-zh="單一因子 PAF…" data-en="Single factor PAF…">單一因子 PAF…</option>
+            <option value="hypertension" data-zh="高血壓" data-en="Hypertension">高血壓</option>
+            <option value="diabetes" data-zh="糖尿病" data-en="Diabetes">糖尿病</option>
+            <option value="obesity" data-zh="肥胖" data-en="Obesity">肥胖</option>
+            <option value="smoking" data-zh="吸菸" data-en="Smoking">吸菸</option>
+            <option value="physical_inactivity" data-zh="身體活動不足" data-en="Physical inactivity">身體活動不足</option>
+          </select>
         </div>
       </div>
       <p id="map-prev-note" class="map-prev-note" style="display:none">
@@ -420,6 +429,14 @@ import T from '../../components/T.astro';
         <li><T zh="日本人口：總務省統計局 e-Stat 都道府県・年齡別人口（資料 2024）。韓國人口：統計廳 KOSIS 시도・연령별 인구（資料 2026）。" en="Japan population: Statistics Bureau e-Stat, prefecture × age (data 2024). Korea population: Statistics Korea KOSIS, Si-do × age (data 2026)." /> <a href="https://www.e-stat.go.jp/en" target="_blank" rel="noopener">e-stat.go.jp</a> · <a href="https://kosis.kr/eng" target="_blank" rel="noopener">kosis.kr</a></li>
         <li><T zh="其餘各國 admin-1 人口分母：WorldPop 2020 1km 年齡／性別網格（資料 2020，CC BY 4.0）；UN World Population Prospects 為國家別校準。部分高所得國家 WorldPop 年齡結構在區間近乎一致，故以全國估計值呈現。" en="Admin-1 population denominator for the remaining countries: WorldPop 2020 1km age/sex grids (data 2020, CC BY 4.0); UN World Population Prospects for national calibration. For some high-income countries WorldPop's age structure is near-uniform across areas, so a single national estimate is shown." /> <a href="https://www.worldpop.org" target="_blank" rel="noopener">worldpop.org</a> · <a href="https://population.un.org/wpp/" target="_blank" rel="noopener">population.un.org/wpp</a></li>
         <li>WHO. <T zh="失智症全球公共衛生應對現況報告，2021（全球失智人口 55M → 78M（2030）→ 139M（2050））。" en="Global status report on the public health response to dementia, 2021 (55M now → 78M by 2030 → 139M by 2050)." /> <a href="https://www.who.int/publications/i/item/9789240033245" target="_blank" rel="noopener">who.int</a></li>
+      </ul>
+
+      <p class="ref-cat"><T zh="⑥ 可調控風險因子與 PAF（風險圖層）" en="⑥ Modifiable risk factors & PAF (risk layers)" /></p>
+      <ul class="ref-list">
+        <li><T zh="相對風險（RR）與可歸因比例（PAF）架構取自 Livingston 2024 Lancet 委員會（見 ①）。PAF = P(RR−1)/[1+P(RR−1)]；5 因子合併採 1−Π(1−PAF)（假設獨立），為下限估計。" en="Relative risks (RR) and the population-attributable-fraction (PAF) framework are from the Livingston 2024 Lancet Commission (see ①). PAF = P(RR−1)/[1+P(RR−1)]; the 5 factors are combined via 1−Π(1−PAF) (independence-assumed), a floor estimate." /></li>
+        <li><T zh="高血壓／糖尿病／肥胖（全成人、年齡標準化、實測，含台灣）：" en="Hypertension / diabetes / obesity (adult, age-standardised, measured; incl. Taiwan): " />NCD Risk Factor Collaboration (NCD-RisC) — <em>Lancet</em> 2017;389:37–55 <a href="https://doi.org/10.1016/S0140-6736(16)31919-5" target="_blank" rel="noopener">doi</a>（<T zh="血壓，資料 2015" en="BP, data 2015" />）· <em>Lancet</em> 2024;404:2077–93 <a href="https://doi.org/10.1016/S0140-6736(24)02317-1" target="_blank" rel="noopener">doi</a>（<T zh="糖尿病，資料 2022" en="diabetes, data 2022" />）· <em>Nature</em> 2026（BMI≥30，<T zh="資料 2024" en="data 2024" />）<a href="https://ncdrisc.org/data-downloads-adiposity.html" target="_blank" rel="noopener">ncdrisc.org</a></li>
+        <li><T zh="吸菸與身體活動不足（台灣以外 26 國，年齡標準化，資料 2021–2025，存取日 2026-07-15）：" en="Smoking & insufficient physical activity (26 countries outside Taiwan, age-standardised, data 2021–2025, accessed 2026-07-15): " />WHO Global Health Observatory（<T zh="指標" en="indicators" /> M_Est_tob_curr, NCD_PAC）. <a href="https://www.who.int/data/gho" target="_blank" rel="noopener">who.int/data/gho</a></li>
+        <li><T zh="台灣吸菸與身體活動不足：2021 年國民健康訪問調查（衛福部國民健康署）。WHO GHO 不含台灣，故由此填補；台灣高血壓／糖尿病／肥胖仍採 NCD-RisC 台灣值以與各國可比。" en="Taiwan smoking & inactivity: 2021 National Health Interview Survey (Taiwan Health Promotion Administration). WHO GHO has no Taiwan row, so these fill it; Taiwan's hypertension/diabetes/obesity use NCD-RisC for cross-country comparability." /> <a href="https://www.hpa.gov.tw/" target="_blank" rel="noopener">hpa.gov.tw</a></li>
       </ul>
     </section>
 
@@ -682,6 +699,13 @@ import T from '../../components/T.astro';
   }
   .map-btn.is-active { border-color: var(--color-accent); color: var(--color-text); }
   .map-btn.is-disabled { opacity: 0.4; cursor: not-allowed; }
+  .map-factor {
+    font-family: var(--font-sans); font-size: 0.85rem; font-weight: 600;
+    padding: 0.45rem 0.7rem; border-radius: 999px; cursor: pointer; max-width: 12rem;
+    border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text-muted);
+  }
+  .map-factor.is-active { border-color: var(--color-accent); color: var(--color-text); }
+  .map-factor:disabled { opacity: 0.4; cursor: not-allowed; }
   .map-prev-note {
     font-size: 0.78rem; color: var(--color-text-muted); margin: 0 0 0.6rem; line-height: 1.6;
     background: var(--color-surface); border: 1px solid var(--color-border);
@@ -1254,6 +1278,7 @@ function applyOptionLangs() {
      (prevalence needs gov population/survey data — see data-download-points.md). ── */
 let map = null, geoLayer = null, legendCtl = null;
 let mapCountry = 'tw', mapMode = 'prevalence';
+let EXPOSOME = null, PREV_META = null;   // national exposome data (all countries) + current prevalence meta
 let GEO = null;                    // current FeatureCollection
 let VAL = { prev: {}, pm: {} };    // current country: code -> value
 let NAMES = {};                    // current country: code -> {zh, en}
@@ -1318,11 +1343,30 @@ const MAP_CFG = {
 };
 function curPrev() { return MAP_CFG[mapCountry].prevMetric || PREV_TW; }
 
+// Exposome (national) modes: 'composite' PAF + one mode per single factor, coloured by PAF % ("% of
+// dementia attributable"). One national value applied to every admin-1 unit of the selected country.
+const EXPO_FACTORS = ['hypertension', 'diabetes', 'obesity', 'smoking', 'physical_inactivity'];
+const FACTOR_LABEL = { hypertension: ['高血壓', 'Hypertension'], diabetes: ['糖尿病', 'Diabetes'],
+  obesity: ['肥胖', 'Obesity'], smoking: ['吸菸', 'Smoking'], physical_inactivity: ['身體活動不足', 'Physical inactivity'] };
+const PAF_COMPOSITE = { bins: [20, 24, 28, 32, 36], legendZh: '可調控失智風險 PAF %', legendEn: 'attributable risk PAF %', unitZh: '%', unitEn: '%', decimals: 1 };
+const PAF_FACTOR = { bins: [2, 4, 6, 8, 10], legendZh: '單因子 PAF %', legendEn: 'single-factor PAF %', unitZh: '%', unitEn: '%', decimals: 1 };
+function isExpo(m) { return m === 'composite' || EXPO_FACTORS.includes(m); }
+function expoNat() {   // national exposome value for the current mode+country
+  const e = EXPOSOME && EXPOSOME[mapCountry]; if (!e) return null;
+  if (mapMode === 'composite') return e.composite_paf_pct;
+  const f = e.factors[mapMode]; return f ? f.paf_pct : null;
+}
+function curBins() {
+  return mapMode === 'composite' ? PAF_COMPOSITE.bins
+    : EXPO_FACTORS.includes(mapMode) ? PAF_FACTOR.bins
+      : mapMode === 'prevalence' ? curPrev().bins : PM_BINS;
+}
+
 function codeOf(f) { return f.properties[MAP_CFG[mapCountry].codeProp]; }
-function valueFor(code) { return mapMode === 'prevalence' ? VAL.prev[code] : VAL.pm[code]; }
+function valueFor(code) { return isExpo(mapMode) ? expoNat() : mapMode === 'prevalence' ? VAL.prev[code] : VAL.pm[code]; }
 function colorFor(v) {
   if (v == null) return document.documentElement.getAttribute('data-theme') === 'dark' ? '#2b3050' : '#e6e6e6';
-  const bins = mapMode === 'prevalence' ? curPrev().bins : PM_BINS;
+  const bins = curBins();
   let i = 0; while (i < bins.length && v > bins[i]) i++;
   return RAMP[i];
 }
@@ -1330,6 +1374,15 @@ function styleFn(f) { return { fillColor: colorFor(valueFor(codeOf(f))), weight:
 function unitName(f) { const n = NAMES[codeOf(f)]; return n ? L(n.zh, n.en) : (f.properties.name || codeOf(f)); }
 function tooltipFor(f) {
   const code = codeOf(f), name = unitName(f);
+  if (isExpo(mapMode)) {
+    const e = EXPOSOME && EXPOSOME[mapCountry], sub = 'style="opacity:.7;font-size:.9em"';
+    if (mapMode === 'composite') {
+      const v = e ? e.composite_paf_pct : null;
+      return `<b>${name}</b><br>${L('可調控失智風險（PAF）', 'Attributable dementia risk (PAF)')}: ${v != null ? v.toFixed(1) : '—'}%<br><span ${sub}>${L('5 因子合計 · 全國估計', '5-factor composite · national')}</span>`;
+    }
+    const fac = e && e.factors[mapMode], lab = FACTOR_LABEL[mapMode];
+    return `<b>${name}</b><br>${L(lab[0], lab[1])} PAF: ${fac ? fac.paf_pct.toFixed(1) : '—'}%<br><span ${sub}>${L('盛行率', 'prevalence')} ${fac ? fac.prev_pct : '—'}% · RR ${fac ? fac.rr : '—'} · ${L('全國估計', 'national')}</span>`;
+  }
   if (mapMode === 'prevalence') {
     const p = curPrev(), v = VAL.prev[code];
     return `<b>${name}</b><br>${L(p.tipZh, p.tipEn)}: ${v != null ? v.toFixed(p.decimals) : '—'} ${L(p.unitZh, p.unitEn)}`;
@@ -1343,9 +1396,10 @@ function buildLegend() {
   legendCtl = window.L.control({ position: 'bottomright' });
   legendCtl.onAdd = () => {
     const div = window.L.DomUtil.create('div', 'map-legend');
-    const p = curPrev();
-    const bins = mapMode === 'prevalence' ? p.bins : PM_BINS;
-    const unit = mapMode === 'prevalence' ? L(p.legendZh, p.legendEn) : 'PM2.5 µg/m³';
+    const bins = curBins();
+    const unit = mapMode === 'composite' ? L(PAF_COMPOSITE.legendZh, PAF_COMPOSITE.legendEn)
+      : EXPO_FACTORS.includes(mapMode) ? L(PAF_FACTOR.legendZh, PAF_FACTOR.legendEn)
+        : mapMode === 'prevalence' ? L(curPrev().legendZh, curPrev().legendEn) : 'PM2.5 µg/m³';
     const edges = [0, ...bins];
     let html = `<b>${unit}</b><br>`;
     for (let i = 0; i < RAMP.length; i++) {
@@ -1357,14 +1411,23 @@ function buildLegend() {
   };
   legendCtl.addTo(map);
 }
+function modeAvailable(m, layers) {
+  return isExpo(m) ? !!(EXPOSOME && EXPOSOME[mapCountry]) : layers.includes(m);
+}
 function syncModeButtons() {
   const layers = MAP_CFG[mapCountry].layers;
   document.querySelectorAll('.map-btn').forEach(b => {
-    const on = layers.includes(b.dataset.mode);
+    const on = modeAvailable(b.dataset.mode, layers);
     b.disabled = !on;
     b.classList.toggle('is-disabled', !on);
     b.classList.toggle('is-active', on && b.dataset.mode === mapMode);
   });
+  const fsel = $('map-factor');   // single-factor picker: enabled when exposome data present
+  if (fsel) {
+    fsel.disabled = !(EXPOSOME && EXPOSOME[mapCountry]);
+    fsel.value = EXPO_FACTORS.includes(mapMode) ? mapMode : '';
+    fsel.classList.toggle('is-active', EXPO_FACTORS.includes(mapMode));
+  }
   const note = $('map-prev-note');
   if (note) note.style.display = layers.includes('prevalence') ? 'none' : '';
 }
@@ -1374,6 +1437,7 @@ function applyMode() {
   geoLayer.eachLayer(l => l.setTooltipContent(tooltipFor(l.feature)));
   buildLegend();
   syncModeButtons();
+  renderMethodBox();
 }
 async function loadCountryData(cc) {
   const cfg = MAP_CFG[cc];
@@ -1467,11 +1531,49 @@ function renderPrevTable(cc, meta) {
   box.style.display = '';
   box.innerHTML = html;
 }
+// Method box dispatcher: prevalence/PM2.5 → the prevalence method table; exposome modes → PAF method.
+function renderMethodBox() {
+  if (isExpo(mapMode)) renderExpoMethod();
+  else renderPrevTable(mapCountry, PREV_META);
+}
+function renderExpoMethod() {
+  const box = $('prev-method'); if (!box) return;
+  const e = EXPOSOME && EXPOSOME[mapCountry];
+  const opt = document.querySelector(`#map-country option[value="${mapCountry}"]`);
+  const country = opt ? L(opt.dataset.zh, opt.dataset.en) : mapCountry.toUpperCase();
+  if (!e) { box.style.display = 'none'; box.innerHTML = ''; return; }
+  const F = e.factors, tail = L('模型估計，非實測', 'modelled estimate, not measured');
+  const formula = L('PAF = P×(RR−1) ÷ [1 + P×(RR−1)]，P 為該因子全國成人盛行率，RR 取自 Livingston 2024。',
+    'PAF = P(RR−1)/[1 + P(RR−1)] — P is the factor’s national adult prevalence, RR from Livingston 2024.');
+  let html;
+  if (mapMode === 'composite') {
+    html = `<h3 class="prev-method-h">${country}：${L('可調控失智風險（PAF）怎麼算？', 'how is attributable risk (PAF) estimated?')}</h3>`
+      + `<p class="prev-method-p">${L('下列 5 項可調控因子的 PAF 以「1 − Π(1−PAF)」合併（假設彼此獨立）。此僅涵蓋 Livingston 2024 十餘項因子中能取得全國資料的 5 項，為「下限」，非完整的約 45%。',
+        'The 5 modifiable factors below are combined via 1 − Π(1−PAF) (assuming independence). This covers only 5 of Livingston 2024’s dozen-plus factors sourced at national level — a floor, not the full ~45%.')}</p>`;
+    const rows = EXPO_FACTORS.filter(k => F[k]).map(k => {
+      const f = F[k], lab = FACTOR_LABEL[k];
+      return `<tr><td>${L(lab[0], lab[1])}</td><td>${f.prev_pct}%</td><td>${f.rr}</td><td>${f.paf_pct}%</td></tr>`;
+    }).join('');
+    html += `<table class="prev-method-table"><thead><tr><th>${L('因子', 'Factor')}</th><th>${L('盛行率', 'Prev.')}</th><th>RR</th><th>PAF</th></tr></thead><tbody>`
+      + rows + `<tr class="prev-method-total"><td>${L('合計（可調控）', 'Composite')}</td><td>—</td><td>—</td><td>${e.composite_paf_pct}%</td></tr></tbody></table>`;
+    const srcs = [...new Set(EXPO_FACTORS.filter(k => F[k]).map(k => `${F[k].source} (${F[k].year})`))].join('；');
+    html += `<p class="prev-method-src">${formula}<br>${L('資料來源：', 'Sources: ')}${srcs}｜RR © Livingston 2024 Lancet Commission｜${tail}</p>`;
+  } else {
+    const f = F[mapMode], lab = FACTOR_LABEL[mapMode];
+    html = `<h3 class="prev-method-h">${country} · ${L(lab[0], lab[1])}：PAF</h3>`;
+    html += f ? `<p class="prev-method-p">${L('此因子可歸因於失智的比例（PAF）', 'Share of dementia attributable to this factor (PAF)')}：<b>${f.paf_pct}%</b>。`
+        + `${L('全國成人盛行率', 'National adult prevalence')} P = ${f.prev_pct}%，RR = ${f.rr}。</p>`
+        + `<p class="prev-method-src">${formula}<br>${L('資料來源：', 'Sources: ')}${f.source} (${f.year})｜RR © Livingston 2024｜${tail}</p>`
+      : `<p class="prev-method-p">${L('無資料', 'No data')}</p>`;
+  }
+  box.style.display = '';
+  box.innerHTML = html;
+}
 async function drawCountry(cc) {
   const d = await loadCountryData(cc);
-  mapCountry = cc; GEO = d.geo; VAL = { prev: d.prev, pm: d.pm }; NAMES = d.names;
-  renderPrevTable(cc, d.prevMeta);
-  if (!d.cfg.layers.includes(mapMode)) mapMode = d.cfg.layers[0];
+  mapCountry = cc; GEO = d.geo; VAL = { prev: d.prev, pm: d.pm }; NAMES = d.names; PREV_META = d.prevMeta;
+  if (!modeAvailable(mapMode, d.cfg.layers)) mapMode = d.cfg.layers[0];   // expo modes work for every country
+  renderMethodBox();
   if (geoLayer) { map.removeLayer(geoLayer); geoLayer = null; }
   geoLayer = window.L.geoJSON(GEO, {
     style: styleFn,
@@ -1490,11 +1592,14 @@ async function initMap() {
     map.attributionControl.setPrefix(false).addAttribution(
       L('界線 © NLSC／taiwan-atlas · Natural Earth｜PM2.5 © ACAG｜失智盛行率為模型估計值',
         'Boundaries © NLSC/taiwan-atlas · Natural Earth · PM2.5 © ACAG · dementia = modelled estimate'));
+    EXPOSOME = await fetch('/data/exposome/exposome.json').then(r => r.ok ? r.json() : null).then(d => d && d.countries).catch(() => null);
     await drawCountry('tw');
     document.querySelectorAll('.map-btn').forEach(b => b.addEventListener('click', () => {
       if (b.disabled) return;
       mapMode = b.dataset.mode; applyMode();
     }));
+    const fsel = $('map-factor');   // single-factor PAF picker
+    if (fsel) fsel.addEventListener('change', () => { if (fsel.value) { mapMode = fsel.value; applyMode(); } });
     const cs = $('map-country');
     if (cs) cs.addEventListener('change', () => drawCountry(cs.value));
   } catch (e) {

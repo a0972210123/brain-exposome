@@ -1030,6 +1030,108 @@ def write_json(rel, obj):
     log(f"  wrote {rel}  ({os.path.getsize(path)//1024} KB)")
 
 
+# ---------- Exposome: modifiable risk factors + composite PAF (national, adult) ----------
+# Livingston 2024 Lancet Commission relative risks (verified from Table 1). Per factor
+# PAF = P(RR-1)/(1+P(RR-1)); composite = 1 - Π(1-PAF) over factors present (independence-assumed — a
+# documented modest over-estimate). HTN/diabetes/obesity from NCD-RisC (adult age-std, incl. Taiwan
+# natively); smoking/inactivity from WHO GHO + Taiwan 2021 NHIS override (GHO has no Taiwan row).
+EXPO_RR = {"hypertension": 1.2, "diabetes": 1.7, "obesity": 1.3, "smoking": 1.3, "physical_inactivity": 1.2}
+NCDRISC_NAME = {
+    "tw": "Taiwan", "cn": "China", "in": "India", "us": "United States of America", "br": "Brazil",
+    "mx": "Mexico", "jp": "Japan", "kr": "South Korea", "ir": "Iran", "th": "Thailand", "vn": "Viet Nam",
+    "id": "Indonesia", "ph": "Philippines", "my": "Malaysia", "pk": "Pakistan", "bd": "Bangladesh",
+    "mm": "Myanmar", "gb": "United Kingdom", "de": "Germany", "fr": "France", "it": "Italy",
+    "es": "Spain", "pl": "Poland", "ca": "Canada", "au": "Australia", "nz": "New Zealand", "tr": "Turkey"}
+EXPO_ISO3 = {
+    "tw": "TWN", "cn": "CHN", "in": "IND", "us": "USA", "br": "BRA", "mx": "MEX", "jp": "JPN",
+    "kr": "KOR", "ir": "IRN", "th": "THA", "vn": "VNM", "id": "IDN", "ph": "PHL", "my": "MYS",
+    "pk": "PAK", "bd": "BGD", "mm": "MMR", "gb": "GBR", "de": "DEU", "fr": "FRA", "it": "ITA",
+    "es": "ESP", "pl": "POL", "ca": "CAN", "au": "AUS", "nz": "NZL", "tr": "TUR"}
+
+
+def _paf(p_frac, rr):
+    return p_frac * (rr - 1) / (1 + p_frac * (rr - 1))
+
+
+def _ncdrisc_latest(fname, field_substr, country_col, sex_col, year_col, names):
+    """{country_name: (year, both-sexes fraction)} at the latest year, mean of the Men/Women rows.
+       field_substr picks the point-estimate column (first header containing it, before its CIs)."""
+    import csv
+    acc = {}   # name -> {year: {sex: value}}
+    with io.open(os.path.join(DATA_IN, "ncdrisc", fname), encoding="utf-8-sig") as f:
+        r = csv.reader(f); hdr = next(r)
+        pi = next(i for i, h in enumerate(hdr) if field_substr in h)
+        for row in r:
+            nm = row[country_col].strip('"')
+            if nm in names:
+                acc.setdefault(nm, {}).setdefault(int(float(row[year_col])), {})[row[sex_col].strip('"')] = float(row[pi])
+    return {nm: (max(byyr), sum(byyr[max(byyr)].values()) / len(byyr[max(byyr)])) for nm, byyr in acc.items()}
+
+
+def _who_gho_latest(indicator, iso3s):
+    """{iso3: (year, percent)} latest OBSERVED both-sexes value; drops projections beyond this year
+       (e.g. the tobacco feed's 2030 forecast)."""
+    rows = json.loads(http_get(f"https://ghoapi.azureedge.net/api/{indicator}").decode("utf-8"))["value"]
+    cur = int(BUILD_DATE[:4]); best = {}
+    for x in rows:
+        iso = x.get("SpatialDim"); v = x.get("NumericValue"); y = x.get("TimeDim")
+        if iso not in iso3s or x.get("Dim1") not in ("SEX_BTSX", None) or v is None or y is None:
+            continue
+        y = int(y)
+        if y <= cur and (iso not in best or y > best[iso][0]):
+            best[iso] = (y, float(v))
+    return best
+
+
+def build_exposome():
+    """National modifiable-risk-factor prevalence + PAF + composite for all 27 countries ->
+       public/data/exposome/exposome.json (one national value per country)."""
+    ALIAS = {"tr": ["Turkiye"]}   # newer NCD-RisC releases (diabetes 2024, BMI 2026) renamed Turkey -> Turkiye
+    names = set(NCDRISC_NAME.values()) | {a for al in ALIAS.values() for a in al}
+    htn = _ncdrisc_latest("NCD_RisC_Lancet_2017_BP_age_standardised_countries.csv", "raised blood pressure", 0, 2, 3, names)
+    dm  = _ncdrisc_latest("NCD_RisC_Lancet_2024_Diabetes_age_standardised_countries.csv", "diabetes (18+", 0, 2, 3, names)
+    obe = _ncdrisc_latest("NCD_RisC_Nature_2026_BMI_age_standardised_country.csv", "BMI>=30", 2, 1, 0, names)
+    smk = _who_gho_latest("M_Est_tob_curr", set(EXPO_ISO3.values()))
+    pac = _who_gho_latest("NCD_PAC", set(EXPO_ISO3.values()))
+    twf = json.load(io.open(os.path.join(DATA_IN, "tw-riskfactors.json"), encoding="utf-8"))["factors"]
+    SRC = {"hypertension": "NCD-RisC raised BP (adult, age-std)", "diabetes": "NCD-RisC diabetes 18+ (age-std)",
+           "obesity": "NCD-RisC BMI≥30 (adult, age-std)", "smoking": "WHO GHO current tobacco (age-std)",
+           "physical_inactivity": "WHO GHO insufficient activity"}
+    out = {}
+    def pick(dct, cc):
+        for nm in [NCDRISC_NAME[cc]] + ALIAS.get(cc, []):
+            if nm in dct:
+                return dct[nm]
+        return None
+    for cc in NCDRISC_NAME:
+        iso = EXPO_ISO3[cc]; pv = {}   # factor -> (percent, year, source)
+        h, dd, o = pick(htn, cc), pick(dm, cc), pick(obe, cc)
+        if h:  pv["hypertension"] = (round(h[1] * 100, 1), h[0], SRC["hypertension"])
+        if dd: pv["diabetes"]     = (round(dd[1] * 100, 1), dd[0], SRC["diabetes"])
+        if o:  pv["obesity"]      = (round(o[1] * 100, 1), o[0], SRC["obesity"])
+        if cc == "tw":
+            for f in ("smoking", "physical_inactivity"):
+                pv[f] = (twf[f]["value_pct"], twf[f]["year"], "2021 Taiwan NHIS")
+        else:
+            if iso in smk: pv["smoking"] = (round(smk[iso][1], 1), smk[iso][0], SRC["smoking"])
+            if iso in pac: pv["physical_inactivity"] = (round(pac[iso][1], 1), pac[iso][0], SRC["physical_inactivity"])
+        factors, keep = {}, 1.0
+        for f, rr in EXPO_RR.items():
+            if f not in pv:
+                continue
+            p, yr, src = pv[f]; paf = _paf(p / 100.0, rr)
+            factors[f] = {"prev_pct": p, "rr": rr, "paf_pct": round(paf * 100, 1), "year": yr, "source": src}
+            keep *= (1 - paf)
+        out[cc] = {"factors": factors, "composite_paf_pct": round((1 - keep) * 100, 1), "n_factors": len(factors)}
+    meta = {"metric": "modifiable dementia risk factors — national adult prevalence + PAF",
+            "note": ("PAF=P(RR-1)/(1+P(RR-1)); composite=1-Π(1-PAF) over factors present, independence-assumed. "
+                     "Covers 5 of the Livingston 2024 modifiable factors sourced at national level — a floor, not the full ~45%."),
+            "rr_source": "Livingston et al., Lancet 2024 Commission (Table 1)", "built": BUILD_DATE}
+    write_json("exposome/exposome.json", {"meta": meta, "countries": out})
+    log(f"  exposome: {len(out)} countries × up to 5 factors + composite PAF")
+    return True
+
+
 def main():
     log("== BUILD DATA ==  RBAR(65+ dementia rate) = %.4f" % RBAR)
     towns_topo, towns, counties = load_boundaries()
@@ -1142,6 +1244,9 @@ def main():
             continue   # rasters not yet downloaded for this country → JSON absent, don't list it
         assets[f"dementia/{key}-modelled.json"] = (f"{gname} admin-1 dementia prevalence 60+, "
                                                    "GBD 2023 rates × WorldPop 2020 pop — modelled estimate")
+    build_exposome()
+    assets["exposome/exposome.json"] = ("national modifiable risk factors + composite PAF (27 countries): "
+                                        "NCD-RisC (BP/diabetes/BMI) + WHO GHO (smoking/inactivity) + Taiwan NHIS × Livingston 2024 RRs")
     write_json("manifest.json", {
         "built": BUILD_DATE, "assets": assets,
         "attribution": ["PM2.5 © ACAG/WashU (Shen 2024; van Donkelaar 2021), CC BY 4.0",
@@ -1153,7 +1258,8 @@ def main():
                         "美國／巴西／墨西哥／伊朗各州省失智盛行率 © GBD 2023, IHME — 模型估計，非商業授權 (attribution)",
                         "日本都道府県失智盛行率 © GBD 2023 (IHME) 年齡別率 × e-Stat 都道府県人口 — 模型估計",
                         "韓國市道失智盛行率 © GBD 2023 (IHME) 年齡別率 × KOSIS 시도人口 — 模型估計",
-                        "其餘各國 admin-1 失智盛行率 © GBD 2023 (IHME) 年齡別率 × WorldPop 2020 人口 (CC BY 4.0) — 模型估計"]})
+                        "其餘各國 admin-1 失智盛行率 © GBD 2023 (IHME) 年齡別率 × WorldPop 2020 人口 (CC BY 4.0) — 模型估計",
+                        "可調控風險因子盛行率 © NCD-RisC (血壓/糖尿病/BMI) + WHO Global Health Observatory (吸菸/身體活動) + 2021 台灣國民健康訪問調查；PAF 相對風險 © Livingston et al. 2024 Lancet Commission — 模型估計"]})
     log("== DONE ==")
 
 

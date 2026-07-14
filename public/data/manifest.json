@@ -83,7 +83,8 @@
     "dementia/ca-modelled.json": "Canada admin-1 dementia prevalence 60+, GBD 2023 rates × WorldPop 2020 pop — modelled estimate",
     "dementia/au-modelled.json": "Australia admin-1 dementia prevalence 60+, GBD 2023 rates × WorldPop 2020 pop — modelled estimate",
     "dementia/nz-modelled.json": "New Zealand admin-1 dementia prevalence 60+, GBD 2023 rates × WorldPop 2020 pop — modelled estimate",
-    "dementia/tr-modelled.json": "Türkiye admin-1 dementia prevalence 60+, GBD 2023 rates × WorldPop 2020 pop — modelled estimate"
+    "dementia/tr-modelled.json": "Türkiye admin-1 dementia prevalence 60+, GBD 2023 rates × WorldPop 2020 pop — modelled estimate",
+    "exposome/exposome.json": "national modifiable risk factors + composite PAF (27 countries): NCD-RisC (BP/diabetes/BMI) + WHO GHO (smoking/inactivity) + Taiwan NHIS × Livingston 2024 RRs"
   },
   "attribution": [
     "PM2.5 © ACAG/WashU (Shen 2024; van Donkelaar 2021), CC BY 4.0",
@@ -96,6 +97,7 @@
     "美國／巴西／墨西哥／伊朗各州省失智盛行率 © GBD 2023, IHME — 模型估計，非商業授權 (attribution)",
     "日本都道府県失智盛行率 © GBD 2023 (IHME) 年齡別率 × e-Stat 都道府県人口 — 模型估計",
     "韓國市道失智盛行率 © GBD 2023 (IHME) 年齡別率 × KOSIS 시도人口 — 模型估計",
-    "其餘各國 admin-1 失智盛行率 © GBD 2023 (IHME) 年齡別率 × WorldPop 2020 人口 (CC BY 4.0) — 模型估計"
+    "其餘各國 admin-1 失智盛行率 © GBD 2023 (IHME) 年齡別率 × WorldPop 2020 人口 (CC BY 4.0) — 模型估計",
+    "可調控風險因子盛行率 © NCD-RisC (血壓/糖尿病/BMI) + WHO Global Health Observatory (吸菸/身體活動) + 2021 台灣國民健康訪問調查；PAF 相對風險 © Livingston et al. 2024 Lancet Commission — 模型估計"
   ]
 }
