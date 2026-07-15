@@ -303,11 +303,12 @@ import T from '../../components/T.astro';
     <!-- Regional map (Taiwan / Japan / Korea / China / USA / India) -->
     <section class="calc-section map-section">
       <p class="section-heading"><T zh="地圖：空污與失智概況" en="Map: air pollution & dementia" /></p>
-      <p class="calc-section-desc"><T zh="切換國家（涵蓋亞洲、歐洲、美洲、大洋洲等 20 多國）與圖層，看各行政區近年的 PM2.5；色階以 WHO 標準（≤5 µg/m³）為基準，可跨國比較。台灣另有縣市層級的失智盛行「模型估計值」。把游標移到區域上看數值。" en="Switch country (20+ across Asia, Europe, the Americas and Oceania) and layer to see recent PM2.5 by district, on a WHO-anchored scale (≤5 µg/m³) that's comparable across countries. Taiwan also has a county-level MODELLED dementia-prevalence estimate. Hover a district for values." /></p>
+      <p class="calc-section-desc"><T zh="預設是「🌍 全球總覽」地球儀——每個國家以近年 PM2.5 或可調控失智風險（PAF）著色，色階以 WHO 標準（≤5 µg/m³）為基準、可跨國比較。點任一國（或用選單切換到 20 多國）即可下鑽到該國各行政區的細節地圖，看更細的 PM2.5 與失智盛行「模型估計值」。把游標移到區域上看數值。" en="The default is a 🌍 global overview globe — each country shaded by recent PM2.5 or modifiable dementia risk (PAF), on a WHO-anchored scale (≤5 µg/m³) comparable across countries. Click a country (or pick one of 20+ from the dropdown) to drill into its admin-1 detail map, with finer PM2.5 and MODELLED dementia-prevalence estimates. Hover a district for values." /></p>
       <div class="map-controls">
         <label class="map-country-wrap">
           <span class="map-country-label"><T zh="國家／地區" en="Country / region" /></span>
           <select id="map-country" class="map-country">
+            <option value="world" data-zh="🌍 全球總覽" data-en="🌍 Global overview">🌍 全球總覽</option>
             <optgroup data-zh="東亞" data-en="East Asia" label="東亞">
               <option value="tw" data-zh="臺灣（縣市／鄉鎮）" data-en="Taiwan (county / town)">臺灣（縣市／鄉鎮）</option>
               <option value="jp" data-zh="日本（都道府県）" data-en="Japan (prefectures)">日本（都道府県）</option>
@@ -364,11 +365,24 @@ import T from '../../components/T.astro';
             <option value="physical_inactivity" data-zh="身體活動不足" data-en="Physical inactivity">身體活動不足</option>
           </select>
         </div>
+        <label class="map-zoom-wrap">
+          <span class="map-country-label"><T zh="縮放" en="Zoom" /></span>
+          <input type="range" id="map-zoom" class="map-zoom" min="0" max="100" value="0" aria-label="zoom" />
+        </label>
       </div>
       <p id="map-prev-note" class="map-prev-note" style="display:none">
         <T zh="※ 台灣以外的失智盛行率地圖需各國政府人口與調查資料（目前政策封鎖，見 data-download-points.md），本輪僅顯示 PM2.5。" en="※ Dementia-prevalence maps outside Taiwan need each country's government population & survey data (currently blocked — see data-download-points.md); this round shows PM2.5 only." />
       </p>
-      <div id="map" class="tw-map"></div>
+      <div class="map-stage">
+        <div id="map" class="tw-map"></div>
+        <div id="globe-stage" class="tw-map globe-stage" hidden>
+          <canvas id="map-globe"></canvas>
+          <button type="button" id="globe-spin" class="globe-ctrl" aria-pressed="true"></button>
+          <div id="globe-tip" class="globe-tip" hidden></div>
+          <div id="globe-legend" class="globe-legend"></div>
+          <div class="globe-hint"><T zh="拖曳旋轉・點國家看細節" en="Drag to spin · click a country to drill in" /></div>
+        </div>
+      </div>
       <p class="map-note">
         <T zh="※ 台灣失智盛行率為鄉鎮市區層級「65 歲以上盛行率」的模型估計（NHRI 年齡別盛行率 × 內政部 #77132 各區單一年齡人口，見下方說明表），非實測。PM2.5 為 ACAG 衛星資料（V6.GL.03）；台灣以外為各行政區（Natural Earth 界線）的衛星網格平均值。美國為本土 48 州＋DC（不含阿拉斯加／夏威夷）。" en="※ Taiwan dementia prevalence is a township-level modelled estimate of prevalence among residents aged 65+ (NHRI age-band rates × MOI #77132 single-year-age population per township — see the method table below), not measured. PM2.5 is ACAG satellite data (V6.GL.03); outside Taiwan, values are grid means per admin-1 unit (Natural Earth boundaries). USA shows the contiguous 48 states + DC (Alaska/Hawaii excluded)." />
       </p>
@@ -447,6 +461,9 @@ import T from '../../components/T.astro';
 <link rel="stylesheet" href="/vendor/leaflet/leaflet.css" />
 <script is:inline src="/vendor/leaflet/leaflet.js"></script>
 <script is:inline src="/vendor/topojson-client.min.js"></script>
+<!-- d3-geo for the global orthographic globe view (d3-array must precede d3-geo) -->
+<script is:inline src="/vendor/d3-array.min.js"></script>
+<script is:inline src="/vendor/d3-geo.min.js"></script>
 
 <style>
   .calc-hero { margin-bottom: var(--spacing-md); }
@@ -731,6 +748,39 @@ import T from '../../components/T.astro';
   .tw-map :global(.map-legend) { padding: 0.5rem 0.7rem; }
   .tw-map :global(.map-legend i) { display: inline-block; width: 14px; height: 14px; margin-right: 6px; vertical-align: -2px; opacity: 0.85; }
   .tw-map :global(.leaflet-tooltip) { padding: 0.4rem 0.6rem; }
+
+  /* Global globe view (d3 orthographic) */
+  .map-stage { position: relative; }
+  .globe-stage { position: relative; overflow: hidden; padding: 0; touch-action: none; cursor: grab; }
+  .globe-stage:active { cursor: grabbing; }
+  #map-globe { display: block; width: 100%; height: 100%; }
+  .globe-hint {
+    position: absolute; left: 12px; top: 12px; z-index: 4; pointer-events: none;
+    background: var(--card-bg); border: 1px solid var(--card-border); box-shadow: var(--card-shadow);
+    color: var(--color-text-muted); font-size: 0.72rem; padding: 0.3rem 0.5rem; border-radius: 8px;
+  }
+  .globe-tip {
+    position: absolute; z-index: 5; pointer-events: none; max-width: 190px;
+    background: var(--card-bg); border: 1px solid var(--card-border); box-shadow: var(--card-shadow);
+    color: var(--color-text); font-size: 0.8rem; line-height: 1.4; padding: 0.35rem 0.55rem; border-radius: 8px;
+  }
+  .globe-legend {
+    position: absolute; right: 12px; bottom: 12px; z-index: 4;
+    background: var(--card-bg); border: 1px solid var(--card-border); box-shadow: var(--card-shadow);
+    border-radius: 8px; padding: 0.5rem 0.6rem; font-size: 0.72rem; color: var(--color-text);
+  }
+  .globe-legend :global(.lg-title) { font-weight: 700; margin-bottom: 0.2rem; }
+  .globe-legend :global(.lg-row) { display: flex; align-items: center; gap: 0.4rem; }
+  .globe-legend :global(i) { width: 0.85rem; height: 0.85rem; border-radius: 2px; display: inline-block; flex-shrink: 0; }
+  .globe-ctrl {
+    position: absolute; right: 12px; top: 12px; z-index: 4; cursor: pointer;
+    font: inherit; font-size: 0.72rem; font-weight: 600;
+    background: var(--card-bg); border: 1px solid var(--card-border); box-shadow: var(--card-shadow);
+    color: var(--color-text); padding: 0.3rem 0.6rem; border-radius: 999px;
+  }
+  .globe-ctrl:hover { border-color: var(--color-accent); }
+  .map-zoom-wrap { display: flex; flex-direction: column; gap: 0.25rem; justify-content: flex-end; }
+  .map-zoom { width: 130px; accent-color: var(--color-accent); cursor: pointer; }
 </style>
 
 <script>
@@ -1341,7 +1391,7 @@ const MAP_CFG = {
     { geojson: `/data/geo/${cc}-admin1.geojson`, codeProp: 'code', layers: ['prevalence', 'pm25'],
       prevMetric: PREV_60, prev: `/data/dementia/${cc}-modelled.json`, pm: `/data/pm25/${cc}-admin1-pm25.json` }])),
 };
-function curPrev() { return MAP_CFG[mapCountry].prevMetric || PREV_TW; }
+function curPrev() { return (MAP_CFG[mapCountry] && MAP_CFG[mapCountry].prevMetric) || PREV_TW; }
 
 // Exposome (national) modes: 'composite' PAF + one mode per single factor, coloured by PAF % ("% of
 // dementia attributable"). One national value applied to every admin-1 unit of the selected country.
@@ -1415,21 +1465,25 @@ function modeAvailable(m, layers) {
   return isExpo(m) ? !!(EXPOSOME && EXPOSOME[mapCountry]) : layers.includes(m);
 }
 function syncModeButtons() {
-  const layers = MAP_CFG[mapCountry].layers;
+  const world = inWorld();
+  const layers = world ? ['pm25', 'composite'] : MAP_CFG[mapCountry].layers;
   document.querySelectorAll('.map-btn').forEach(b => {
-    const on = modeAvailable(b.dataset.mode, layers);
+    // Global globe only carries the two cross-country-comparable metrics (PM2.5, composite PAF);
+    // prevalence + single factors need the per-country drill-down.
+    const on = world ? (b.dataset.mode === 'pm25' || b.dataset.mode === 'composite')
+                     : modeAvailable(b.dataset.mode, layers);
     b.disabled = !on;
     b.classList.toggle('is-disabled', !on);
     b.classList.toggle('is-active', on && b.dataset.mode === mapMode);
   });
-  const fsel = $('map-factor');   // single-factor picker: enabled when exposome data present
+  const fsel = $('map-factor');   // single-factor picker: enabled when exposome data present (never in world view)
   if (fsel) {
-    fsel.disabled = !(EXPOSOME && EXPOSOME[mapCountry]);
-    fsel.value = EXPO_FACTORS.includes(mapMode) ? mapMode : '';
-    fsel.classList.toggle('is-active', EXPO_FACTORS.includes(mapMode));
+    fsel.disabled = world || !(EXPOSOME && EXPOSOME[mapCountry]);
+    fsel.value = (!world && EXPO_FACTORS.includes(mapMode)) ? mapMode : '';
+    fsel.classList.toggle('is-active', !world && EXPO_FACTORS.includes(mapMode));
   }
   const note = $('map-prev-note');
-  if (note) note.style.display = layers.includes('prevalence') ? 'none' : '';
+  if (note) note.style.display = world ? 'none' : (layers.includes('prevalence') ? 'none' : '');
 }
 function applyMode() {
   if (!geoLayer) return;
@@ -1533,8 +1587,22 @@ function renderPrevTable(cc, meta) {
 }
 // Method box dispatcher: prevalence/PM2.5 → the prevalence method table; exposome modes → PAF method.
 function renderMethodBox() {
+  if (inWorld()) { renderWorldMethod(); return; }
   if (isExpo(mapMode)) renderExpoMethod();
   else renderPrevTable(mapCountry, PREV_META);
+}
+function renderWorldMethod() {
+  const box = $('prev-method'); if (!box) return;
+  const pm = mapMode !== 'composite';
+  box.style.display = '';
+  box.innerHTML = `<h3 class="prev-method-h">${L('全球總覽', 'Global overview')}</h3>`
+    + `<p class="prev-method-p">${pm
+      ? L('每個國家以近年全國人口加權 PM2.5（ACAG 衛星，µg/m³）著色，色階與各國地圖同一套 WHO 基準（≤5）。點任一國可下鑽到其行政區細節。',
+          'Each country is shaded by recent national population-weighted PM2.5 (ACAG satellite, µg/m³) on the same WHO-anchored scale (≤5) as the per-country maps. Click a country to drill into its admin-1 detail.')
+      : L('每個國家以「可調控失智風險 PAF %」著色（Livingston 2024 的 5 因子合計、全國估計）。目前 27 國有資料，其餘為灰色。此指標跨國可比。點國家看細節。',
+          'Each country is shaded by composite modifiable-risk PAF % (5 factors, national estimate; Livingston 2024). 27 countries have data; the rest are grey. This metric is comparable across countries. Click a country to drill in.')}</p>`
+    + `<p class="prev-method-src">${L('失智盛行率因各國年齡分母不同（如 65+／60+／50+）不宜跨國比較，故只在下鑽後的各國地圖顯示。界線 © Natural Earth（public domain）；PM2.5 © ACAG/WashU（CC BY 4.0）；PAF © Livingston 2024 Lancet Commission — 皆為模型估計。',
+        'Dementia prevalence uses different age denominators per country (e.g. 65+/60+/50+), so it is not cross-country comparable — it appears only in the per-country drill-down. Boundaries © Natural Earth (public domain); PM2.5 © ACAG/WashU (CC BY 4.0); PAF © Livingston 2024 Lancet Commission — all modelled estimates.')}</p>`;
 }
 function renderExpoMethod() {
   const box = $('prev-method'); if (!box) return;
@@ -1580,9 +1648,166 @@ async function drawCountry(cc) {
     onEachFeature: (f, layer) => layer.bindTooltip(tooltipFor(f), { sticky: true }),
   }).addTo(map);
   if (d.cfg.fit) map.fitBounds(d.cfg.fit); else map.fitBounds(geoLayer.getBounds(), { padding: [8, 8] });
+  leafFitZoom = map.getZoom();                    // this fitted zoom = the slider's 0 point
+  const zslider = $('map-zoom'); if (zslider) zslider.value = 0;
   buildLegend();
   syncModeButtons();
   setTimeout(() => map && map.invalidateSize(), 150);
+}
+/* ── Global globe view (d3-geo orthographic, canvas) ──────────────────────────
+   A whole-world country-level overview embedded in the same map area. Shows the
+   two cross-country-comparable metrics (PM2.5, composite PAF) from world-globe.geojson;
+   clicking a country drills into that country's admin-1 2D map. Reuses PM_BINS/RAMP/
+   PAF_COMPOSITE/L()/theme so it matches the flat maps exactly. */
+let worldGeo = null, gcanvas = null, gctx = null, gproj = null, gpath = null, ggrat = null;
+let gW = 0, gH = 0, grot = [-12, -10, 0], gdrag = false, gspin = true, ghover = null, graf = null, gLast = null, gDownXY = null;
+let gZoom = 1, gBaseScale = 0, leafFitZoom = null;   // globe zoom factor, its fitted base scale, Leaflet fitted zoom
+function inWorld() { return mapCountry === 'world'; }
+function updateSpinBtn() {
+  const b = $('globe-spin'); if (!b) return;
+  b.textContent = gspin ? L('⏸ 暫停自轉', '⏸ Pause spin') : L('▶ 自轉', '▶ Auto-spin');
+  b.setAttribute('aria-pressed', String(gspin));
+}
+const WORLD_METRICS = {
+  pm25: { prop: 'pm25', bins: PM_BINS, unit: 'µg/m³', zh: 'PM2.5 µg/m³', en: 'PM2.5 µg/m³', dec: 1 },
+  composite: { prop: 'paf', bins: PAF_COMPOSITE.bins, unit: '%', zh: PAF_COMPOSITE.legendZh, en: PAF_COMPOSITE.legendEn, dec: 1 },
+};
+function gMetric() { return mapMode === 'composite' ? WORLD_METRICS.composite : WORLD_METRICS.pm25; }
+function gTheme(dark, light) { return document.documentElement.getAttribute('data-theme') === 'dark' ? dark : light; }
+function gColor(v, bins) {
+  if (v == null || Number.isNaN(v)) return gTheme('#2b3050', '#e6e6e6');
+  let i = 0; while (i < bins.length && v > bins[i]) i++;
+  return RAMP[i];
+}
+function gResize() {
+  if (!gcanvas) return;
+  const r = $('globe-stage').getBoundingClientRect();
+  gW = r.width; gH = r.height;
+  const dpr = Math.min(window.devicePixelRatio || 1, 2);
+  gcanvas.width = gW * dpr; gcanvas.height = gH * dpr;
+  gcanvas.style.width = gW + 'px'; gcanvas.style.height = gH + 'px';
+  gctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  gproj.fitExtent([[16, 16], [gW - 16, gH - 16]], { type: 'Sphere' });
+  gBaseScale = gproj.scale();           // fitted scale = zoom 1×; the slider multiplies this
+  gproj.scale(gBaseScale * gZoom);
+  gDraw();
+}
+function gSetZoom(factor) {   // factor 1..4 (globe); reapply around the current (centered) translate
+  gZoom = factor;
+  if (gBaseScale) { gproj.scale(gBaseScale * gZoom); gDraw(); }
+}
+function gDraw() {
+  if (!gW || !worldGeo) return;
+  gctx.clearRect(0, 0, gW, gH);
+  gctx.beginPath(); gpath({ type: 'Sphere' }); gctx.fillStyle = gTheme('#0b0d18', '#eef3fb'); gctx.fill();
+  gctx.beginPath(); gpath(ggrat); gctx.strokeStyle = gTheme('rgba(255,255,255,.05)', 'rgba(0,0,0,.05)'); gctx.lineWidth = 0.5; gctx.stroke();
+  const m = gMetric();
+  for (const f of worldGeo) {
+    gctx.beginPath(); gpath(f);
+    gctx.fillStyle = gColor(f.properties[m.prop], m.bins); gctx.fill();
+    gctx.lineWidth = f === ghover ? 1.3 : 0.4;
+    gctx.strokeStyle = f === ghover ? gTheme('#fff', '#111') : gTheme('#2a2f4a', '#fff');
+    gctx.stroke();
+  }
+  gctx.beginPath(); gpath({ type: 'Sphere' }); gctx.strokeStyle = gTheme('#3a4066', '#c9d4e6'); gctx.lineWidth = 1; gctx.stroke();
+}
+function gTickLoop() {
+  graf = requestAnimationFrame(gTickLoop);
+  if (gspin && !gdrag && inWorld()) { grot[0] += 0.16; gproj.rotate(grot); gDraw(); }
+}
+function gLegendBuild() {
+  const el = $('globe-legend'); if (!el) return;
+  const m = gMetric(), bins = m.bins, edges = [0, ...bins], rows = [];
+  for (let i = 0; i < RAMP.length; i++) {
+    const lab = bins[i] != null ? `${edges[i]}–${bins[i]}` : `>${edges[edges.length - 1]}`;
+    rows.push(`<span class="lg-row"><i style="background:${RAMP[i]}"></i>${lab}</span>`);
+  }
+  el.innerHTML = `<div class="lg-title">${L(m.zh, m.en)}</div>` + rows.join('');
+}
+function ccOfFeature(f) { const iso = (f.properties.iso_a2 || '').toLowerCase(); return MAP_CFG[iso] ? iso : null; }
+function gFeatureAt(clientX, clientY) {
+  const rect = gcanvas.getBoundingClientRect();
+  const p = gproj.invert([clientX - rect.left, clientY - rect.top]);
+  if (!p || !Number.isFinite(p[0])) return null;
+  for (const f of worldGeo) if (window.d3.geoContains(f, p)) return f;
+  return null;
+}
+function gPointerMove(e) {
+  if (gdrag && gLast) {
+    const k = 0.3;
+    grot[0] += (e.clientX - gLast[0]) * k;
+    grot[1] = Math.max(-90, Math.min(90, grot[1] - (e.clientY - gLast[1]) * k));
+    gLast = [e.clientX, e.clientY];
+    gproj.rotate(grot); gDraw();
+    return;
+  }
+  const found = gFeatureAt(e.clientX, e.clientY);
+  if (found !== ghover) { ghover = found; gDraw(); }
+  const tip = $('globe-tip'), rect = gcanvas.getBoundingClientRect();
+  if (found) {
+    const m = gMetric(), v = found.properties[m.prop], drill = ccOfFeature(found);
+    tip.innerHTML = `<b>${found.properties.name}</b><br>${L(m.zh, m.en)}: `
+      + (v == null ? L('無資料', 'no data') : `${(+v).toFixed(m.dec)} ${m.unit}`)
+      + (drill ? `<br><span style="opacity:.7">${L('點擊看行政區細節', 'click for admin-1 detail')}</span>` : '');
+    tip.hidden = false;
+    tip.style.left = Math.min(gW - 160, e.clientX - rect.left + 12) + 'px';
+    tip.style.top = (e.clientY - rect.top + 12) + 'px';
+  } else { tip.hidden = true; }
+}
+function setupGlobe() {
+  if (gcanvas) return;
+  gcanvas = $('map-globe'); gctx = gcanvas.getContext('2d');
+  gproj = window.d3.geoOrthographic().precision(0.5);
+  gpath = window.d3.geoPath(gproj, gctx);
+  ggrat = window.d3.geoGraticule10();
+  gproj.rotate(grot);
+  // Pointer handlers live on the canvas (not the stage) so overlay controls — the spin
+  // button, legend, tooltip — never trigger a drag or drill.
+  gcanvas.addEventListener('pointerdown', (e) => {
+    gdrag = true; gspin = false; updateSpinBtn(); gDownXY = [e.clientX, e.clientY]; gLast = [e.clientX, e.clientY];
+    try { gcanvas.setPointerCapture(e.pointerId); } catch (x) { /* ignore */ }
+  });
+  gcanvas.addEventListener('pointermove', gPointerMove);
+  gcanvas.addEventListener('pointerup', (e) => {
+    gdrag = false;
+    const moved = gDownXY ? Math.hypot(e.clientX - gDownXY[0], e.clientY - gDownXY[1]) : 99;
+    gLast = null; gDownXY = null;
+    if (moved < 5) {   // a tap, not a drag → drill down
+      const f = gFeatureAt(e.clientX, e.clientY), cc = f && ccOfFeature(f);
+      if (cc) { const cs = $('map-country'); if (cs) cs.value = cc; selectView(cc); }
+    }
+  });
+  gcanvas.addEventListener('pointerleave', () => { ghover = null; const t = $('globe-tip'); if (t) t.hidden = true; });
+  const spinBtn = $('globe-spin');
+  if (spinBtn) spinBtn.addEventListener('click', () => { gspin = !gspin; updateSpinBtn(); });
+  window.addEventListener('resize', () => { if (inWorld()) gResize(); });
+  new MutationObserver(() => { if (inWorld()) gDraw(); })
+    .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
+}
+async function enterWorld() {
+  mapCountry = 'world';
+  if (mapMode !== 'pm25' && mapMode !== 'composite') mapMode = 'pm25';
+  const mapEl = $('map'), stage = $('globe-stage');
+  if (mapEl) mapEl.hidden = true;
+  if (stage) stage.hidden = false;
+  gZoom = 1; gspin = true;                       // fresh globe view: reset zoom, resume auto-spin
+  const zslider = $('map-zoom'); if (zslider) zslider.value = 0;
+  if (!worldGeo) {
+    const g = await fetch('/data/geo/world-globe.geojson').then(r => r.ok ? r.json() : null).catch(() => null);
+    worldGeo = g ? g.features : [];
+    setupGlobe();
+  }
+  gResize(); gLegendBuild(); updateSpinBtn();
+  if (!graf) gTickLoop();
+  syncModeButtons(); renderMethodBox();
+}
+function selectView(v) {
+  if (v === 'world') { enterWorld(); return; }
+  const stage = $('globe-stage'), mapEl = $('map');
+  if (stage) stage.hidden = true;
+  if (mapEl) mapEl.hidden = false;
+  if (map) map.invalidateSize();   // re-read size now #map is visible again, before fitBounds
+  drawCountry(v);
 }
 async function initMap() {
   const el = $('map');
@@ -1593,21 +1818,38 @@ async function initMap() {
       L('界線 © NLSC／taiwan-atlas · Natural Earth｜PM2.5 © ACAG｜失智盛行率為模型估計值',
         'Boundaries © NLSC/taiwan-atlas · Natural Earth · PM2.5 © ACAG · dementia = modelled estimate'));
     EXPOSOME = await fetch('/data/exposome/exposome.json').then(r => r.ok ? r.json() : null).then(d => d && d.countries).catch(() => null);
-    await drawCountry('tw');
+    // Default landing = the global globe overview (marquee view; the country switcher's
+    // first option). Drilling into a country lazily builds its Leaflet admin-1 map.
+    await enterWorld();
     document.querySelectorAll('.map-btn').forEach(b => b.addEventListener('click', () => {
       if (b.disabled) return;
-      mapMode = b.dataset.mode; applyMode();
+      mapMode = b.dataset.mode;
+      if (inWorld()) { gLegendBuild(); gDraw(); syncModeButtons(); renderMethodBox(); }
+      else applyMode();
     }));
-    const fsel = $('map-factor');   // single-factor PAF picker
-    if (fsel) fsel.addEventListener('change', () => { if (fsel.value) { mapMode = fsel.value; applyMode(); } });
+    const fsel = $('map-factor');   // single-factor PAF picker (country view only)
+    if (fsel) fsel.addEventListener('change', () => { if (fsel.value && !inWorld()) { mapMode = fsel.value; applyMode(); } });
     const cs = $('map-country');
-    if (cs) cs.addEventListener('change', () => drawCountry(cs.value));
+    if (cs) cs.addEventListener('change', () => selectView(cs.value));
+    const zoom = $('map-zoom');   // universal zoom: drives the globe's scale or Leaflet's zoom
+    if (zoom) zoom.addEventListener('input', () => {
+      const v = +zoom.value;
+      if (inWorld()) gSetZoom(1 + v / 100 * 3);                                     // globe 1×–4×
+      else if (map && leafFitZoom != null) map.setZoom(leafFitZoom + v / 100 * 5);  // Leaflet fit .. fit+5
+    });
+    map.on('zoomend', () => {   // keep the slider in sync when Leaflet's own +/- buttons are used
+      if (inWorld() || leafFitZoom == null) return;
+      const z = $('map-zoom'); if (z) z.value = Math.max(0, Math.min(100, (map.getZoom() - leafFitZoom) / 5 * 100));
+    });
   } catch (e) {
     console.error('map init failed:', e);
     el.innerHTML = `<p class="map-fail">${L('地圖資料載入失敗。', 'Map data failed to load.')}</p>`;
   }
 }
-function relabelMap() { if (map && geoLayer) applyMode(); }
+function relabelMap() {
+  if (inWorld()) { gLegendBuild(); renderMethodBox(); updateSpinBtn(); gDraw(); }
+  else if (map && geoLayer) applyMode();
+}
 
 /* ── Init ── */
 /* LDL unit: mg/dL (default) vs mmol/L — update the input's range/placeholder, and
