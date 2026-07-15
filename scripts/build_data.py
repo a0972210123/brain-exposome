@@ -1208,6 +1208,7 @@ def build_world_globe_geojson():
     pop65 = _load_pop65()
     iso3_to_cc = {v: k for k, v in EXPO_ISO3.items()}
     pm_norm = {_norm_country(k): v["values"][-1] for k, v in world_pm.items()}
+    prev_norm = {_norm_country(k): v for k, v in load_gbd_prev60().items()}   # GBD dementia % among 60+ (national + subnat)
     ne = json.loads(http_get(NE_ADMIN0).decode("utf-8", "replace"))
     feats, unmatched = [], []
     for f in ne["features"]:
@@ -1231,23 +1232,31 @@ def build_world_globe_geojson():
         paf = expo[cc].get("composite_paf_pct") if cc in expo else None
         iso2c = "" if iso2 == "-99" else iso2
         pop = pop65.get(iso2c)
+        prev = None   # national dementia prevalence among 60+ (%) from GBD, matched by country name
+        for fld in ("NAME", "NAME_LONG", "ADMIN", "GEOUNIT", "BRK_NAME", "NAME_EN", "FORMAL_EN"):
+            nm = p.get(fld)
+            if nm and _norm_country(nm) in prev_norm:
+                prev = round(prev_norm[_norm_country(nm)] * 100, 2)
+                break
         g = shape(f["geometry"]).simplify(0.15, preserve_topology=True)
         gm = mapping(g)
         gm = {"type": gm["type"], "coordinates": _round_coords(gm["coordinates"], 2)}
         feats.append({"type": "Feature",
                       "properties": {"name": name, "iso_a2": iso2c,
-                                     "pm25": pm, "paf": paf, "pop65": pop},
+                                     "pm25": pm, "paf": paf, "pop65": pop, "prev": prev},
                       "geometry": gm})
     write_json("geo/world-globe.geojson", {
         "type": "FeatureCollection",
         "meta": {"pm25": "ACAG SatPM2.5 V6.GL.03 national latest-year (CC BY 4.0)",
                  "paf": "composite modifiable-risk PAF, 27 countries (Livingston 2024 RRs) — modelled",
                  "pop65": "population aged 65+ (% of total), World Bank/UN latest — partial seed, modelled estimate",
+                 "prev": "GBD 2023 dementia prevalence among 60+ (%), national — modelled (IHME non-commercial)",
                  "boundaries": "Natural Earth admin-0 110m (public domain)", "built": BUILD_DATE},
         "features": feats})
     npaf = sum(1 for x in feats if x["properties"]["paf"] is not None)
     n65 = sum(1 for x in feats if x["properties"]["pop65"] is not None)
-    log(f"  world-globe: {len(feats)} countries · PM2.5 matched {len(feats) - len(unmatched)} · PAF {npaf} · 65+ {n65}")
+    nprev = sum(1 for x in feats if x["properties"]["prev"] is not None)
+    log(f"  world-globe: {len(feats)} countries · PM2.5 matched {len(feats) - len(unmatched)} · PAF {npaf} · 65+ {n65} · prev {nprev}")
     if unmatched:
         log("  PM2.5 unmatched (" + str(len(unmatched)) + "): " + ", ".join(sorted(unmatched)[:50]))
 

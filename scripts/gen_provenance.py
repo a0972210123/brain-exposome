@@ -37,7 +37,7 @@ types = [
     {"key": "aging", "zh": "老年人口 65+", "en": "Population 65+",
      "default": {"natSrc": "World Bank / UN WPP 2024", "natUrl": WB, "natYear": "2024", "status": "live"}},
     {"key": "prevalence", "zh": "失智盛行率", "en": "Dementia prevalence",
-     "default": {"natSrc": "GBD 2023 (IHME)", "natUrl": GBD, "natYear": "2023", "status": "identified"}},
+     "default": {"natSrc": "GBD 2023 (IHME) 60+", "natUrl": GBD, "natYear": "2023", "status": "live"}},
     {"key": "mci", "zh": "MCI 盛行率", "en": "MCI prevalence", "planned": True,
      "default": {"natSrc": "—", "natYear": "—", "status": "none"}},
     {"key": "scd", "zh": "SCD 盛行率", "en": "SCD prevalence", "planned": True,

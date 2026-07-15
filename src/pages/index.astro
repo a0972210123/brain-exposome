@@ -1512,7 +1512,7 @@ function modeAvailable(m, layers) {
 }
 function syncModeButtons() {
   const world = inWorld();
-  const worldModes = ['pm25', 'composite', 'aging'];
+  const worldModes = ['prevalence', 'pm25', 'composite', 'aging'];
   const layers = world ? worldModes : MAP_CFG[mapCountry].layers;
   document.querySelectorAll('.map-btn').forEach(b => {
     // Global globe carries the cross-country-comparable / national metrics (PM2.5, composite PAF,
@@ -1648,12 +1648,15 @@ function renderWorldMethod() {
   } else if (mapMode === 'composite') {
     body = L('每個國家以「可調控失智風險 PAF %」著色（Livingston 2024 的 5 因子合計、全國估計）。目前 27 國有資料，其餘為灰色。此指標跨國可比。點國家看細節。',
       'Each country is shaded by composite modifiable-risk PAF % (5 factors, national estimate; Livingston 2024). 27 countries have data; the rest are grey. This metric is comparable across countries. Click a country to drill in.');
+  } else if (mapMode === 'prevalence') {
+    body = L('每個國家以「失智盛行率（60 歲以上，GBD 2023）」著色。全球採單一年齡分母（皆 60+），因此可跨國比較；與下鑽後各國地圖採各自年齡分母（65+／60+／50+）的最佳估計不同。點國家看細節。',
+      'Each country is shaded by dementia prevalence among adults 60+ (GBD 2023). It uses one age denominator (60+) for every country, so it IS comparable across countries — unlike the per-country drill-down maps, which use each country’s own denominator (65+/60+/50+). Click a country to drill in.');
   } else {
     body = L('每個國家以近年全國人口加權 PM2.5（ACAG 衛星，µg/m³）著色，色階與各國地圖同一套 WHO 基準（≤5）。點任一國可下鑽到其行政區細節。',
       'Each country is shaded by recent national population-weighted PM2.5 (ACAG satellite, µg/m³) on the same WHO-anchored scale (≤5) as the per-country maps. Click a country to drill into its admin-1 detail.');
   }
-  const src = L('失智盛行率因各國年齡分母不同（如 65+／60+／50+）不宜跨國比較，只在下鑽後的各國地圖顯示。界線 © Natural Earth；PM2.5 © ACAG/WashU（CC BY 4.0）；PAF © Livingston 2024；高齡人口 © World Bank／UN（台灣 內政部）— 皆為模型估計／最新可得估計。',
-    'Dementia prevalence uses different age denominators per country (65+/60+/50+), so it appears only in the per-country drill-down. Boundaries © Natural Earth; PM2.5 © ACAG/WashU (CC BY 4.0); PAF © Livingston 2024; 65+ © World Bank/UN (Taiwan: MOI) — modelled / latest-available estimates.');
+  const src = L('全球總覽的失智盛行率採 GBD 2023「60 歲以上」全球一致口徑（可跨國比較）；下鑽的各國地圖則採各國自己的最佳估計與年齡分母。界線 © Natural Earth；PM2.5 © ACAG/WashU（CC BY 4.0）；失智盛行率 © GBD 2023 (IHME)；PAF © Livingston 2024；高齡人口 © World Bank／UN（台灣 內政部）— 皆為模型估計／最新可得估計。',
+    'The global overview’s dementia prevalence uses GBD 2023 “60+” on one comparable scale for all countries; the per-country drill-down maps use each country’s own best estimate and denominator. Boundaries © Natural Earth; PM2.5 © ACAG/WashU (CC BY 4.0); dementia prevalence © GBD 2023 (IHME); PAF © Livingston 2024; 65+ © World Bank/UN (Taiwan: MOI) — modelled / latest-available estimates.');
   box.innerHTML = `<h3 class="prev-method-h">${L('全球總覽', 'Global overview')}</h3>`
     + `<p class="prev-method-p">${body}</p><p class="prev-method-src">${src}</p>`;
 }
@@ -1732,6 +1735,8 @@ const WORLD_METRICS = {
   pm25: { prop: 'pm25', bins: PM_BINS, unit: 'µg/m³', zh: 'PM2.5 µg/m³', en: 'PM2.5 µg/m³', dec: 1 },
   composite: { prop: 'paf', bins: PAF_COMPOSITE.bins, unit: '%', zh: PAF_COMPOSITE.legendZh, en: PAF_COMPOSITE.legendEn, dec: 1 },
   aging: { prop: 'pop65', bins: AGE_BINS, ramp: AGE_RAMP, tiers: AGE_TIERS, unit: '%', zh: '高齡人口 65+ %', en: 'Population 65+ %', dec: 1 },
+  // national dementia prevalence among 60+ (GBD 2023) — cross-country comparable, one shade per country
+  prevalence: { prop: 'prev', bins: PREV_60.bins, unit: '%', zh: '失智盛行率 60+ %（GBD）', en: 'Dementia 60+ % (GBD)', dec: 1 },
 };
 function gMetric() { return WORLD_METRICS[mapMode] || WORLD_METRICS.pm25; }
 function gTheme(dark, light) { return document.documentElement.getAttribute('data-theme') === 'dark' ? dark : light; }
