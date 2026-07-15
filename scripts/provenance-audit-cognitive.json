@@ -1,0 +1,1108 @@
+{
+ "AE": {
+  "mci": {
+   "natSrc": "UAE community-dwelling older adults cohort",
+   "natUrl": "https://www.frontiersin.org/journals/aging/articles/10.3389/fragi.2026.1822042/full",
+   "natYear": "2026",
+   "note": "Community sample; ~40.9% MCI by MoCA.",
+   "status": "identified"
+  }
+ },
+ "AL": {
+  "mci": {
+   "natSrc": "Albania nationwide (Brain Sci)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11506003/",
+   "natYear": "2024",
+   "note": "Door-to-door >50; MCI 5.51%.",
+   "status": "identified"
+  }
+ },
+ "AM": {
+  "mci": {
+   "natSrc": "Jivalagian 2025",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12724876/",
+   "natYear": "2025",
+   "note": "Nationwide MoCA screening (8 provinces, n=2598, 55+).",
+   "status": "identified"
+  }
+ },
+ "AR": {
+  "mci": {
+   "natSrc": "Matanza-Riachuelo Study (Serrano/ACUMAR)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5619181/",
+   "natYear": "2013",
+   "note": "Sub-national (Buenos Aires basin); CIND 18.1% in 60+.",
+   "status": "identified"
+  }
+ },
+ "AT": {
+  "mci": {
+   "natSrc": "VITA (Vienna Transdanube Aging)",
+   "natUrl": "https://onlinelibrary.wiley.com/doi/abs/10.1002/gps.1311",
+   "natYear": "2005",
+   "note": "Community cohort, sub-national (Vienna).",
+   "status": "identified"
+  }
+ },
+ "AU": {
+  "mci": {
+   "natSrc": "Sydney Memory & Ageing Study (MAS)",
+   "natUrl": "https://www.sciencedirect.com/science/article/abs/pii/S155252601200026X",
+   "natYear": "2012",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "COSMIC (incl. AIBL/PATH/Sydney MAS)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7749505/",
+   "natYear": "2020",
+   "status": "identified"
+  }
+ },
+ "BD": {
+  "mci": {
+   "natSrc": "Cognitive impairment among elderly in Bangladesh (J Public Health)",
+   "natUrl": "https://link.springer.com/article/10.1007/s10389-021-01569-z",
+   "natYear": "2021",
+   "note": "Community MMSE (27.9%), not strictly MCI-diagnostic.",
+   "status": "identified"
+  }
+ },
+ "BE": {
+  "scd": {
+   "natSrc": "Flanders older-adults SCD study",
+   "natUrl": "https://www.nature.com/articles/s41598-023-36718-9",
+   "natYear": "2023",
+   "note": "Flanders n=371; COVID-impact study; low confidence. No Belgian MCI cohort found.",
+   "status": "identified"
+  }
+ },
+ "BG": {
+  "mci": {
+   "natSrc": "Varna urban study (Am J Alzheimers Dis)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10697338/",
+   "natYear": "2012",
+   "note": "Sub-national (Varna), ≥65; MCI 6.7%.",
+   "status": "identified"
+  }
+ },
+ "BJ": {
+  "mci": {
+   "natSrc": "Rural Benin cognitive impairment (Guerchet 2009)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/19136831/",
+   "natYear": "2009",
+   "note": "Door-to-door CIND 10.4%; screening-based.",
+   "status": "identified"
+  }
+ },
+ "BN": {
+  "mci": {
+   "natSrc": "Demensia Brunei community screening (Teo et al.)",
+   "natUrl": "https://www.mdpi.com/2499-6564/74/2/8",
+   "natYear": "2026",
+   "note": "Mini-Cog screening, not formal MCI.",
+   "status": "identified"
+  }
+ },
+ "BO": {
+  "mci": {
+   "natSrc": "Gatz et al. 2023 (Tsimane/Moseten)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9458772/",
+   "natYear": "2023",
+   "note": "Indigenous Amazonian; not nationally representative.",
+   "status": "identified"
+  }
+ },
+ "BR": {
+  "mci": {
+   "natSrc": "César/Nitrini 2016 (Tremembé, São Paulo Ageing)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/26629676/",
+   "natYear": "2016",
+   "note": "Sub-national (Tremembé, SP); SPAH national alt.",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "Borelli et al. 2022 (ELSI-Brazil)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9663677/",
+   "natYear": "2022",
+   "note": "National; SCD 29.2%.",
+   "status": "identified"
+  }
+ },
+ "CA": {
+  "mci": {
+   "natSrc": "Canadian Study of Health and Aging (CSHA)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/7763211/",
+   "natYear": "1995",
+   "note": "CIND ~16.8%; CLSA newer alt (2023).",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "Canadian Longitudinal Study on Aging (CLSA)",
+   "natUrl": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8681321/",
+   "natYear": "2021",
+   "status": "identified"
+  }
+ },
+ "CD": {
+  "mci": {
+   "natSrc": "Kinshasa suspected-dementia study (Ikanga 2023)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10483015/",
+   "natYear": "2023",
+   "note": "Community n=355, 65+; DSM-5 mild NCD 34.7%.",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "Kinshasa study (subjective cognitive impairment subgroup)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10483015/",
+   "natYear": "2023",
+   "note": "Low confidence; SCI subgroup 1.7%.",
+   "status": "identified"
+  }
+ },
+ "CF": {
+  "mci": {
+   "natSrc": "EPIDEMCA (Pilleron 2015)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/26099336/",
+   "natYear": "2015",
+   "note": "Population-based CAR, Petersen MCI.",
+   "status": "identified"
+  }
+ },
+ "CG": {
+  "mci": {
+   "natSrc": "EPIDEMCA (Pilleron 2015)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/26099336/",
+   "natYear": "2015",
+   "note": "EPIDEMCA covers Republic of Congo.",
+   "status": "identified"
+  }
+ },
+ "CH": {
+  "mci": {
+   "natSrc": "Lausanne cohort 65+ (Lc65+)",
+   "natUrl": "https://academic.oup.com/ije/article/51/4/e156/6446133",
+   "natYear": "2022",
+   "note": "Lausanne city cohort; no single national CH cohort.",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "SwissDEM (Canton Ticino)",
+   "natUrl": "https://www.frontiersin.org/journals/psychiatry/articles/10.3389/fpsyt.2022.963703/full",
+   "natYear": "2022",
+   "note": "Ticino 65+; sub-national.",
+   "status": "identified"
+  }
+ },
+ "CL": {
+  "mci": {
+   "natSrc": "Chilean National Health Survey 2016-17 (ENS)",
+   "natUrl": "https://www.sciencedirect.com/science/article/pii/S2667032122000531",
+   "natYear": "2022",
+   "note": "National survey; MCI ~10% in 60+.",
+   "status": "identified"
+  }
+ },
+ "CM": {
+  "mci": {
+   "natSrc": "Rural Cameroon cognitive impairment (Tianyi 2019)",
+   "natUrl": "https://karger.com/Article/Abstract/496825",
+   "natYear": "2019",
+   "note": "Batibo, MMSE CI 33.3%; screening-based.",
+   "status": "identified"
+  }
+ },
+ "CN": {
+  "mci": {
+   "natSrc": "Jia et al. 2020 (Lancet Public Health)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/33271079/",
+   "natYear": "2020",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "Chinese SCD meta-analysis (Front Public Health)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10722401/",
+   "natYear": "2023",
+   "note": "Pooled national SCD ~46% from 17 studies.",
+   "status": "identified"
+  }
+ },
+ "CO": {
+  "mci": {
+   "natSrc": "SABE Colombia 2015 national survey",
+   "natUrl": "https://bmcgeriatr.biomedcentral.com/articles/10.1186/s12877-024-05432-0",
+   "natYear": "2024",
+   "status": "identified",
+   "subSrc": "Bonilla-Santos 2023 (Southern Colombia)",
+   "subUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10789289/",
+   "subYear": "2023"
+  }
+ },
+ "CR": {
+  "mci": {
+   "natSrc": "CRELES",
+   "natUrl": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10738314/",
+   "natYear": "2023",
+   "note": "CI incidence; MoCA cutoffs validated (2024).",
+   "status": "identified"
+  }
+ },
+ "CU": {
+  "mci": {
+   "natSrc": "10/66 Dementia Research Group (Sosa 2012)",
+   "natUrl": "https://journals.plos.org/plosmedicine/article?id=10.1371%2Fjournal.pmed.1001170",
+   "natYear": "2012",
+   "note": "aMCI; Cuba 10/66 site.",
+   "status": "identified"
+  }
+ },
+ "CY": {
+  "mci": {
+   "natSrc": "SHARE harmonized (Sci Rep)",
+   "natUrl": "https://www.nature.com/articles/s41598-025-97691-z",
+   "natYear": "2025",
+   "note": "SHARE 2022 harmonized country estimate.",
+   "status": "identified"
+  }
+ },
+ "CZ": {
+  "mci": {
+   "natSrc": "Seblova (J Alzheimers Dis)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6845821/",
+   "natYear": "2019",
+   "note": "SHARE-based CI prevalence, not MCI-specific.",
+   "status": "identified"
+  }
+ },
+ "DE": {
+  "mci": {
+   "natSrc": "AgeCoDe",
+   "natUrl": "https://www.annfammed.org/content/12/2/158",
+   "natYear": "2014",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "AgeCoDe / SCD-I (Jessen)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4713115/",
+   "natYear": "2016",
+   "note": "German SCD prevalence; SCD-I framework Jessen 2014.",
+   "status": "identified"
+  }
+ },
+ "DK": {
+  "mci": {
+   "natSrc": "Danish 1905 Cohort Survey",
+   "natUrl": "https://karger.com/dem/article-abstract/13/3/156/97800",
+   "natYear": "2002",
+   "note": "National birth cohort; MMSE 18-23, not clinical MCI; low confidence.",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "Copenhagen GP subjective memory complaints (Waldorff)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3587297/",
+   "natYear": "2013",
+   "note": "~23% SMC in primary care; sub-national.",
+   "status": "identified"
+  }
+ },
+ "DO": {
+  "mci": {
+   "natSrc": "10/66 Dementia Research Group (Sosa 2012)",
+   "natUrl": "https://journals.plos.org/plosmedicine/article?id=10.1371%2Fjournal.pmed.1001170",
+   "natYear": "2012",
+   "note": "aMCI; DR 10/66 site.",
+   "status": "identified"
+  }
+ },
+ "EC": {
+  "mci": {
+   "natSrc": "Atahualpa Project (Del Brutto)",
+   "natUrl": "http://scielo.senescyt.gob.ec/scielo.php?script=sci_arttext&pid=S2631-25812017000100164",
+   "natYear": "2017",
+   "note": "Rural sub-national cohort; MCI proxy.",
+   "status": "identified"
+  }
+ },
+ "EE": {
+  "mci": {
+   "natSrc": "SHARE harmonized (Sci Rep)",
+   "natUrl": "https://www.nature.com/articles/s41598-025-97691-z",
+   "natYear": "2025",
+   "note": "SHARE 2022 harmonized country estimate.",
+   "status": "identified"
+  }
+ },
+ "EG": {
+  "mci": {
+   "natSrc": "Khedr 2015 (Qena Governorate)",
+   "natUrl": "https://journals.sagepub.com/doi/10.3233/JAD-142655",
+   "natYear": "2015",
+   "note": "Sub-national (Upper Egypt).",
+   "status": "identified"
+  }
+ },
+ "ES": {
+  "mci": {
+   "natSrc": "Spanish nationally representative sample (Lara et al.)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/26923809/",
+   "natYear": "2016",
+   "note": "National n=3625 50+; ZARADEMP alt.",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "Spanish national health survey (SCD proxy)",
+   "natUrl": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11417891/",
+   "natYear": "2024",
+   "note": "National survey n=7082.",
+   "status": "identified"
+  }
+ },
+ "ET": {
+  "mci": {
+   "natSrc": "Gondar town community study 2022 (Sci Rep)",
+   "natUrl": "https://www.nature.com/articles/s41598-022-11735-2",
+   "natYear": "2022",
+   "note": "Sub-national screening.",
+   "status": "identified"
+  }
+ },
+ "FI": {
+  "mci": {
+   "natSrc": "Kuopio population-based study (Hänninen et al.)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/12174174/",
+   "natYear": "2002",
+   "note": "Regional (Kuopio).",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "Eastern Finland AAMI study (Koivisto et al.)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/7723964/",
+   "natYear": "1995",
+   "note": "Age-associated memory impairment; SCD proxy.",
+   "status": "identified"
+  }
+ },
+ "FR": {
+  "mci": {
+   "natSrc": "PAQUID",
+   "natUrl": "https://www.neurology.org/doi/10.1212/01.WNL.0000034176.07159.F8",
+   "natYear": "2002",
+   "note": "Regional (Gironde/Dordogne); 3C alt.",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "Three-City (3C) Study",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/22672286/",
+   "natYear": "2012",
+   "note": "Subjective memory impairment.",
+   "status": "identified"
+  }
+ },
+ "GB": {
+  "mci": {
+   "natSrc": "CFAS (Cognitive Function and Ageing Study)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6861197/",
+   "natYear": "2019",
+   "note": "CFAS I/II, England.",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "Caerphilly Prospective Study (CaPS)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10582873/",
+   "natYear": "2023",
+   "note": "Regional (South Wales); PROTECT national alt.",
+   "status": "identified"
+  }
+ },
+ "GE": {
+  "mci": {
+   "natSrc": "Janelidze 2018",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5946339/",
+   "natYear": "2018",
+   "note": "Population-based Georgian MoCA study, MCI 13.3%.",
+   "status": "identified"
+  }
+ },
+ "GH": {
+  "mci": {
+   "natSrc": "Cape Coast MoCA pilot",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11665373/",
+   "natYear": "2024",
+   "note": "Sub-national pilot, small sample.",
+   "status": "identified"
+  }
+ },
+ "GR": {
+  "mci": {
+   "natSrc": "HELIAD",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/31913961/",
+   "natYear": "2020",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "HELIAD (SCD-frailty)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/30621435/",
+   "natYear": "2019",
+   "status": "identified"
+  }
+ },
+ "GT": {
+  "mci": {
+   "natSrc": "Zacapa Regional Hospital cross-sectional study",
+   "natUrl": "https://revistasociedadcunzac.com/index.php/revista/article/download/85/99",
+   "natYear": "2022",
+   "note": "Low confidence: hospital-based, not population.",
+   "status": "identified"
+  }
+ },
+ "HR": {
+  "mci": {
+   "natSrc": "SHARE harmonized (Sci Rep)",
+   "natUrl": "https://www.nature.com/articles/s41598-025-97691-z",
+   "natYear": "2025",
+   "note": "SHARE 2022 harmonized country estimate.",
+   "status": "identified"
+  }
+ },
+ "HU": {
+  "mci": {
+   "natSrc": "SHARE harmonized (Sci Rep)",
+   "natUrl": "https://www.nature.com/articles/s41598-025-97691-z",
+   "natYear": "2025",
+   "note": "SHARE 2022 harmonized country estimate.",
+   "status": "identified"
+  }
+ },
+ "ID": {
+  "mci": {
+   "natSrc": "IFLS-based cognitive impairment (Jurnal Berkala Kesehatan)",
+   "natUrl": "https://ppjp.ulm.ac.id/journal/index.php/berkala-kesehatan/article/view/9786",
+   "natYear": "2021",
+   "note": "Nationally representative IFLS; MCI ~31.4%.",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "Memory impairment among older adults (IFLS)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/36856553/",
+   "natYear": "2023",
+   "note": "National IFLS self-reported memory (SCD proxy).",
+   "status": "identified"
+  }
+ },
+ "IE": {
+  "mci": {
+   "natSrc": "TILDA (Irish Longitudinal Study on Ageing)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/26707711/",
+   "natYear": "2016",
+   "note": "National cohort; MCI 10.1% (MoCA).",
+   "status": "identified"
+  }
+ },
+ "IL": {
+  "mci": {
+   "natSrc": "Jerusalem Longitudinal Study",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10738720/",
+   "natYear": "2023",
+   "note": "Representative community cohort.",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "Israeli national sample (subjective cognitive functioning)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/18314928/",
+   "natYear": "2008",
+   "note": "National sample 60+; older study; also in COSMIC.",
+   "status": "identified"
+  }
+ },
+ "IN": {
+  "mci": {
+   "natSrc": "LASI-DAD (DSM-5 mild NCD ≈ CIND)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10849236/",
+   "natYear": "2024",
+   "note": "Nationally representative; mild NCD 17.6%.",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "Menon et al. (SCD, urban South India)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11848155/",
+   "natYear": "2025",
+   "note": "Regional; first Indian SCD study; SCD 45.2%.",
+   "status": "identified"
+  }
+ },
+ "IQ": {
+  "mci": {
+   "natSrc": "Sulaymaniyah older-adults cognitive impairment",
+   "natUrl": "https://kjar.spu.edu.iq/index.php/kjar/article/view/942",
+   "natYear": "2024",
+   "note": "Sub-national (Kurdistan); MMSE-based.",
+   "status": "identified"
+  }
+ },
+ "IR": {
+  "mci": {
+   "natSrc": "Delbari 2024 (Ardakan Cohort Study on Aging)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10803666/",
+   "natYear": "2024",
+   "note": "Large community cohort (Yazd), sub-national.",
+   "status": "identified"
+  }
+ },
+ "IS": {
+  "mci": {
+   "natSrc": "AGES-Reykjavik Study",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9768066/",
+   "natYear": "2022",
+   "note": "National cohort cognition overview.",
+   "status": "identified"
+  }
+ },
+ "IT": {
+  "mci": {
+   "natSrc": "ILSA (Di Carlo et al., Neurology)",
+   "natUrl": "https://n.neurology.org/content/68/22/1909.short",
+   "natYear": "2007",
+   "note": "MCI 16.1%; aMCI 7.0%.",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "IPREA (AACD proxy)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/20383053/",
+   "natYear": "2010",
+   "note": "AACD 9.2% as SCD proxy.",
+   "status": "identified"
+  }
+ },
+ "JM": {
+  "mci": {
+   "natSrc": "Jamaica national cognitive impairment survey (WIMJ Open)",
+   "natUrl": "https://www.mona.uwi.edu/wimjopen/article/1640",
+   "natYear": "2015",
+   "note": "Nationally representative (n=2943); MMSE-based CI.",
+   "status": "identified"
+  }
+ },
+ "JO": {
+  "mci": {
+   "natSrc": "Cognitive impairment among elderly, Jerash",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10849287/",
+   "natYear": "2024",
+   "note": "Sub-national; ECAQ-based (~9.1%).",
+   "status": "identified"
+  }
+ },
+ "JP": {
+  "mci": {
+   "natSrc": "JPSC-AD (Ninomiya et al.)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7603740/",
+   "natYear": "2020",
+   "note": "National multicenter cohort (8 sites); Hisayama alt.",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "Nakamura et al. (community elderly)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/32962150/",
+   "natYear": "2020",
+   "note": "Regional; no clean national SCD.",
+   "status": "identified"
+  }
+ },
+ "KG": {
+  "mci": {
+   "natSrc": "Kazakh-Kyrgyz cognitive impairment study 2020",
+   "natUrl": "https://www.cambridge.org/core/journals/international-psychogeriatrics/article/338-risk-factors-for-moderate-cognitive-impairment-and-dementia-in-the-kazakh-and-kyrgyz-populations-preliminary-results/FDA10846FCD955E4AD9F9029368E6A1F",
+   "natYear": "2020",
+   "note": "Sub-national (Bishkek, n=150); preliminary, low confidence.",
+   "status": "identified"
+  }
+ },
+ "KR": {
+  "mci": {
+   "natSrc": "NaSDEK (Suh et al.)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/33843678/",
+   "natYear": "2021",
+   "note": "Nationwide Survey on Dementia Epidemiology of Korea.",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "Nationwide age-66 cohort (n=579,710)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7203882/",
+   "natYear": "2020",
+   "note": "SCD 38.3% at age 66.",
+   "status": "identified"
+  }
+ },
+ "KW": {
+  "mci": {
+   "natSrc": "Kuwait geriatric outpatient cognitive study",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11995643/",
+   "natYear": "2025",
+   "note": "Clinical outpatient sample, MMSE.",
+   "status": "identified"
+  }
+ },
+ "KZ": {
+  "mci": {
+   "natSrc": "Tsoy 2019",
+   "natUrl": "https://journals.lww.com/alzheimerjournal/abstract/2019/04000/prevalence_of_mild_cognitive_impairment_among.8.aspx",
+   "natYear": "2019",
+   "note": "Almaty, n=668, 60+, MoCA; MCI 30%.",
+   "status": "identified"
+  }
+ },
+ "LA": {
+  "mci": {
+   "natSrc": "HDS-R cognitive assessment, Lao PDR (Health Res Policy Syst)",
+   "natUrl": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC9706827/",
+   "natYear": "2022",
+   "note": "WHO STEPS national sample; screening, not MCI-specific.",
+   "status": "identified"
+  }
+ },
+ "LB": {
+  "mci": {
+   "natSrc": "MCI among Lebanese older adults (primary care)",
+   "natUrl": "https://www.sciencedirect.com/science/article/abs/pii/S1876201821002847",
+   "natYear": "2021",
+   "note": "Beirut primary-care, MoCA; first Lebanon MCI epi.",
+   "status": "identified"
+  }
+ },
+ "LK": {
+  "mci": {
+   "natSrc": "Coonghe 2015 (MCI, Jaffna District)",
+   "natUrl": "https://scholars.direct/Articles/neurodegenerative-disorders/jnd-3-015.php?jid=neurodegenerative-disorders",
+   "natYear": "2015",
+   "note": "Sub-national (Jaffna).",
+   "status": "identified"
+  }
+ },
+ "LT": {
+  "mci": {
+   "natSrc": "SHARE harmonized (Sci Rep)",
+   "natUrl": "https://www.nature.com/articles/s41598-025-97691-z",
+   "natYear": "2025",
+   "note": "SHARE 2022 harmonized country estimate.",
+   "status": "identified"
+  }
+ },
+ "LU": {
+  "mci": {
+   "natSrc": "MemoVie cohort, Luxembourg",
+   "natUrl": "https://bmcpublichealth.biomedcentral.com/articles/10.1186/1471-2458-12-519",
+   "natYear": "2012",
+   "note": "Cohort designed to estimate MCI/AD prevalence 65+.",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "MemoVie (cognitive complaints, PLOS One)",
+   "natUrl": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0138818",
+   "natYear": "2015",
+   "note": "National sample; cognitive complaints as SCD proxy.",
+   "status": "identified"
+  }
+ },
+ "LV": {
+  "mci": {
+   "natSrc": "SHARE harmonized (Sci Rep)",
+   "natUrl": "https://www.nature.com/articles/s41598-025-97691-z",
+   "natYear": "2025",
+   "note": "SHARE 2022 harmonized country estimate.",
+   "status": "identified"
+  }
+ },
+ "MA": {
+  "mci": {
+   "natSrc": "Chahidi 2025 (National Prevalence Study, Morocco)",
+   "natUrl": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12726269/",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "El Harsi 2023 (cognitive complaints, primary care)",
+   "natUrl": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10229085/",
+   "natYear": "2023",
+   "note": "Sub-national (Marrakech); SCD proxy.",
+   "status": "identified"
+  }
+ },
+ "MM": {
+  "mci": {
+   "natSrc": "HDS-R cognitive impairment, Nay Pyi Taw (PLOS One)",
+   "natUrl": "https://journals.plos.org/plosone/article?id=10.1371/journal.pone.0236656",
+   "natYear": "2020",
+   "note": "Rural sub-national; screening.",
+   "status": "identified"
+  }
+ },
+ "MN": {
+  "mci": {
+   "natSrc": "VCI in Mongolian adults (Neurosci Res Notes)",
+   "natUrl": "https://neuroscirn.org/2021v4i3supplno99/",
+   "natYear": "2021",
+   "note": "Low confidence: review of local studies.",
+   "status": "identified"
+  }
+ },
+ "MX": {
+  "mci": {
+   "natSrc": "Mexican Health & Aging Study (MHAS)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3557523/",
+   "natYear": "2011",
+   "note": "Mejía-Arango CIND; Mex-Cog + 10/66 alt.",
+   "status": "identified"
+  }
+ },
+ "MY": {
+  "mci": {
+   "natSrc": "MCI screening in older Malaysians (Düşünen Adam J)",
+   "natUrl": "https://dusunenadamdergisi.org/article/111",
+   "natYear": "2016",
+   "note": "Multi-state community; NHMS 2018 also reports MCI.",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "Subjective memory complaints, rural Malaysia (latent class)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/30588848/",
+   "natYear": "2019",
+   "status": "identified"
+  }
+ },
+ "NG": {
+  "mci": {
+   "natSrc": "Nigeria community MCI prevalence",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10682501/",
+   "natYear": "2024",
+   "note": "Community ~12.9%; VALIANT Ibadan alt.",
+   "status": "identified"
+  }
+ },
+ "NL": {
+  "mci": {
+   "natSrc": "Rotterdam Study (de Bruijn et al.)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/24825566/",
+   "natYear": "2014",
+   "note": "MCI ~9% (655/7111).",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "Rotterdam Study (subjective memory complaints)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/19595922/",
+   "natYear": "2007",
+   "note": "Population cohort ≥55.",
+   "status": "identified"
+  }
+ },
+ "NO": {
+  "mci": {
+   "natSrc": "HUNT4 70+ (Gjøra et al.)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7990439/",
+   "natYear": "2021",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "NorCog registry",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9462106/",
+   "natYear": "2022",
+   "note": "Clinic-based registry share; not population prevalence.",
+   "status": "identified"
+  }
+ },
+ "NP": {
+  "mci": {
+   "natSrc": "Pradhan et al. (MCI, Baraha Municipality)",
+   "natUrl": "https://www.nepjol.info/index.php/jbpkihs/article/view/30322",
+   "natYear": "2020",
+   "note": "Local (Sunsari), small purposive sample; screening.",
+   "status": "identified"
+  }
+ },
+ "NZ": {
+  "mci": {
+   "natSrc": "LiDiA feasibility (10/66, CDR 0.5)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11041074/",
+   "natYear": "2024",
+   "note": "Low confidence; dementia-focused feasibility study.",
+   "status": "identified"
+  }
+ },
+ "PA": {
+  "mci": {
+   "natSrc": "Panama Aging Research Initiative (PARI)",
+   "natUrl": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC4698525/",
+   "natYear": "2015",
+   "note": "Community elderly CI, Panama City.",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "PARI-HD",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11208464/",
+   "natYear": "2024",
+   "note": "Low confidence: women-only select cohort.",
+   "status": "identified"
+  }
+ },
+ "PE": {
+  "mci": {
+   "natSrc": "Zegarra-Valdivia et al. 2025 (Chiclayo)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12133550/",
+   "natYear": "2025",
+   "note": "Sub-national (Lambayeque), MCI 40.5%; 10/66 alt.",
+   "status": "identified"
+  }
+ },
+ "PH": {
+  "mci": {
+   "natSrc": "Dominguez et al. (Marikina Memory & Ageing Project)",
+   "natUrl": "https://journals.sagepub.com/doi/abs/10.3233/JAD-180095",
+   "natYear": "2018",
+   "note": "Population-based Marikina; MCI 23.2%.",
+   "status": "identified"
+  }
+ },
+ "PK": {
+  "mci": {
+   "natSrc": "Cognitive impairment among elderly, Rawalpindi",
+   "natUrl": "https://www.researchgate.net/publication/380138265_Prevalence_of_Cognitive_Impairment_and_Risk_Factors_among_Elderly_in_Rawalpindi_Pakistan_A_cross-Sectional_study",
+   "natYear": "2024",
+   "note": "Sub-national (Rawalpindi), MoCA-Urdu; MCI 30%.",
+   "status": "identified"
+  }
+ },
+ "PL": {
+  "mci": {
+   "natSrc": "PolSenior (Arch Gerontol Geriatr)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/24937034/",
+   "natYear": "2014",
+   "note": "National; CI suspected of dementia (MMSE), not MCI-specific.",
+   "status": "identified"
+  }
+ },
+ "PR": {
+  "mci": {
+   "natSrc": "10/66 Dementia Research Group (Sosa 2012)",
+   "natUrl": "https://journals.plos.org/plosmedicine/article?id=10.1371%2Fjournal.pmed.1001170",
+   "natYear": "2012",
+   "note": "aMCI; PR 10/66 site; PREHCO alt.",
+   "status": "identified"
+  }
+ },
+ "PS": {
+  "mci": {
+   "natSrc": "MCI among Palestinian older adults",
+   "natUrl": "https://www.tandfonline.com/doi/full/10.1080/23311908.2025.2478715",
+   "natYear": "2025",
+   "note": "Sub-national (Hebron), community-dwelling.",
+   "status": "identified"
+  }
+ },
+ "PT": {
+  "mci": {
+   "natSrc": "EPIPorto cohort (Northern Portugal)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10852416/",
+   "natYear": "2019",
+   "note": "Regional (Porto), not fully national.",
+   "status": "identified"
+  }
+ },
+ "RO": {
+  "mci": {
+   "natSrc": "SHARE harmonized (Sci Rep)",
+   "natUrl": "https://www.nature.com/articles/s41598-025-97691-z",
+   "natYear": "2025",
+   "note": "SHARE 2022 harmonized country estimate.",
+   "status": "identified"
+  }
+ },
+ "RU": {
+  "mci": {
+   "natSrc": "EVKALIPT (Russian Federation)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/38696145/",
+   "natYear": "2024",
+   "note": "National CI study ≥65.",
+   "status": "identified"
+  }
+ },
+ "SA": {
+  "mci": {
+   "natSrc": "Alkhunizan 2018",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5921184/",
+   "natYear": "2018",
+   "note": "Riyadh community, MoCA; MCI 38.6%.",
+   "status": "identified"
+  }
+ },
+ "SD": {
+  "mci": {
+   "natSrc": "Central Sudan community study",
+   "natUrl": "https://www.tandfonline.com/doi/full/10.2147/IJGM.S573913",
+   "natYear": "2025",
+   "note": "Regional (East Gezira); MoCA<26 in adults ≥18.",
+   "status": "identified"
+  }
+ },
+ "SE": {
+  "mci": {
+   "natSrc": "Good Aging in Skåne (GÅS, SNAC)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/31311017/",
+   "natYear": "2019",
+   "note": "Sub-national SNAC site; SNAC-K alt.",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "Swedish Twin Registry (Caracciolo et al.)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4063353/",
+   "natYear": "2012",
+   "status": "identified"
+  }
+ },
+ "SI": {
+  "mci": {
+   "natSrc": "SHARE harmonized (Sci Rep)",
+   "natUrl": "https://www.nature.com/articles/s41598-025-97691-z",
+   "natYear": "2025",
+   "note": "SHARE 2022 harmonized country estimate.",
+   "status": "identified"
+  }
+ },
+ "SK": {
+  "mci": {
+   "natSrc": "SHARE harmonized (Sci Rep)",
+   "natUrl": "https://www.nature.com/articles/s41598-025-97691-z",
+   "natYear": "2025",
+   "note": "SHARE 2022 harmonized country estimate.",
+   "status": "identified"
+  }
+ },
+ "SV": {
+  "mci": {
+   "natSrc": "Hernández 2017 (El Salvador, AAIC)",
+   "natUrl": "https://alz-journals.onlinelibrary.wiley.com/doi/10.1016/j.jalz.2017.06.1183",
+   "natYear": "2017",
+   "note": "MCI 17.09% in 60+; small two-phase sample.",
+   "status": "identified"
+  }
+ },
+ "TH": {
+  "mci": {
+   "natSrc": "Dementia and Disability Project in Thai Elderly (DDP)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3552988/",
+   "natYear": "2013",
+   "note": "Nationwide; community MCI studies also exist.",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "SCD/MCI household survey, Chiang Mai (Sci Rep)",
+   "natUrl": "https://www.nature.com/articles/s41598-024-58150-3",
+   "natYear": "2024",
+   "status": "identified"
+  }
+ },
+ "TR": {
+  "mci": {
+   "natSrc": "Dementia & MCI in rural Sivas",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7930887/",
+   "natYear": "2021",
+   "note": "Sub-national door-to-door; first community CI study in Turkey.",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "Cetin 2025 (subjective memory complaints)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12779049/",
+   "natYear": "2025",
+   "note": "Single-center geriatric clinic; SMC 61%.",
+   "status": "identified"
+  }
+ },
+ "TW": {
+  "mci": {
+   "natSrc": "Sun et al. 2014 (nationwide, PLOS One)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/24940604/",
+   "natYear": "2014",
+   "note": "Door-to-door nationwide, MCI 18.76%.",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "Wang/Fuh Kinmen SMC study",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/10733056/",
+   "natYear": "2000",
+   "note": "Low confidence: sub-national (Kinmen).",
+   "status": "identified"
+  }
+ },
+ "TZ": {
+  "mci": {
+   "natSrc": "Paddick 2015 (Hai district)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/25579049/",
+   "natYear": "2015",
+   "note": "Sub-national, rural Hai, 70+.",
+   "status": "identified"
+  }
+ },
+ "UG": {
+  "mci": {
+   "natSrc": "Rural Eastern Uganda 2026 (npj Dementia)",
+   "natUrl": "https://www.nature.com/articles/s44400-026-00077-9",
+   "natYear": "2026",
+   "note": "Sub-national; NCI 20.6% (MCI+dementia).",
+   "status": "identified"
+  }
+ },
+ "US": {
+  "mci": {
+   "natSrc": "Mayo Clinic Study of Aging (MCSA)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2938972/",
+   "natYear": "2010",
+   "note": "Petersen 2010, any-MCI 16%; HRS-ADAMS (CIND) national alt.",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "CDC BRFSS Subjective Cognitive Decline module",
+   "natUrl": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6047468/",
+   "natYear": "2018",
+   "note": "MMWR, official national SCD estimate (2015-16 data).",
+   "status": "identified"
+  }
+ },
+ "VE": {
+  "mci": {
+   "natSrc": "Sosa et al. 2012 (10/66 amnestic MCI)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3274506/",
+   "natYear": "2012",
+   "note": "10/66 multi-site; Maracaibo alt.",
+   "status": "identified"
+  }
+ },
+ "VN": {
+  "mci": {
+   "natSrc": "Nguyen et al. (MCI in older outpatients)",
+   "natUrl": "https://journals.sagepub.com/doi/full/10.1177/00469580261444222",
+   "natYear": "2026",
+   "note": "Clinic sample; MCI 30.1%.",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "Subjective memory complaints, Da Nang (Int Psychogeriatrics)",
+   "natUrl": "https://www.sciencedirect.com/science/article/pii/S1041610224017587",
+   "natYear": "2024",
+   "status": "identified"
+  }
+ },
+ "YE": {
+  "mci": {
+   "natSrc": "Neurocognitive dysfunction in T2 diabetics, Sana'a",
+   "natUrl": "https://www.frontiersin.org/journals/endocrinology/articles/10.3389/fendo.2026.1873295/abstract",
+   "natYear": "2026",
+   "note": "Low confidence: clinical diabetic sample, not population.",
+   "status": "identified"
+  }
+ },
+ "ZA": {
+  "mci": {
+   "natSrc": "Smith 2019 (WHO SAGE, nationally representative)",
+   "natUrl": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6521106/",
+   "natYear": "2019",
+   "note": "National MCI 8.5% (NIA-AA), SAGE, 50+.",
+   "status": "identified"
+  }
+ }
+}
