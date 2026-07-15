@@ -54,6 +54,8 @@ ALL_BBOX = dict(lon_min=118.0, lon_max=154.0, lat_min=21.0, lat_max=46.5)
 TATLAS_TGZ = "https://registry.npmjs.org/taiwan-atlas/-/taiwan-atlas-2021.9.20.tgz"
 NE_ADMIN1 = ("https://raw.githubusercontent.com/nvkelso/natural-earth-vector/"
              "master/geojson/ne_10m_admin_1_states_provinces.geojson")
+NE_ADMIN0 = ("https://raw.githubusercontent.com/nvkelso/natural-earth-vector/"
+             "master/geojson/ne_110m_admin_0_countries.geojson")
 # Other-country sub-national PM2.5 maps (boundaries: Natural Earth admin-1, ACAG zonal).
 # bbox = the grid crop for that country (centroid-filtered so far-flung units — e.g. US
 # Alaska/Hawaii — are dropped for a clean contiguous map). Signed lon (-180..180).
@@ -1132,6 +1134,86 @@ def build_exposome():
     return True
 
 
+# ---------- World globe asset: admin-0 boundaries + national PM2.5 + composite PAF ----------
+# For the 3D/2.5D globe prototypes. Natural Earth admin-0 (110m) polygons, with two national
+# metrics baked per country: PM2.5 (world-country-pm25.json, 246 countries, latest year) and
+# composite modifiable-risk PAF (exposome.json, 27 countries). Standalone — reads the two
+# already-built JSONs, so it can run without re-fetching ACAG.
+def _norm_country(s):
+    import unicodedata as _u, re as _re
+    s = _u.normalize("NFKD", s or "").encode("ascii", "ignore").decode()
+    return _re.sub(r"[^a-z0-9]", "", s.lower())
+
+
+# Natural-Earth name (normalised) → the key world-country-pm25.json actually uses.
+WORLD_PM_ALIAS = {
+    "unitedstatesofamerica": "United States", "czechia": "Czech Republic",
+    "republicofserbia": "Serbia", "unitedrepublicoftanzania": "Tanzania",
+    "democraticrepublicofthecongo": "Democratic Republic of the Congo",
+    "congo": "Republic of Congo", "republicofthecongo": "Republic of Congo",
+    "palestine": "Palestina", "guineabissau": "Guinea-Bissau",
+    "ivorycoast": "Cote d'Ivoire", "eswatini": "Swaziland", "northmacedonia": "Macedonia",
+    "bosniaandherzegovina": "Bosnia and Herzegovina", "southsudan": "South Sudan",
+    "falklandislands": "Falkland Islands", "timorleste": "Timor-Leste",
+}
+
+
+def _round_coords(obj, nd=2):
+    if isinstance(obj, (list, tuple)):
+        if obj and isinstance(obj[0], (int, float)):
+            return [round(float(obj[0]), nd), round(float(obj[1]), nd)]
+        return [_round_coords(x, nd) for x in obj]
+    return obj
+
+
+def build_world_globe_geojson():
+    """geo/world-globe.geojson — admin-0 polygons + national pm25 + composite paf per country."""
+    from shapely.geometry import shape, mapping
+    log("World globe geojson (admin-0 + national PM2.5 + composite PAF) …")
+    world_pm = json.load(open(os.path.join(OUT, "pm25/world-country-pm25.json")))["countries"]
+    expo = json.load(open(os.path.join(OUT, "exposome/exposome.json")))["countries"]
+    iso3_to_cc = {v: k for k, v in EXPO_ISO3.items()}
+    pm_norm = {_norm_country(k): v["values"][-1] for k, v in world_pm.items()}
+    ne = json.loads(http_get(NE_ADMIN0).decode("utf-8", "replace"))
+    feats, unmatched = [], []
+    for f in ne["features"]:
+        p = f["properties"]
+        name = p.get("NAME") or p.get("NAME_LONG") or p.get("ADMIN")
+        iso2 = p.get("ISO_A2_EH") or p.get("ISO_A2") or ""
+        iso3 = p.get("ISO_A3_EH") or p.get("ISO_A3") or ""
+        pm = None
+        for fld in ("NAME", "NAME_LONG", "ADMIN", "GEOUNIT", "BRK_NAME", "NAME_EN", "FORMAL_EN"):
+            nm = p.get(fld)
+            if not nm:
+                continue
+            key = _norm_country(nm)
+            key = _norm_country(WORLD_PM_ALIAS.get(key, "")) or key
+            if key in pm_norm:
+                pm = round(float(pm_norm[key]), 1)
+                break
+        if pm is None and _norm_country(name) != "antarctica":
+            unmatched.append(name)
+        cc = iso3_to_cc.get(iso3)
+        paf = expo[cc].get("composite_paf_pct") if cc in expo else None
+        g = shape(f["geometry"]).simplify(0.15, preserve_topology=True)
+        gm = mapping(g)
+        gm = {"type": gm["type"], "coordinates": _round_coords(gm["coordinates"], 2)}
+        feats.append({"type": "Feature",
+                      "properties": {"name": name, "iso_a2": ("" if iso2 == "-99" else iso2),
+                                     "pm25": pm, "paf": paf},
+                      "geometry": gm})
+    write_json("geo/world-globe.geojson", {
+        "type": "FeatureCollection",
+        "meta": {"pm25": "ACAG SatPM2.5 V6.GL.03 national latest-year (CC BY 4.0)",
+                 "paf": "composite modifiable-risk PAF, 27 countries (Livingston 2024 RRs) — modelled",
+                 "boundaries": "Natural Earth admin-0 110m (public domain)", "built": BUILD_DATE},
+        "features": feats})
+    npaf = sum(1 for x in feats if x["properties"]["paf"] is not None)
+    log(f"  world-globe: {len(feats)} countries · PM2.5 matched {len(feats) - len(unmatched)} · PAF {npaf}")
+    if unmatched:
+        log("  PM2.5 unmatched (" + str(len(unmatched)) + "): " + ", ".join(sorted(unmatched)[:50]))
+
+
 def main():
     log("== BUILD DATA ==  RBAR(65+ dementia rate) = %.4f" % RBAR)
     towns_topo, towns, counties = load_boundaries()
@@ -1247,6 +1329,9 @@ def main():
     build_exposome()
     assets["exposome/exposome.json"] = ("national modifiable risk factors + composite PAF (27 countries): "
                                         "NCD-RisC (BP/diabetes/BMI) + WHO GHO (smoking/inactivity) + Taiwan NHIS × Livingston 2024 RRs")
+    build_world_globe_geojson()
+    assets["geo/world-globe.geojson"] = ("Natural Earth admin-0 (public domain) + national PM2.5 "
+                                         "(ACAG V6.GL.03, CC BY 4.0) + composite PAF (Livingston 2024) — for the globe view")
     write_json("manifest.json", {
         "built": BUILD_DATE, "assets": assets,
         "attribution": ["PM2.5 © ACAG/WashU (Shen 2024; van Donkelaar 2021), CC BY 4.0",
