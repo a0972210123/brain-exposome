@@ -1643,8 +1643,8 @@ function renderWorldMethod() {
   box.style.display = '';
   let body;
   if (mapMode === 'aging') {
-    body = L('每個國家以「65 歲以上人口占比」著色，並依國際高齡化標準分級：&lt;7% 未達高齡化、7–14% 高齡化社會、14–21% 高齡社會、≥21% 超高齡社會。目前為主要國家的種子資料（World Bank／UN 最新估計，台灣為內政部）；完整各國與縣市（admin-1）層級資料補齊中。',
-      'Each country is shaded by its share of population aged 65+, tiered by the international aging-society standard: &lt;7% pre-aging, 7–14% aging, 14–21% aged, ≥21% super-aged. Currently a seed for major countries (latest World Bank/UN estimates; Taiwan: MOI); full country + admin-1 coverage is being filled in.');
+    body = L('每個國家以「65 歲以上人口占比」著色，依聯合國高齡化分級：&lt;7% 未達高齡化、7–14% 高齡化社會、14–20% 高齡社會、≥20% 超高齡社會。目前為主要國家的種子資料（World Bank／UN 最新估計，台灣為內政部）；完整各國與縣市（admin-1）層級資料補齊中。分級標準：<a href="https://www.un.org/en/global-issues/ageing" target="_blank" rel="noopener">UN World Population Ageing</a>（超高齡＝20%；7% 門檻源自 UN 1956《The Aging of Populations》Population Studies No. 26）。',
+      'Each country is shaded by its share of population aged 65+, tiered by the UN aging-society standard: &lt;7% pre-aging, 7–14% aging, 14–20% aged, ≥20% super-aged. Currently a seed for major countries (latest World Bank/UN estimates; Taiwan: MOI); full country + admin-1 coverage is being filled in. Classification: <a href="https://www.un.org/en/global-issues/ageing" target="_blank" rel="noopener">UN World Population Ageing</a> (super-aged = 20%; the 7% threshold originates in UN 1956, Population Studies No. 26).');
   } else if (mapMode === 'composite') {
     body = L('每個國家以「可調控失智風險 PAF %」著色（Livingston 2024 的 5 因子合計、全國估計）。目前 27 國有資料，其餘為灰色。此指標跨國可比。點國家看細節。',
       'Each country is shaded by composite modifiable-risk PAF % (5 factors, national estimate; Livingston 2024). 27 countries have data; the rest are grey. This metric is comparable across countries. Click a country to drill in.');
@@ -1722,12 +1722,12 @@ function updateSpinBtn() {
   b.setAttribute('aria-pressed', String(gspin));
 }
 // Aging-society layer (globe only): 65+ % of population, tiered by the international standard
-// (<7 pre-aging · 7–14 aging · 14–21 aged · ≥21 super-aged). A distinct BuPu ramp so it doesn't
+// (<7 pre-aging · 7–14 aging · 14–20 aged · ≥20 super-aged, UN WPA). A distinct BuPu ramp so it doesn't
 // read as "risk" like the YlOrRd layers.
-const AGE_BINS = [7, 14, 21];
+const AGE_BINS = [7, 14, 20];   // UN aging-society tiers: 7% aging · 14% aged · 20% super-aged (WPA)
 const AGE_RAMP = ['#edf8fb', '#b3cde3', '#8c96c6', '#88419d'];
 const AGE_TIERS = [['未達高齡化 <7%', 'Pre-aging <7%'], ['高齡化社會 7–14%', 'Aging 7–14%'],
-  ['高齡社會 14–21%', 'Aged 14–21%'], ['超高齡社會 ≥21%', 'Super-aged ≥21%']];
+  ['高齡社會 14–20%', 'Aged 14–20%'], ['超高齡社會 ≥20%', 'Super-aged ≥20%']];
 const WORLD_METRICS = {
   pm25: { prop: 'pm25', bins: PM_BINS, unit: 'µg/m³', zh: 'PM2.5 µg/m³', en: 'PM2.5 µg/m³', dec: 1 },
   composite: { prop: 'paf', bins: PAF_COMPOSITE.bins, unit: '%', zh: PAF_COMPOSITE.legendZh, en: PAF_COMPOSITE.legendEn, dec: 1 },
