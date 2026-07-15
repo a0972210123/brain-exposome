@@ -100,6 +100,7 @@
     "日本都道府県失智盛行率 © GBD 2023 (IHME) 年齡別率 × e-Stat 都道府県人口 — 模型估計",
     "韓國市道失智盛行率 © GBD 2023 (IHME) 年齡別率 × KOSIS 시도人口 — 模型估計",
     "其餘各國 admin-1 失智盛行率 © GBD 2023 (IHME) 年齡別率 × WorldPop 2020 人口 (CC BY 4.0) — 模型估計",
-    "可調控風險因子盛行率 © NCD-RisC (血壓/糖尿病/BMI) + WHO Global Health Observatory (吸菸/身體活動) + 2021 台灣國民健康訪問調查；PAF 相對風險 © Livingston et al. 2024 Lancet Commission — 模型估計"
+    "可調控風險因子盛行率 © NCD-RisC (血壓/糖尿病/BMI) + WHO Global Health Observatory (吸菸/身體活動) + 2021 台灣國民健康訪問調查；PAF 相對風險 © Livingston et al. 2024 Lancet Commission — 模型估計",
+    "各國 65 歲以上人口占比 © World Bank (SP.POP.65UP.TO.ZS, UN WPP) 2024 — 揭露表/地球儀高齡化圖層"
   ]
 }

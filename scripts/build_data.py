@@ -1203,8 +1203,8 @@ def build_world_globe_geojson():
     """geo/world-globe.geojson — admin-0 polygons + national pm25 + composite paf + 65+ % per country."""
     from shapely.geometry import shape, mapping
     log("World globe geojson (admin-0 + national PM2.5 + PAF + 65+) …")
-    world_pm = json.load(open(os.path.join(OUT, "pm25/world-country-pm25.json")))["countries"]
-    expo = json.load(open(os.path.join(OUT, "exposome/exposome.json")))["countries"]
+    world_pm = json.load(open(os.path.join(OUT, "pm25/world-country-pm25.json"), encoding="utf-8"))["countries"]
+    expo = json.load(open(os.path.join(OUT, "exposome/exposome.json"), encoding="utf-8"))["countries"]
     pop65 = _load_pop65()
     iso3_to_cc = {v: k for k, v in EXPO_ISO3.items()}
     pm_norm = {_norm_country(k): v["values"][-1] for k, v in world_pm.items()}

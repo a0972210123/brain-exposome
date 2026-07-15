@@ -23,7 +23,7 @@ OUT = os.path.join(ROOT, "public/data/data-provenance.json")
 AUDIT_IN = os.path.join(ROOT, "scripts/provenance-audit.json")
 
 # ---- country universe: ISO alpha-2 from world-globe.geojson (all countries w/ data) ----
-wg = json.load(open(os.path.join(ROOT, "public/data/geo/world-globe.geojson")))
+wg = json.load(open(os.path.join(ROOT, "public/data/geo/world-globe.geojson"), encoding="utf-8"))
 iso = sorted({f["properties"]["iso_a2"] for f in wg["features"] if f["properties"].get("iso_a2")})
 
 # ---- data types (tabs) with global-default source per type ----
@@ -35,7 +35,7 @@ GHO = "https://www.who.int/data/gho"
 LANCET = "https://doi.org/10.1016/S0140-6736(24)01296-0"
 types = [
     {"key": "aging", "zh": "老年人口 65+", "en": "Population 65+",
-     "default": {"natSrc": "World Bank / UN WPP 2024", "natUrl": WB, "natYear": "2024", "status": "identified"}},
+     "default": {"natSrc": "World Bank / UN WPP 2024", "natUrl": WB, "natYear": "2024", "status": "live"}},
     {"key": "prevalence", "zh": "失智盛行率", "en": "Dementia prevalence",
      "default": {"natSrc": "GBD 2023 (IHME)", "natUrl": GBD, "natYear": "2023", "status": "identified"}},
     {"key": "mci", "zh": "MCI 盛行率", "en": "MCI prevalence", "planned": True,
@@ -135,7 +135,7 @@ OV = {
 # ---- all-country source audit (scripts/provenance-audit.json, ~146 non-map countries) ----
 # Keep only aspects with a real distinct source; drop status=="none" (default renders "—") + notes.
 ASPECTS = ("aging", "prevalence", "mci", "scd")
-audit = json.load(open(AUDIT_IN))
+audit = json.load(open(AUDIT_IN, encoding="utf-8"))
 for ISO, aspects in audit.items():
     for k in ASPECTS:
         v = aspects.get(k)
@@ -163,7 +163,7 @@ def _factor_url(src):
     return None
 
 
-expo = json.load(open(os.path.join(ROOT, "public/data/exposome/exposome.json")))["countries"]
+expo = json.load(open(os.path.join(ROOT, "public/data/exposome/exposome.json"), encoding="utf-8"))["countries"]
 FKEYS = ["hypertension", "diabetes", "obesity", "smoking", "physical_inactivity"]
 for cc, e in expo.items():
     ISO = cc.upper()
@@ -189,7 +189,7 @@ for cc, e in expo.items():
 # A dedicated MCI + SCD WebSearch pass (incl. the 27 map countries the first audit skipped). Runs last so it
 # is the single source of truth for those two aspects, overriding the scattered mci/scd from pass 1.
 COG_IN = os.path.join(ROOT, "scripts/provenance-audit-cognitive.json")
-cog = json.load(open(COG_IN))
+cog = json.load(open(COG_IN, encoding="utf-8"))
 for ISO, aspects in cog.items():
     for k in ("mci", "scd"):
         v = aspects.get(k)

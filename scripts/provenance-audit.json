@@ -4,7 +4,7 @@
    "natSrc": "Federal Competitiveness and Statistics Centre (FCSC)",
    "natUrl": "https://opendata.fcsc.gov.ae/@federal-competitiveness-and-statistics-center/uae-population-estimates-by-gender-age-group-year",
    "natYear": "2022",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -25,7 +25,7 @@
    "natSrc": "NSIA Statistical Yearbook 2020",
    "natUrl": "https://nsia.gov.af:8443/wp-content/uploads/2021/04/Statistical-Year-book-2020.pdf",
    "natYear": "2020",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -46,7 +46,7 @@
    "natSrc": "INSTAT Albania (2023 Census)",
    "natUrl": "https://www.instat.gov.al/en/themes/demography-and-social-indicators/population/",
    "natYear": "2023",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "natSrc": "Nationwide cross-sectional study (Albania, MCI 5.51%)",
@@ -70,7 +70,7 @@
    "natSrc": "ArmStat (Demographic Database)",
    "natUrl": "https://armstat.am/en/?nid=209",
    "natYear": "2023",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -91,7 +91,7 @@
    "natSrc": "INE Angola (Censo 2014 / projecções)",
    "natUrl": "https://www.ine.gov.ao/Arquivos/arquivosCarregados/Carregados/Publicacao_638097239926448689.pdf",
    "natYear": "2014",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -105,7 +105,7 @@
    "natSrc": "INDEC (Proyecciones 2022–2040)",
    "natUrl": "https://www.indec.gob.ar/ftp/cuadros/publicaciones/proyecciones_nacionales_2022_2040.pdf",
    "natYear": "2022",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -129,7 +129,7 @@
    "natSrc": "Statistics Austria (population by age/sex)",
    "natUrl": "https://www.statistik.at/en/statistics/population-and-society/population/population-stock/population-by-age-/sex",
    "natYear": "2025",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -149,7 +149,7 @@
    "natSrc": "State Statistical Committee of Azerbaijan",
    "natUrl": "https://www.stat.gov.az/source/demoqraphy/?lang=en",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -163,7 +163,7 @@
    "natSrc": "Agency for Statistics of Bosnia and Herzegovina (BHAS)",
    "natUrl": "https://bhas.gov.ba/?lang=en",
    "natYear": "2023",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -183,7 +183,7 @@
    "natSrc": "Statbel (structure of the population)",
    "natUrl": "https://statbel.fgov.be/en/themes/population/structure-population",
    "natYear": "2026",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -206,7 +206,7 @@
    "natSrc": "INSD Burkina Faso (RGPH 2019)",
    "natUrl": "https://www.insd.bf",
    "natYear": "2019",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -220,7 +220,7 @@
    "natSrc": "National Statistical Institute (NSI Bulgaria)",
    "natUrl": "https://www.nsi.bg/en/content/2974/population",
    "natYear": "2025",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -240,7 +240,7 @@
    "natSrc": "INSBU Burundi (Annuaire Statistique 2023)",
    "natUrl": "https://www.insbu.bi/documents/Annuaires/Annuaire_Statistique_Burundi_Edition_2023.pdf",
    "natYear": "2023",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -254,7 +254,7 @@
    "natSrc": "INStaD Benin (RGPH4 2013)",
    "natUrl": "https://instad.bj",
    "natYear": "2013",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -277,7 +277,7 @@
    "natSrc": "Dept. of Economic Planning & Statistics (2021 Census)",
    "natUrl": "https://deps.mofe.gov.bn/population-social-statistics/",
    "natYear": "2021",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -298,7 +298,7 @@
    "natSrc": "INE Bolivia (Censo 2024)",
    "natUrl": "https://cpv2024.ine.gob.bo/index.php/resultados/resultados-demografia-demografia/resultados-demografia-poblacion/",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -319,7 +319,7 @@
    "natSrc": "Bahamas National Statistical Institute (2022 Census)",
    "natUrl": "https://cdn.bahamas.gov.bs/tenant/tenantbnsi/documents/2022-Census-Report-1st-Release-12-February-2025-FINAL-20250526040559.pdf",
    "natYear": "2022",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -340,7 +340,7 @@
    "natSrc": "National Statistics Bureau (2017 Census)",
    "natUrl": "https://www.nsb.gov.bt/wp-content/uploads/dlm_uploads/2020/07/PHCB2017_wp.pdf",
    "natYear": "2017",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -361,7 +361,7 @@
    "natSrc": "Statistics Botswana (2022 Census)",
    "natUrl": "https://www.statsbots.org.bw/census-2022",
    "natYear": "2022",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -375,7 +375,7 @@
    "natSrc": "National Statistical Committee of Belarus (Belstat)",
    "natUrl": "https://www.belstat.gov.by/en/ofitsialnaya-statistika/Demographic-and-social-statistics/population-and-migration/population/",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -396,7 +396,7 @@
    "natSrc": "Statistical Institute of Belize (2022 Census)",
    "natUrl": "https://sib.org.bz/statistics/population/",
    "natYear": "2022",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -417,7 +417,7 @@
    "natSrc": "INS-RDC (1984 Census / projections)",
    "natUrl": "https://ins-rdc.org",
    "natYear": "1984",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -431,7 +431,7 @@
    "natSrc": "ICASEES (RGPH-3 2003 / 2021 estimates)",
    "natUrl": "https://icasees.org",
    "natYear": "2003",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "natSrc": "EPIDEMCA (Pilleron et al.)",
@@ -455,7 +455,7 @@
    "natSrc": "INS-Congo (RGPH-5 2023)",
    "natUrl": "https://ins-congo.cg",
    "natYear": "2023",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "natSrc": "EPIDEMCA (Pilleron et al.)",
@@ -479,7 +479,7 @@
    "natSrc": "Federal Statistical Office (FSO)",
    "natUrl": "https://www.bfs.admin.ch/bfs/en/home/statistics/population/effectif-change/age.html",
    "natYear": "2025",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -499,7 +499,7 @@
    "natSrc": "INS Côte d'Ivoire (RGPH 2021)",
    "natUrl": "https://www.ins.ci",
    "natYear": "2021",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -513,7 +513,7 @@
    "natSrc": "INE Chile (Proyecciones, base Censo 2024)",
    "natUrl": "https://www.ine.gob.cl/estadisticas/sociales/demografia-y-vitales/proyecciones-de-poblacion",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -534,7 +534,7 @@
    "natSrc": "BUCREP Cameroon (RGPH-3 2005)",
    "natUrl": "https://bucrep.org",
    "natYear": "2005",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -555,7 +555,7 @@
    "natSrc": "DANE (Proyecciones de población)",
    "natUrl": "https://www.dane.gov.co/index.php/estadisticas-por-tema/demografia-y-poblacion/proyecciones-de-poblacion",
    "natYear": "2023",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "natSrc": "MCI in Southern Colombia",
@@ -578,7 +578,7 @@
    "natSrc": "INEC Costa Rica (proyecciones)",
    "natUrl": "https://inec.cr/noticias/poblacion-65-anos-mas-costa-rica-se-duplicara-los-proximos-20-anos",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "natSrc": "MoCA cut-off validation (Costa Rica)",
@@ -602,7 +602,7 @@
    "natSrc": "ONEI Cuba (Envejecimiento 2024)",
    "natUrl": "https://www.onei.gob.cu/envejecimiento-de-la-poblacion-2024",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -622,7 +622,7 @@
    "natSrc": "Statistical Service of Cyprus (CYSTAT)",
    "natUrl": "https://www.cystat.gov.cy/en/SubthemeStatistics?id=46",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -642,7 +642,7 @@
    "natSrc": "Czech Statistical Office (CZSO)",
    "natUrl": "https://csu.gov.cz/population-estimates-structure-and-projection",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -662,7 +662,7 @@
    "natSrc": "INSTAD Djibouti (RGPH 2024)",
    "natUrl": "https://instad.dj/",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -676,7 +676,7 @@
    "natSrc": "Statistics Denmark (population figures)",
    "natUrl": "https://www.dst.dk/en/Statistik/emner/borgere/befolkning/befolkningstal",
    "natYear": "2026",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -697,7 +697,7 @@
    "natSrc": "ONE Dominican Republic (X Censo 2022)",
    "natUrl": "https://www.one.gob.do/media/atbcumc0/informe-general-xcnpv-completo.pdf",
    "natYear": "2022",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -718,7 +718,7 @@
    "natSrc": "ONS (Office National des Statistiques, RGPH 2022)",
    "natUrl": "https://www.ons.dz",
    "natYear": "2022",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -741,7 +741,7 @@
    "natSrc": "INEC Ecuador (Censo 2022)",
    "natUrl": "https://www.censoecuador.gob.ec/",
    "natYear": "2022",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -764,7 +764,7 @@
    "natSrc": "Statistics Estonia",
    "natUrl": "https://stat.ee/en/find-statistics/statistics-theme/population/population-figure",
    "natYear": "2025",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -784,7 +784,7 @@
    "natSrc": "CAPMAS (2017 Census)",
    "natUrl": "https://www.capmas.gov.eg",
    "natYear": "2017",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -823,7 +823,7 @@
    "natSrc": "Ethiopian Statistical Service (2007 Census / projections)",
    "natUrl": "https://www.ess.gov.et/",
    "natYear": "2007",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -844,7 +844,7 @@
    "natSrc": "Statistics Finland (population structure)",
    "natUrl": "https://stat.fi/en/statistics/vaerak",
    "natYear": "2025",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -865,7 +865,7 @@
    "natSrc": "Fiji Bureau of Statistics (2017 Census)",
    "natUrl": "https://www.statsfiji.gov.fj/statistics/social-statistics/population-and-demographic-indicators/",
    "natYear": "2017",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -893,7 +893,7 @@
    "natSrc": "Direction Générale de la Statistique Gabon (RGPL 2013)",
    "natUrl": "https://instatgabon.org",
    "natYear": "2013",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -907,7 +907,7 @@
    "natSrc": "National Statistics Office of Georgia (GeoStat)",
    "natUrl": "https://www.geostat.ge/en/modules/categories/316/population-and-demography",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "natSrc": "MCI in Republic of Georgia",
@@ -931,7 +931,7 @@
    "natSrc": "Ghana Statistical Service (2021 PHC)",
    "natUrl": "https://statsghana.gov.gh",
    "natYear": "2021",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "natSrc": "Cape Coast MCI pilot (MoCA)",
@@ -954,7 +954,7 @@
    "natSrc": "Statistics Greenland (population estimates)",
    "natUrl": "https://stat.gl/publ/en/BE/202401/contents/Population%20estimates.htm",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -975,7 +975,7 @@
    "natSrc": "Gambia Bureau of Statistics (2024 Census)",
    "natUrl": "https://www.gbosdata.org",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -989,7 +989,7 @@
    "natSrc": "INS Guinea (RGPH-3 2014)",
    "natUrl": "https://www.stat-guinee.org",
    "natYear": "2014",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1003,7 +1003,7 @@
    "natSrc": "INEGE Equatorial Guinea (IV Censo 2015)",
    "natUrl": "https://inege.org",
    "natYear": "2015",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1017,7 +1017,7 @@
    "natSrc": "ELSTAT (Hellenic Statistical Authority)",
    "natUrl": "https://www.statistics.gr/en/statistics/pop",
    "natYear": "2025",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "natSrc": "HELIAD study (MCI, Greece)",
@@ -1041,7 +1041,7 @@
    "natSrc": "INE Guatemala (XII Censo 2018)",
    "natUrl": "https://censo2018.ine.gob.gt/censo2018/poblacion.php",
    "natYear": "2018",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1062,7 +1062,7 @@
    "natSrc": "INE Guinea-Bissau (III RGPH 2009)",
    "natUrl": "https://www.stat-guinebissau.com",
    "natYear": "2009",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1076,7 +1076,7 @@
    "natSrc": "Bureau of Statistics Guyana (2022 Census)",
    "natUrl": "https://statisticsguyana.gov.gy/census/",
    "natYear": "2022",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1090,7 +1090,7 @@
    "natSrc": "INE Honduras (EPHPM 2025, 60+)",
    "natUrl": "https://ine.gob.hn/2025/12/09/caracterizacion-de-la-poblacion-adulta-mayor-en-honduras-60-anos-y-mas-junio-2025/",
    "natYear": "2025",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1111,7 +1111,7 @@
    "natSrc": "Croatian Bureau of Statistics (DZS)",
    "natUrl": "https://podaci.dzs.hr/en/statistics/population/population-estimate/",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1131,7 +1131,7 @@
    "natSrc": "IHSI Haiti (2024 estimates)",
    "natUrl": "https://ihsi.gouv.ht/statistiques/statistiques_demographiques_et_sociales/projections_et_estimations_de_la_population/document_views/estimations-desagregees-de-la-population-haitienne-en-2024",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1145,7 +1145,7 @@
    "natSrc": "Hungarian Central Statistical Office (KSH)",
    "natUrl": "https://www.ksh.hu/stadat_files/nep/en/nep0035.html",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1165,7 +1165,7 @@
    "natSrc": "CSO Ireland (population)",
    "natUrl": "https://www.cso.ie/en/statistics/population/",
    "natYear": "2025",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1186,7 +1186,7 @@
    "natSrc": "Central Bureau of Statistics Israel",
    "natUrl": "https://www.cbs.gov.il/en/subjects/Pages/Population.aspx",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1207,7 +1207,7 @@
    "natSrc": "Central Statistical Organization (COSIT, 2024 Census)",
    "natUrl": "https://cosit.gov.iq/AAS/section_2.php",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1228,7 +1228,7 @@
    "natSrc": "Statistics Iceland (population)",
    "natUrl": "https://hagstofa.is/en/statistics/population",
    "natYear": "2025",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1248,7 +1248,7 @@
    "natSrc": "Statistical Institute of Jamaica (2022 Census)",
    "natUrl": "https://statinja.gov.jm/Census/popCensus/Popcensus2022Index.aspx",
    "natYear": "2022",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1269,7 +1269,7 @@
    "natSrc": "Department of Statistics (DoS Jordan)",
    "natUrl": "https://dosweb.dos.gov.jo/population/population-2/",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1290,7 +1290,7 @@
    "natSrc": "Kenya National Bureau of Statistics (2019 Census)",
    "natUrl": "https://www.knbs.or.ke/2019-kenya-population-and-housing-census-reports/",
    "natYear": "2019",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1311,7 +1311,7 @@
    "natSrc": "National Statistical Committee of Kyrgyz Republic",
    "natUrl": "https://www.stat.gov.kg/en/statistics/naselenie/",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1332,7 +1332,7 @@
    "natSrc": "National Institute of Statistics (2019 Census)",
    "natUrl": "https://nis.gov.kh/en/general-population-census-of-cambodia/",
    "natYear": "2019",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1346,7 +1346,7 @@
    "natSrc": "DPRK Central Bureau of Statistics (2008 Census)",
    "natUrl": "https://unstats.un.org/unsd/demographic/sources/census/wphc/North_Korea/Final%20national%20census%20report.pdf",
    "natYear": "2008",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1360,7 +1360,7 @@
    "natSrc": "Central Statistical Bureau (Kuwait Census 2021)",
    "natUrl": "https://census.csb.gov.kw/Census_Dashboard_EN",
    "natYear": "2021",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1381,7 +1381,7 @@
    "natSrc": "Bureau of National Statistics of Kazakhstan",
    "natUrl": "https://stat.gov.kz/en/industries/social-statistics/demography/",
    "natYear": "2021",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "natSrc": "Tsoy et al. (Alzheimer Dis Assoc Disord)",
@@ -1405,7 +1405,7 @@
    "natSrc": "Lao Statistics Bureau (2015 Census)",
    "natUrl": "https://www.lsb.gov.la/",
    "natYear": "2015",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1426,7 +1426,7 @@
    "natSrc": "Central Administration of Statistics (CAS)",
    "natUrl": "http://cas.gov.lb/index.php/demographic-and-social-en/population-en",
    "natYear": "2019",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1447,7 +1447,7 @@
    "natSrc": "Dept. of Census and Statistics (2024 Census)",
    "natUrl": "https://www.statistics.gov.lk/Population/StaticalInformation/CPH2024/",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1468,7 +1468,7 @@
    "natSrc": "LISGIS Liberia (2022 Census)",
    "natUrl": "https://www.lisgis.gov.lr",
    "natYear": "2022",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1482,7 +1482,7 @@
    "natSrc": "Lesotho Bureau of Statistics (2016 Census)",
    "natUrl": "http://www.bos.gov.ls/2016_Summary_Key_Findings.pdf",
    "natYear": "2016",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1496,7 +1496,7 @@
    "natSrc": "Statistics Lithuania",
    "natUrl": "https://osp.stat.gov.lt/en/gyventojai1",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1516,7 +1516,7 @@
    "natSrc": "STATEC (Statistics Luxembourg)",
    "natUrl": "https://statistiques.public.lu/dam-assets/catalogue-publications/en-chiffres/2025/population-chiffres-2025.pdf",
    "natYear": "2025",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1541,7 +1541,7 @@
    "natSrc": "Central Statistical Bureau of Latvia",
    "natUrl": "https://stat.gov.lv/en/statistics-themes/population/population/2323-population-age-and-sex",
    "natYear": "2025",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1561,7 +1561,7 @@
    "natSrc": "Bureau of Statistics and Census (BSC) Libya (2006 Census)",
    "natUrl": "https://bsc.ly/en/",
    "natYear": "2006",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1582,7 +1582,7 @@
    "natSrc": "HCP (RGPH 2024, elderly analysis)",
    "natUrl": "https://www.hcp.ma/Les-personnes-agees-au-Maroc-Analyse-issue-du-RGPH-de-2024-Decembre-2025_a4228.html",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "natSrc": "Chahidi et al. (national study, MCI estimate)",
@@ -1609,7 +1609,7 @@
    "natSrc": "National Bureau of Statistics of Moldova (BNS, 2024 Census)",
    "natUrl": "https://statistica.gov.md/en/preliminary-results-of-the-2024-population-and-housing-census-10077_61626.html",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1630,7 +1630,7 @@
    "natSrc": "Statistical Office of Montenegro (MONSTAT)",
    "natUrl": "https://www.monstat.org/eng/page.php?id=394&pageid=57",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1651,7 +1651,7 @@
    "natSrc": "INSTAT Madagascar (RGPH-3)",
    "natUrl": "https://www.instat.mg/documents/upload/main/INSTAT-RGPH3_EtatetStructuredelaPopulation.pdf",
    "natYear": "2018",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1665,7 +1665,7 @@
    "natSrc": "State Statistical Office of North Macedonia",
    "natUrl": "https://www.stat.mk/en/stat/population-and-living-conditions/population/",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1685,7 +1685,7 @@
    "natSrc": "INSTAT Mali (RGPH-5 2022)",
    "natUrl": "https://www.instat-mali.org",
    "natYear": "2022",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1699,7 +1699,7 @@
    "natSrc": "National Statistics Office of Mongolia (Census)",
    "natUrl": "https://www.1212.mn/en",
    "natYear": "2020",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "natSrc": "Otgonbayar 2017 (Ulaanbaatar), via NRN overview",
@@ -1724,7 +1724,7 @@
    "natSrc": "ANSADE Mauritania (RGPH-5 2023)",
    "natUrl": "https://ansade.mr",
    "natYear": "2023",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1738,7 +1738,7 @@
    "natSrc": "National Statistical Office of Malawi (2018 Census)",
    "natUrl": "https://www.nsomalawi.mw/census/2018",
    "natYear": "2018",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1752,7 +1752,7 @@
    "natSrc": "INE Moçambique (Censo 2017)",
    "natUrl": "https://www.ine.gov.mz/en/censo-2017",
    "natYear": "2017",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1766,7 +1766,7 @@
    "natSrc": "Namibia Statistics Agency (2023 Census)",
    "natUrl": "https://nsa.org.na/document/2023-population-and-housing-census-main-report/",
    "natYear": "2023",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1780,7 +1780,7 @@
    "natSrc": "ISEE Nouvelle-Calédonie (2019 Census)",
    "natUrl": "https://www.isee.nc/population/demographie",
    "natYear": "2019",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1794,7 +1794,7 @@
    "natSrc": "INS Niger (RGPH 2012)",
    "natUrl": "https://www.stat-niger.org",
    "natYear": "2012",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1808,7 +1808,7 @@
    "natSrc": "National Bureau of Statistics / NPC (2006 Census)",
    "natUrl": "https://nigerianstat.gov.ng",
    "natYear": "2006",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1829,7 +1829,7 @@
    "natSrc": "INIDE Nicaragua (proyecciones / IX Censo 2024)",
    "natUrl": "https://www.inide.gob.ni/docu/estadisticas/sociodemograficas.htm",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1850,7 +1850,7 @@
    "natSrc": "CBS (Statistics Netherlands)",
    "natUrl": "https://www.cbs.nl/en-gb/figures/detail/85496ENG",
    "natYear": "2025",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1873,7 +1873,7 @@
    "natSrc": "Statistics Norway (SSB)",
    "natUrl": "https://www.ssb.no/en/befolkning/folketall/statistikk/befolkning",
    "natYear": "2025",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "natSrc": "HUNT4 70+ Study (MCI 35.3%)",
@@ -1897,7 +1897,7 @@
    "natSrc": "National Statistics Office (2021 Census)",
    "natUrl": "https://censusnepal.cbs.gov.np/",
    "natYear": "2021",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1920,7 +1920,7 @@
    "natSrc": "National Centre for Statistics and Information (NCSI)",
    "natUrl": "https://data.ncsi.gov.om/?q=dataset/total-population",
    "natYear": "2023",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1941,7 +1941,7 @@
    "natSrc": "INEC Panama (XII Censo 2023)",
    "natUrl": "https://www.inec.gob.pa/publicaciones/Default3.aspx?ID_PUBLICACION=1199&ID_CATEGORIA=19&ID_SUBCATEGORIA=71",
    "natYear": "2023",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1962,7 +1962,7 @@
    "natSrc": "INEI Peru (Censo 2017 / proyecciones)",
    "natUrl": "https://m.inei.gob.pe/estadisticas/indice-tematico/population-estimates-and-projections/",
    "natYear": "2017",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1985,7 +1985,7 @@
    "natSrc": "PNG National Statistical Office (2011 Census)",
    "natUrl": "https://www.nso.gov.pg/statistics/population/",
    "natYear": "2011",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -1999,7 +1999,7 @@
    "natSrc": "Instituto de Estadísticas de PR / US Census (PRCS)",
    "natUrl": "https://censo.estadisticas.pr/Comunicado-de-prensa/2024-06-27t152651",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2020,7 +2020,7 @@
    "natSrc": "Palestinian Central Bureau of Statistics (PCBS)",
    "natUrl": "https://www.pcbs.gov.ps/portals/_pcbs/PressRelease/Press_En_1-10-2020-elder-en.pdf",
    "natYear": "2020",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2041,7 +2041,7 @@
    "natSrc": "INE Portugal (demographic statistics)",
    "natUrl": "https://www.ine.pt/xportal/xmain?PUBLICACOESmodo=2&PUBLICACOESpub_boui=280978178&xlang=en&xpgid=ine_publicacoes&xpid=INE",
    "natYear": "2023",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2061,7 +2061,7 @@
    "natSrc": "INE Paraguay (Censo 2022)",
    "natUrl": "https://www.ine.gov.py/noticias/2157/el-censo-2022-indica-que-523660-personas-tienen-65-y-mas-anos-de-edad-en-el-pais",
    "natYear": "2022",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2075,7 +2075,7 @@
    "natSrc": "Planning and Statistics Authority (PSA Qatar)",
    "natUrl": "https://www.psa.gov.qa/en/statistics1/StatisticsSite/Pages/Population.aspx",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2096,7 +2096,7 @@
    "natSrc": "National Institute of Statistics (INSSE Romania)",
    "natUrl": "https://insse.ro/cms/en/content/demographic-yearbook-romania",
    "natYear": "2025",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2116,7 +2116,7 @@
    "natSrc": "Statistical Office of the Republic of Serbia (SORS)",
    "natUrl": "https://www.stat.gov.rs/en-US/oblasti/stanovnistvo/procene-stanovnistva",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2136,7 +2136,7 @@
    "natSrc": "Rosstat (Demographic Yearbook of Russia)",
    "natUrl": "https://eng.rosstat.gov.ru/Publications/document/13972",
    "natYear": "2023",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2157,7 +2157,7 @@
    "natSrc": "National Institute of Statistics of Rwanda (RPHC5 2022)",
    "natUrl": "https://statistics.gov.rw/data-sources/censuses/Population-and-Housing-Census/fifth-population-and-housing-census-2022/rphc5-thematic-reports/rphc5-thematic-report-population-size-structure-and-distribution",
    "natYear": "2022",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2178,7 +2178,7 @@
    "natSrc": "General Authority for Statistics (GASTAT, Census 2022)",
    "natUrl": "https://www.stats.gov.sa/en/w/%D8%A7%D9%84%D8%B3%D9%83%D8%A7%D9%86-%D8%AD%D8%B3%D8%A8-%D8%A7%D9%84%D9%81%D8%A6%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D8%B1%D9%8A%D8%A9-%D8%A7%D9%84%D8%AA%D9%81%D8%B5%D9%8A%D9%84%D9%8A%D8%A9",
    "natYear": "2022",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "natSrc": "Alkhunizan et al. (Saudi community-based MCI/dementia)",
@@ -2202,7 +2202,7 @@
    "natSrc": "Solomon Islands National Statistics Office (2019 Census)",
    "natUrl": "https://statistics.gov.sb/category/statistics/social-statistics/population/",
    "natYear": "2019",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2216,7 +2216,7 @@
    "natSrc": "Central Bureau of Statistics (CBS) Sudan (2008 Census)",
    "natUrl": "http://cbs.gov.sd/index.php/en/",
    "natYear": "2008",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2237,7 +2237,7 @@
    "natSrc": "Statistics Sweden (SCB)",
    "natUrl": "https://www.scb.se/en/finding-statistics/statistics-by-subject-area/population-and-living-conditions/population-composition-and-development/population-statistics/",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2258,7 +2258,7 @@
    "natSrc": "Statistical Office of Slovenia (SURS)",
    "natUrl": "https://pxweb.stat.si/sistat/en/Podrocja/Index/100/population",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2278,7 +2278,7 @@
    "natSrc": "Statistical Office of the Slovak Republic",
    "natUrl": "https://vekovastruktura.statistics.sk/index.php?lang=en",
    "natYear": "2025",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2298,7 +2298,7 @@
    "natSrc": "Statistics Sierra Leone (2021 Mid-Term Census)",
    "natUrl": "https://www.statistics.sl",
    "natYear": "2021",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2312,7 +2312,7 @@
    "natSrc": "ANSD Senegal (RGPH-5 2023)",
    "natUrl": "https://www.ansd.sn",
    "natYear": "2023",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2333,7 +2333,7 @@
    "natSrc": "Somali National Bureau of Statistics (PESS 2014)",
    "natUrl": "https://nbs.gov.so/",
    "natYear": "2014",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2347,7 +2347,7 @@
    "natSrc": "Algemeen Bureau voor de Statistiek (ABS Suriname, 2012 Census)",
    "natUrl": "https://statistics-suriname.org/census-statistics-2012/",
    "natYear": "2012",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2361,7 +2361,7 @@
    "natSrc": "National Bureau of Statistics South Sudan (2008 Census / projections)",
    "natUrl": "https://www.ssnbss.org/home/documents/census-and-surveys/",
    "natYear": "2008",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2375,7 +2375,7 @@
    "natSrc": "ONEC-BCR El Salvador (Censo 2024)",
    "natUrl": "https://onec.bcr.gob.sv/",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "natSrc": "Hernández et al. (El Salvador, MCI 17.09% 60+)",
@@ -2400,7 +2400,7 @@
    "natUrl": "https://www.cbssyr.org/",
    "natYear": "2022",
    "note": "Estimates; last full census 2004. Low confidence.",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2421,7 +2421,7 @@
    "natSrc": "Central Statistical Office Eswatini (2017 Census)",
    "natUrl": "https://www.gov.sz/index.php?option=com_content&view=article&id=687:central-statistics-office",
    "natYear": "2017",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2435,7 +2435,7 @@
    "natSrc": "INSEED Chad (RGPH-2 2009)",
    "natUrl": "https://www.inseed.td",
    "natYear": "2009",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2449,7 +2449,7 @@
    "natSrc": "INSEED Togo (RGPH-5 2022)",
    "natUrl": "https://inseed.tg",
    "natYear": "2022",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2463,7 +2463,7 @@
    "natSrc": "Agency on Statistics under the President of Tajikistan",
    "natUrl": "https://www.stat.tj/en/population-and-housing-census/",
    "natYear": "2020",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2477,7 +2477,7 @@
    "natSrc": "Instituto Nacional de Estatística Timor-Leste (2022 Census)",
    "natUrl": "https://inetl-ip.gov.tl/2023/05/18/main-report-timor-leste-population-and-housing-census-2022/",
    "natYear": "2022",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2491,7 +2491,7 @@
    "natSrc": "State Committee of Turkmenistan on Statistics (2022 Census)",
    "natUrl": "https://www.stat.gov.tm/en/population-census",
    "natYear": "2022",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2505,7 +2505,7 @@
    "natSrc": "INS (RGPH 2024)",
    "natUrl": "https://www.ins.tn/en/enquetes/population-and-housing-census-2024",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2528,7 +2528,7 @@
    "natSrc": "Central Statistical Office Trinidad & Tobago (2011 Census)",
    "natUrl": "https://cso.gov.tt/subjects/population-and-vital-statistics/population/",
    "natYear": "2011",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2549,7 +2549,7 @@
    "natSrc": "National Bureau of Statistics Tanzania (2022 Census)",
    "natUrl": "https://www.nbs.go.tz/nbs/takwimu/Census2022/Age_and_Sex_Distribution_Key_Finding_Report_Tanzania.pdf",
    "natYear": "2022",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2571,7 +2571,7 @@
    "natUrl": "https://stat.gov.ua/en/topics/population-and-migration",
    "natYear": "2022",
    "note": "Pre-war estimates; no census since 2001.",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2591,7 +2591,7 @@
    "natSrc": "Uganda Bureau of Statistics (2024 Census)",
    "natUrl": "https://www.ubos.org/wp-content/uploads/publications/National-Population-and-Housing-Census-2024-Preliminary-Report.pdf",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2612,7 +2612,7 @@
    "natSrc": "INE Uruguay (Censo 2023 / proyecciones)",
    "natUrl": "https://www.gub.uy/instituto-nacional-estadistica/datos-y-estadisticas/estadisticas/estimaciones-proyecciones",
    "natYear": "2023",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2626,7 +2626,7 @@
    "natSrc": "Statistics Agency of Uzbekistan",
    "natUrl": "https://stat.uz/en/official-statistics/demography",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2640,7 +2640,7 @@
    "natSrc": "INE Venezuela (proyecciones, base Censo 2011)",
    "natUrl": "https://ine.gob.ve/demograficos/",
    "natYear": "2011",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2664,7 +2664,7 @@
    "natSrc": "Vanuatu Bureau of Statistics (2020 Census)",
    "natUrl": "https://vbos.gov.vu/index.php/en/census-and-surveys/census-report",
    "natYear": "2020",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2678,7 +2678,7 @@
    "natSrc": "Kosovo Agency of Statistics (ASK, 2024 Census)",
    "natUrl": "https://askdata.rks-gov.net/pxweb/en/ASKdata/ASKdata__Census%20population__1_Demographic_Characteristics/census2024_00.px/",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2699,7 +2699,7 @@
    "natSrc": "Central Statistical Organization (CSO Yemen)",
    "natUrl": "https://cso-ye.org/en/",
    "natYear": "2024",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2720,7 +2720,7 @@
    "natSrc": "Statistics South Africa (Mid-year estimates P0302)",
    "natUrl": "https://www.statssa.gov.za/publications/P0302/P03022025.pdf",
    "natYear": "2025",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2743,7 +2743,7 @@
    "natSrc": "Zambia Statistics Agency (2022 Census)",
    "natUrl": "https://www.zamstats.gov.zm/2022-census/",
    "natYear": "2022",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
@@ -2764,7 +2764,7 @@
    "natSrc": "Zimbabwe National Statistics Agency (2022 Census)",
    "natUrl": "https://zimstat.co.zw/population-census/",
    "natYear": "2022",
-   "status": "identified"
+   "status": "live"
   },
   "mci": {
    "status": "none"
