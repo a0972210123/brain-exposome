@@ -21,6 +21,10 @@ The `claude.ai/code` build sandbox routes all egress through a **strict policy a
 
 ## Data-fill strategy (confirmed: hybrid, global-first) + global sweeps
 
+> **📋 Full source-backed plan: `data-sourcing-plan.md`** — per-country sources, open-API vs manual,
+> sub-national availability, recency, journal leads, and the phased fetch order. Read that first for the
+> details; this section is the summary.
+
 The owner chose a **hybrid** approach: **do the global-per-metric sweeps first** (any metric with a
 complete global database → one pull covers ~200 countries, uniformly comparable), then per-country
 deep-dives for the gaps (mostly admin-1 detail from national censuses / gov portals / single papers).
