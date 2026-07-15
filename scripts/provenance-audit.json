@@ -1,0 +1,2776 @@
+{
+ "AE": {
+  "aging": {
+   "natSrc": "Federal Competitiveness and Statistics Centre (FCSC)",
+   "natUrl": "https://opendata.fcsc.gov.ae/@federal-competitiveness-and-statistics-center/uae-population-estimates-by-gender-age-group-year",
+   "natYear": "2022",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Qassem et al. (Dementia in the Arab world, BJPsych Open)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10375885/",
+   "natYear": "2023",
+   "note": "GBD-based Arab-world regional review; no UAE-specific study.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "AF": {
+  "aging": {
+   "natSrc": "NSIA Statistical Yearbook 2020",
+   "natUrl": "https://nsia.gov.af:8443/wp-content/uploads/2021/04/Statistical-Year-book-2020.pdf",
+   "natYear": "2020",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Trani et al. (eClinicalMedicine)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/36969341/",
+   "natYear": "2023",
+   "note": "Two-province RUDAS study of 50+; no national study.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "AL": {
+  "aging": {
+   "natSrc": "INSTAT Albania (2023 Census)",
+   "natUrl": "https://www.instat.gov.al/en/themes/demography-and-social-indicators/population/",
+   "natYear": "2023",
+   "status": "identified"
+  },
+  "mci": {
+   "natSrc": "Nationwide cross-sectional study (Albania, MCI 5.51%)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11506003/",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "prevalence": {
+   "natSrc": "Nationwide cross-sectional study (Brain Sciences/MDPI)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11506003/",
+   "natYear": "2024",
+   "note": "Door-to-door national screening 50+, 12 districts.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "AM": {
+  "aging": {
+   "natSrc": "ArmStat (Demographic Database)",
+   "natUrl": "https://armstat.am/en/?nid=209",
+   "natYear": "2023",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Jivalagian et al. (Alz & Dementia)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC12724876/",
+   "natYear": "2025",
+   "note": "Nationwide MoCA screening 55+.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "AO": {
+  "aging": {
+   "natSrc": "INE Angola (Censo 2014 / projecções)",
+   "natUrl": "https://www.ine.gov.ao/Arquivos/arquivosCarregados/Carregados/Publicacao_638097239926448689.pdf",
+   "natYear": "2014",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "AR": {
+  "aging": {
+   "natSrc": "INDEC (Proyecciones 2022–2040)",
+   "natUrl": "https://www.indec.gob.ar/ftp/cuadros/publicaciones/proyecciones_nacionales_2022_2040.pdf",
+   "natYear": "2022",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Matanza-Riachuelo Study (Greater Buenos Aires)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5619181/",
+   "natYear": "2016",
+   "note": "No full national study; MR main cohort.",
+   "status": "identified",
+   "subSrc": "Matanza-Riachuelo (population-based, admin-1)",
+   "subUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5619181/",
+   "subYear": "2016"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "AT": {
+  "aging": {
+   "natSrc": "Statistics Austria (population by age/sex)",
+   "natUrl": "https://www.statistik.at/en/statistics/population-and-society/population/population-stock/population-by-age-/sex",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Österreichischer Demenzbericht 2025 (GÖG)",
+   "natUrl": "https://jasmin.goeg.at/id/eprint/4699/1/Demenzbericht%202025_bf.pdf",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "AZ": {
+  "aging": {
+   "natSrc": "State Statistical Committee of Azerbaijan",
+   "natUrl": "https://www.stat.gov.az/source/demoqraphy/?lang=en",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "BA": {
+  "aging": {
+   "natSrc": "Agency for Statistics of Bosnia and Herzegovina (BHAS)",
+   "natUrl": "https://bhas.gov.ba/?lang=en",
+   "natYear": "2023",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Alzheimer Europe (Yearbook)",
+   "natUrl": "https://www.alzheimer-europe.org/dementia/prevalence-dementia-europe",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "BE": {
+  "aging": {
+   "natSrc": "Statbel (structure of the population)",
+   "natUrl": "https://statbel.fgov.be/en/themes/population/structure-population",
+   "natYear": "2026",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Alzheimer Europe (Yearbook)",
+   "natUrl": "https://www.alzheimer-europe.org/dementia/prevalence-dementia-europe",
+   "natYear": "2019",
+   "status": "identified",
+   "subSrc": "Flanders GP-registry (Intego)",
+   "subUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9639092/",
+   "subYear": "2022"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "BF": {
+  "aging": {
+   "natSrc": "INSD Burkina Faso (RGPH 2019)",
+   "natUrl": "https://www.insd.bf",
+   "natYear": "2019",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "BG": {
+  "aging": {
+   "natSrc": "National Statistical Institute (NSI Bulgaria)",
+   "natUrl": "https://www.nsi.bg/en/content/2974/population",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Alzheimer Europe (Yearbook)",
+   "natUrl": "https://www.alzheimer-europe.org/dementia/prevalence-dementia-europe",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "BI": {
+  "aging": {
+   "natSrc": "INSBU Burundi (Annuaire Statistique 2023)",
+   "natUrl": "https://www.insbu.bi/documents/Annuaires/Annuaire_Statistique_Burundi_Edition_2023.pdf",
+   "natYear": "2023",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "BJ": {
+  "aging": {
+   "natSrc": "INStaD Benin (RGPH4 2013)",
+   "natUrl": "https://instad.bj",
+   "natYear": "2013",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Paraïso et al. (Cotonou, urban)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/21677449/",
+   "natYear": "2011",
+   "status": "identified",
+   "subSrc": "Guerchet et al. (rural Djidja)",
+   "subUrl": "https://pubmed.ncbi.nlm.nih.gov/19136831/",
+   "subYear": "2009"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "BN": {
+  "aging": {
+   "natSrc": "Dept. of Economic Planning & Statistics (2021 Census)",
+   "natUrl": "https://deps.mofe.gov.bn/population-social-statistics/",
+   "natYear": "2021",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Demensia Brunei / RIPAS (Mini-COG screening)",
+   "natUrl": "https://www.mdpi.com/2499-6564/74/2/8",
+   "natYear": "2026",
+   "note": "Community screening 60+, not formal prevalence.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "BO": {
+  "aging": {
+   "natSrc": "INE Bolivia (Censo 2024)",
+   "natUrl": "https://cpv2024.ine.gob.bo/index.php/resultados/resultados-demografia-demografia/resultados-demografia-poblacion/",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Deterioro cognitivo Bolivia (Rev Chil Neuropsiquiatr)",
+   "natUrl": "https://www.scielo.cl/scielo.php?pid=S0717-92272021000400280&script=sci_arttext",
+   "natYear": "2021",
+   "note": "Cognitive-impairment, sub-national sample.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "BS": {
+  "aging": {
+   "natSrc": "Bahamas National Statistical Institute (2022 Census)",
+   "natUrl": "https://cdn.bahamas.gov.bs/tenant/tenantbnsi/documents/2022-Census-Report-1st-Release-12-February-2025-FINAL-20250526040559.pdf",
+   "natYear": "2022",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Ribeiro et al. LAC systematic review",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9582196/",
+   "natYear": "2022",
+   "note": "Regional LAC pooled estimate; no Bahamas study.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "BT": {
+  "aging": {
+   "natSrc": "National Statistics Bureau (2017 Census)",
+   "natUrl": "https://www.nsb.gov.bt/wp-content/uploads/dlm_uploads/2020/07/PHCB2017_wp.pdf",
+   "natYear": "2017",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Chauhan et al. (South Asia GBD 2021)",
+   "natUrl": "https://onlinelibrary.wiley.com/doi/full/10.1002/agm2.70002",
+   "natYear": "2025",
+   "note": "Regional GBD fallback; no country-specific study.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "BW": {
+  "aging": {
+   "natSrc": "Statistics Botswana (2022 Census)",
+   "natUrl": "https://www.statsbots.org.bw/census-2022",
+   "natYear": "2022",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "BY": {
+  "aging": {
+   "natSrc": "National Statistical Committee of Belarus (Belstat)",
+   "natUrl": "https://www.belstat.gov.by/en/ofitsialnaya-statistika/Demographic-and-social-statistics/population-and-migration/population/",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "GBD 2019 (Lancet Public Health)",
+   "natUrl": "https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(21)00249-8/fulltext",
+   "natYear": "2019",
+   "note": "No Belarus-specific study.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "BZ": {
+  "aging": {
+   "natSrc": "Statistical Institute of Belize (2022 Census)",
+   "natUrl": "https://sib.org.bz/statistics/population/",
+   "natYear": "2022",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Ribeiro et al. LAC systematic review",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9582196/",
+   "natYear": "2022",
+   "note": "Regional LAC pooled estimate; no Belize study.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "CD": {
+  "aging": {
+   "natSrc": "INS-RDC (1984 Census / projections)",
+   "natUrl": "https://ins-rdc.org",
+   "natYear": "1984",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "CF": {
+  "aging": {
+   "natSrc": "ICASEES (RGPH-3 2003 / 2021 estimates)",
+   "natUrl": "https://icasees.org",
+   "natYear": "2003",
+   "status": "identified"
+  },
+  "mci": {
+   "natSrc": "EPIDEMCA (Pilleron et al.)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/26099336/",
+   "natYear": "2015",
+   "status": "identified"
+  },
+  "prevalence": {
+   "natSrc": "EPIDEMCA (Guerchet/Pilleron et al.)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4096859/",
+   "natYear": "2014",
+   "note": "Population-based CAR; ~7.6–8.4%.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "CG": {
+  "aging": {
+   "natSrc": "INS-Congo (RGPH-5 2023)",
+   "natUrl": "https://ins-congo.cg",
+   "natYear": "2023",
+   "status": "identified"
+  },
+  "mci": {
+   "natSrc": "EPIDEMCA (Pilleron et al.)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/26099336/",
+   "natYear": "2015",
+   "status": "identified"
+  },
+  "prevalence": {
+   "natSrc": "EPIDEMCA (Guerchet/Pilleron et al.)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4096859/",
+   "natYear": "2014",
+   "note": "Population-based Congo; ~5.4–6.9%.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "CH": {
+  "aging": {
+   "natSrc": "Federal Statistical Office (FSO)",
+   "natUrl": "https://www.bfs.admin.ch/bfs/en/home/statistics/population/effectif-change/age.html",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Alzheimer Schweiz (Zahlen und Fakten)",
+   "natUrl": "https://www.alzheimer-schweiz.ch/de/ueber-demenz/beitrag/demenz-in-der-schweiz",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "CI": {
+  "aging": {
+   "natSrc": "INS Côte d'Ivoire (RGPH 2021)",
+   "natUrl": "https://www.ins.ci",
+   "natYear": "2021",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "CL": {
+  "aging": {
+   "natSrc": "INE Chile (Proyecciones, base Censo 2024)",
+   "natUrl": "https://www.ine.gob.cl/estadisticas/sociales/demografia-y-vitales/proyecciones-de-poblacion",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Aging and dementia in Chile (Dement Neuropsychol)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5619178/",
+   "natYear": "2017",
+   "note": "Encuesta Nacional de Dependencia (7.1% 60+).",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "CM": {
+  "aging": {
+   "natSrc": "BUCREP Cameroon (RGPH-3 2005)",
+   "natUrl": "https://bucrep.org",
+   "natYear": "2005",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Ntui Health District study (Pathogens)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11280333/",
+   "natYear": "2024",
+   "note": "Rural district ≥60y, 10.7%; not nationally representative.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "CO": {
+  "aging": {
+   "natSrc": "DANE (Proyecciones de población)",
+   "natUrl": "https://www.dane.gov.co/index.php/estadisticas-por-tema/demografia-y-poblacion/proyecciones-de-poblacion",
+   "natYear": "2023",
+   "status": "identified"
+  },
+  "mci": {
+   "natSrc": "MCI in Southern Colombia",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10789289/",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "prevalence": {
+   "natSrc": "Prevalence of dementia in Colombia (EPINEURO/Pradilla)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5619179/",
+   "natYear": "2017",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "CR": {
+  "aging": {
+   "natSrc": "INEC Costa Rica (proyecciones)",
+   "natUrl": "https://inec.cr/noticias/poblacion-65-anos-mas-costa-rica-se-duplicara-los-proximos-20-anos",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "natSrc": "MoCA cut-off validation (Costa Rica)",
+   "natUrl": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11709614/",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "prevalence": {
+   "natSrc": "CRELES (Costa Rican Longevity & Healthy Aging Study)",
+   "natUrl": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10738314/",
+   "natYear": "2023",
+   "note": "National cohort.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "CU": {
+  "aging": {
+   "natSrc": "ONEI Cuba (Envejecimiento 2024)",
+   "natUrl": "https://www.onei.gob.cu/envejecimiento-de-la-poblacion-2024",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "10/66 Dementia Research Group (Havana & Matanzas)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2855229/",
+   "natYear": "2010",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "CY": {
+  "aging": {
+   "natSrc": "Statistical Service of Cyprus (CYSTAT)",
+   "natUrl": "https://www.cystat.gov.cy/en/SubthemeStatistics?id=46",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Alzheimer Europe (Yearbook)",
+   "natUrl": "https://www.alzheimer-europe.org/dementia/prevalence-dementia-europe",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "CZ": {
+  "aging": {
+   "natSrc": "Czech Statistical Office (CZSO)",
+   "natUrl": "https://csu.gov.cz/population-estimates-structure-and-projection",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Alzheimer Europe (Yearbook)",
+   "natUrl": "https://www.alzheimer-europe.org/dementia/prevalence-dementia-europe",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "DJ": {
+  "aging": {
+   "natSrc": "INSTAD Djibouti (RGPH 2024)",
+   "natUrl": "https://instad.dj/",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "DK": {
+  "aging": {
+   "natSrc": "Statistics Denmark (population figures)",
+   "natUrl": "https://www.dst.dk/en/Statistik/emner/borgere/befolkning/befolkningstal",
+   "natYear": "2026",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Nationalt Videnscenter for Demens",
+   "natUrl": "https://videnscenterfordemens.dk/en/incidence-and-prevalence-dementia-denmark",
+   "natYear": "2024",
+   "note": "Register-based, ~100,000 aged 65+.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "DO": {
+  "aging": {
+   "natSrc": "ONE Dominican Republic (X Censo 2022)",
+   "natUrl": "https://www.one.gob.do/media/atbcumc0/informe-general-xcnpv-completo.pdf",
+   "natYear": "2022",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "10/66 Dementia Research Group (Santo Domingo)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7848137/",
+   "natYear": "2020",
+   "note": "Caribbean Hispanic 10/66 review; ~11.7%.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "DZ": {
+  "aging": {
+   "natSrc": "ONS (Office National des Statistiques, RGPH 2022)",
+   "natUrl": "https://www.ons.dz",
+   "natYear": "2022",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "GBD 2021 MENA regional (Sci Rep)",
+   "natUrl": "https://www.nature.com/articles/s41598-025-89899-w",
+   "natYear": "2025",
+   "status": "identified",
+   "subSrc": "Algiers door-to-door (Tazir et al.)",
+   "subUrl": "https://www.neuroscigroup.us/articles/AADC-5-120.php",
+   "subYear": "2021"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "EC": {
+  "aging": {
+   "natSrc": "INEC Ecuador (Censo 2022)",
+   "natUrl": "https://www.censoecuador.gob.ec/",
+   "natYear": "2022",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Atahualpa Project (Del Brutto, rural coastal)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6372307/",
+   "natYear": "2019",
+   "status": "identified",
+   "subSrc": "Atahualpa village cohort",
+   "subUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC6372307/",
+   "subYear": "2019"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "EE": {
+  "aging": {
+   "natSrc": "Statistics Estonia",
+   "natUrl": "https://stat.ee/en/find-statistics/statistics-theme/population/population-figure",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Alzheimer Europe (Yearbook)",
+   "natUrl": "https://www.alzheimer-europe.org/dementia/prevalence-dementia-europe",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "EG": {
+  "aging": {
+   "natSrc": "CAPMAS (2017 Census)",
+   "natUrl": "https://www.capmas.gov.eg",
+   "natYear": "2017",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Elshahidi et al. systematic review (Neuropsychiatr Dis Treat)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5345900/",
+   "natYear": "2017",
+   "status": "identified",
+   "subSrc": "El Tallawy (Al Kharga/New Valley door-to-door)",
+   "subUrl": "https://link.springer.com/article/10.1186/s41983-019-0074-y",
+   "subYear": "2019"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "EH": {
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "ER": {
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "ET": {
+  "aging": {
+   "natSrc": "Ethiopian Statistical Service (2007 Census / projections)",
+   "natUrl": "https://www.ess.gov.et/",
+   "natYear": "2007",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Neurocognitive impairment, Bahir Dar (Front Aging Neurosci)",
+   "natUrl": "https://www.frontiersin.org/journals/aging-neuroscience/articles/10.3389/fnagi.2022.888704/full",
+   "natYear": "2022",
+   "note": "Sub-national; low confidence.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "FI": {
+  "aging": {
+   "natSrc": "Statistics Finland (population structure)",
+   "natUrl": "https://stat.fi/en/statistics/vaerak",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "THL (memory disorders)",
+   "natUrl": "https://thl.fi/en/topics/chronic-diseases/memory-disorders",
+   "natYear": "2021",
+   "note": "National register, ~150,000.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "FJ": {
+  "aging": {
+   "natSrc": "Fiji Bureau of Statistics (2017 Census)",
+   "natUrl": "https://www.statsfiji.gov.fj/statistics/social-statistics/population-and-demographic-indicators/",
+   "natYear": "2017",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "FK": {
+  "aging": {
+   "natSrc": "Falkland Islands Government (2021 Census)",
+   "natUrl": "https://www.falklands.gov.fk/policy/2021-census/census",
+   "natYear": "2021",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "GA": {
+  "aging": {
+   "natSrc": "Direction Générale de la Statistique Gabon (RGPL 2013)",
+   "natUrl": "https://instatgabon.org",
+   "natYear": "2013",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "GE": {
+  "aging": {
+   "natSrc": "National Statistics Office of Georgia (GeoStat)",
+   "natUrl": "https://www.geostat.ge/en/modules/categories/316/population-and-demography",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "natSrc": "MCI in Republic of Georgia",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5946339/",
+   "natYear": "2018",
+   "status": "identified"
+  },
+  "prevalence": {
+   "natSrc": "Gigineishvili (Georgian Medical Journal)",
+   "natUrl": "https://tcm.tsu.ge/index.php/TCM-GMJ/article/view/557",
+   "natYear": "2021",
+   "note": "Alzheimer Europe rates applied to GeoStat population.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "GH": {
+  "aging": {
+   "natSrc": "Ghana Statistical Service (2021 PHC)",
+   "natUrl": "https://statsghana.gov.gh",
+   "natYear": "2021",
+   "status": "identified"
+  },
+  "mci": {
+   "natSrc": "Cape Coast MCI pilot (MoCA)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11665373/",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "prevalence": {
+   "natSrc": "Ghana AD/ADRD cross-sectional population study",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/39049873/",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "GL": {
+  "aging": {
+   "natSrc": "Statistics Greenland (population estimates)",
+   "natUrl": "https://stat.gl/publ/en/BE/202401/contents/Population%20estimates.htm",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Nielsen et al. (Greenland Inuit, Arctic dementia)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8245097/",
+   "natYear": "2021",
+   "note": "Tool-validation + cognitive-impairment; not covered by AE/GBD.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "GM": {
+  "aging": {
+   "natSrc": "Gambia Bureau of Statistics (2024 Census)",
+   "natUrl": "https://www.gbosdata.org",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "GN": {
+  "aging": {
+   "natSrc": "INS Guinea (RGPH-3 2014)",
+   "natUrl": "https://www.stat-guinee.org",
+   "natYear": "2014",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "GQ": {
+  "aging": {
+   "natSrc": "INEGE Equatorial Guinea (IV Censo 2015)",
+   "natUrl": "https://inege.org",
+   "natYear": "2015",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "GR": {
+  "aging": {
+   "natSrc": "ELSTAT (Hellenic Statistical Authority)",
+   "natUrl": "https://www.statistics.gr/en/statistics/pop",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "mci": {
+   "natSrc": "HELIAD study (MCI, Greece)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/31913961/",
+   "natYear": "2020",
+   "status": "identified"
+  },
+  "prevalence": {
+   "natSrc": "HELIAD study (Greece)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/29528855/",
+   "natYear": "2018",
+   "note": "Population-based; 5.0% in 65+.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "GT": {
+  "aging": {
+   "natSrc": "INE Guatemala (XII Censo 2018)",
+   "natUrl": "https://censo2018.ine.gob.gt/censo2018/poblacion.php",
+   "natYear": "2018",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Multicentric LAC dementia study (incl. Guatemala)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC8543347/",
+   "natYear": "2021",
+   "note": "No standalone Guatemala study.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "GW": {
+  "aging": {
+   "natSrc": "INE Guinea-Bissau (III RGPH 2009)",
+   "natUrl": "https://www.stat-guinebissau.com",
+   "natYear": "2009",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "GY": {
+  "aging": {
+   "natSrc": "Bureau of Statistics Guyana (2022 Census)",
+   "natUrl": "https://statisticsguyana.gov.gy/census/",
+   "natYear": "2022",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "HN": {
+  "aging": {
+   "natSrc": "INE Honduras (EPHPM 2025, 60+)",
+   "natUrl": "https://ine.gob.hn/2025/12/09/caracterizacion-de-la-poblacion-adulta-mayor-en-honduras-60-anos-y-mas-junio-2025/",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Ribeiro et al. LAC systematic review",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9582196/",
+   "natYear": "2022",
+   "note": "Review found no Honduras study; regional LAC pooled.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "HR": {
+  "aging": {
+   "natSrc": "Croatian Bureau of Statistics (DZS)",
+   "natUrl": "https://podaci.dzs.hr/en/statistics/population/population-estimate/",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Alzheimer Europe (Yearbook)",
+   "natUrl": "https://www.alzheimer-europe.org/dementia/prevalence-dementia-europe",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "HT": {
+  "aging": {
+   "natSrc": "IHSI Haiti (2024 estimates)",
+   "natUrl": "https://ihsi.gouv.ht/statistiques/statistiques_demographiques_et_sociales/projections_et_estimations_de_la_population/document_views/estimations-desagregees-de-la-population-haitienne-en-2024",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "HU": {
+  "aging": {
+   "natSrc": "Hungarian Central Statistical Office (KSH)",
+   "natUrl": "https://www.ksh.hu/stadat_files/nep/en/nep0035.html",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Alzheimer Europe (Yearbook)",
+   "natUrl": "https://www.alzheimer-europe.org/dementia/prevalence-dementia-europe",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "IE": {
+  "aging": {
+   "natSrc": "CSO Ireland (population)",
+   "natUrl": "https://www.cso.ie/en/statistics/population/",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Pierce et al. (Ireland estimates)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/31187725/",
+   "natYear": "2019",
+   "note": "Eurodem/AE rates applied to CSO census.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "IL": {
+  "aging": {
+   "natSrc": "Central Bureau of Statistics Israel",
+   "natUrl": "https://www.cbs.gov.il/en/subjects/Pages/Population.aspx",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Nationally representative cohort (Int Psychogeriatrics)",
+   "natUrl": "https://www.sciencedirect.com/science/article/pii/S1041610224023135",
+   "natYear": "2024",
+   "note": "National cohort 60+.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "IQ": {
+  "aging": {
+   "natSrc": "Central Statistical Organization (COSIT, 2024 Census)",
+   "natUrl": "https://cosit.gov.iq/AAS/section_2.php",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Qassem et al. (Dementia in the Arab world)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10375885/",
+   "natYear": "2023",
+   "note": "Regional Arab-world review.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "IS": {
+  "aging": {
+   "natSrc": "Statistics Iceland (population)",
+   "natUrl": "https://hagstofa.is/en/statistics/population",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "AGES-Reykjavik Study",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9768066/",
+   "natYear": "2022",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "JM": {
+  "aging": {
+   "natSrc": "Statistical Institute of Jamaica (2022 Census)",
+   "natUrl": "https://statinja.gov.jm/Census/popCensus/Popcensus2022Index.aspx",
+   "natYear": "2022",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Eldemire-Shearer et al. (Kingston community survey)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/23637080/",
+   "natYear": "2013",
+   "note": "~5.9% nationally reported.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "JO": {
+  "aging": {
+   "natSrc": "Department of Statistics (DoS Jordan)",
+   "natUrl": "https://dosweb.dos.gov.jo/population/population-2/",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Kofahi et al. (Int J Gen Med)",
+   "natUrl": "https://www.dovepress.com/annual-period-prevalence-and-risk-factors-of-dementia-among-older-jord-peer-reviewed-fulltext-article-IJGM",
+   "natYear": "2021",
+   "note": "Nationwide hospital-records period prevalence.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "KE": {
+  "aging": {
+   "natSrc": "Kenya National Bureau of Statistics (2019 Census)",
+   "natUrl": "https://www.knbs.or.ke/2019-kenya-population-and-housing-census-reports/",
+   "natYear": "2019",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Dementia Screening in Rural Kenya (Muyela et al., Karger)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11151958/",
+   "natYear": "2024",
+   "note": "Sub-national rural screening.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "KG": {
+  "aging": {
+   "natSrc": "National Statistical Committee of Kyrgyz Republic",
+   "natUrl": "https://www.stat.gov.kg/en/statistics/naselenie/",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Kazakh & Kyrgyz cognitive-impairment study (Int Psychogeriatrics)",
+   "natUrl": "https://www.cambridge.org/core/journals/international-psychogeriatrics/article/338-risk-factors-for-moderate-cognitive-impairment-and-dementia-in-the-kazakh-and-kyrgyz-populations-preliminary-results/FDA10846FCD955E4AD9F9029368E6A1F",
+   "natYear": "2020",
+   "note": "Small preliminary (n=300) regional study.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "KH": {
+  "aging": {
+   "natSrc": "National Institute of Statistics (2019 Census)",
+   "natUrl": "https://nis.gov.kh/en/general-population-census-of-cambodia/",
+   "natYear": "2019",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "KP": {
+  "aging": {
+   "natSrc": "DPRK Central Bureau of Statistics (2008 Census)",
+   "natUrl": "https://unstats.un.org/unsd/demographic/sources/census/wphc/North_Korea/Final%20national%20census%20report.pdf",
+   "natYear": "2008",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "KW": {
+  "aging": {
+   "natSrc": "Central Statistical Bureau (Kuwait Census 2021)",
+   "natUrl": "https://census.csb.gov.kw/Census_Dashboard_EN",
+   "natYear": "2021",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Qassem et al. (Dementia in the Arab world)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10375885/",
+   "natYear": "2023",
+   "note": "Regional Arab-world review.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "KZ": {
+  "aging": {
+   "natSrc": "Bureau of National Statistics of Kazakhstan",
+   "natUrl": "https://stat.gov.kz/en/industries/social-statistics/demography/",
+   "natYear": "2021",
+   "status": "identified"
+  },
+  "mci": {
+   "natSrc": "Tsoy et al. (Alzheimer Dis Assoc Disord)",
+   "natUrl": "https://doi.org/10.1097/WAD.0000000000000298",
+   "natYear": "2019",
+   "status": "identified"
+  },
+  "prevalence": {
+   "natSrc": "Kazakh & Kyrgyz cognitive-impairment study (Int Psychogeriatrics)",
+   "natUrl": "https://www.cambridge.org/core/journals/international-psychogeriatrics/article/338-risk-factors-for-moderate-cognitive-impairment-and-dementia-in-the-kazakh-and-kyrgyz-populations-preliminary-results/FDA10846FCD955E4AD9F9029368E6A1F",
+   "natYear": "2020",
+   "note": "Small preliminary (n=300) regional study.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "LA": {
+  "aging": {
+   "natSrc": "Lao Statistics Bureau (2015 Census)",
+   "natUrl": "https://www.lsb.gov.la/",
+   "natYear": "2015",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Kounnavong et al. (Lao TPHI / WHO Kobe)",
+   "natUrl": "https://health-policy-systems.biomedcentral.com/articles/10.1186/s12961-022-00919-x",
+   "natYear": "2022",
+   "note": "National cognitive-impairment survey 60+ (HDS-R).",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "LB": {
+  "aging": {
+   "natSrc": "Central Administration of Statistics (CAS)",
+   "natUrl": "http://cas.gov.lb/index.php/demographic-and-social-en/population-en",
+   "natYear": "2019",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Phung et al. (Lebanon 10/66, Alz & Dementia)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5718975/",
+   "natYear": "2017",
+   "note": "Community-based; age-std 9.0%.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "LK": {
+  "aging": {
+   "natSrc": "Dept. of Census and Statistics (2024 Census)",
+   "natUrl": "https://www.statistics.gov.lk/Population/StaticalInformation/CPH2024/",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "de Silva et al. (Int J Geriatr Psychiatry)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/12891639/",
+   "natYear": "2003",
+   "note": "Semi-urban 65+ survey, ~4%.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "LR": {
+  "aging": {
+   "natSrc": "LISGIS Liberia (2022 Census)",
+   "natUrl": "https://www.lisgis.gov.lr",
+   "natYear": "2022",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "LS": {
+  "aging": {
+   "natSrc": "Lesotho Bureau of Statistics (2016 Census)",
+   "natUrl": "http://www.bos.gov.ls/2016_Summary_Key_Findings.pdf",
+   "natYear": "2016",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "LT": {
+  "aging": {
+   "natSrc": "Statistics Lithuania",
+   "natUrl": "https://osp.stat.gov.lt/en/gyventojai1",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Alzheimer Europe (Yearbook)",
+   "natUrl": "https://www.alzheimer-europe.org/dementia/prevalence-dementia-europe",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "LU": {
+  "aging": {
+   "natSrc": "STATEC (Statistics Luxembourg)",
+   "natUrl": "https://statistiques.public.lu/dam-assets/catalogue-publications/en-chiffres/2025/population-chiffres-2025.pdf",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Luxembourg population-based study",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4577122/",
+   "natYear": "2015",
+   "note": "n=1,377 residents 64+; 3.8%.",
+   "status": "identified"
+  },
+  "scd": {
+   "natSrc": "Luxembourg study (cognitive complaints, SCD-proxy)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC4577122/",
+   "natYear": "2015",
+   "note": "26.1% cognitive complaints; proxy not dedicated SCD.",
+   "status": "identified"
+  }
+ },
+ "LV": {
+  "aging": {
+   "natSrc": "Central Statistical Bureau of Latvia",
+   "natUrl": "https://stat.gov.lv/en/statistics-themes/population/population/2323-population-age-and-sex",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Alzheimer Europe (Yearbook)",
+   "natUrl": "https://www.alzheimer-europe.org/dementia/prevalence-dementia-europe",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "LY": {
+  "aging": {
+   "natSrc": "Bureau of Statistics and Census (BSC) Libya (2006 Census)",
+   "natUrl": "https://bsc.ly/en/",
+   "natYear": "2006",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "GBD 2021 MENA regional (Sci Rep)",
+   "natUrl": "https://www.nature.com/articles/s41598-025-89899-w",
+   "natYear": "2025",
+   "note": "No Libya-specific study.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "MA": {
+  "aging": {
+   "natSrc": "HCP (RGPH 2024, elderly analysis)",
+   "natUrl": "https://www.hcp.ma/Les-personnes-agees-au-Maroc-Analyse-issue-du-RGPH-de-2024-Decembre-2025_a4228.html",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "natSrc": "Chahidi et al. (national study, MCI estimate)",
+   "natUrl": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12726269/",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "prevalence": {
+   "natSrc": "Chahidi et al. (National Prevalence Study, AAIC 2025)",
+   "natUrl": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12726269/",
+   "natYear": "2025",
+   "note": "First nationally representative study, 50+.",
+   "status": "identified",
+   "subSrc": "Razouqi scoping review (J Alzheimers Dis)",
+   "subUrl": "https://doi.org/10.1177/13872877261430304",
+   "subYear": "2026"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "MD": {
+  "aging": {
+   "natSrc": "National Bureau of Statistics of Moldova (BNS, 2024 Census)",
+   "natUrl": "https://statistica.gov.md/en/preliminary-results-of-the-2024-population-and-housing-census-10077_61626.html",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "GBD 2019 (Lancet Public Health)",
+   "natUrl": "https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(21)00249-8/fulltext",
+   "natYear": "2019",
+   "note": "No Moldova-specific study; CEE meta-analysis alt.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "ME": {
+  "aging": {
+   "natSrc": "Statistical Office of Montenegro (MONSTAT)",
+   "natUrl": "https://www.monstat.org/eng/page.php?id=394&pageid=57",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "GBD 2019 (Lancet Public Health)",
+   "natUrl": "https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(21)00249-8/fulltext",
+   "natYear": "2019",
+   "note": "No Montenegro-specific study.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "MG": {
+  "aging": {
+   "natSrc": "INSTAT Madagascar (RGPH-3)",
+   "natUrl": "https://www.instat.mg/documents/upload/main/INSTAT-RGPH3_EtatetStructuredelaPopulation.pdf",
+   "natYear": "2018",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "MK": {
+  "aging": {
+   "natSrc": "State Statistical Office of North Macedonia",
+   "natUrl": "https://www.stat.mk/en/stat/population-and-living-conditions/population/",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Alzheimer Europe (Yearbook)",
+   "natUrl": "https://www.alzheimer-europe.org/dementia/prevalence-dementia-europe",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "ML": {
+  "aging": {
+   "natSrc": "INSTAT Mali (RGPH-5 2022)",
+   "natUrl": "https://www.instat-mali.org",
+   "natYear": "2022",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "MN": {
+  "aging": {
+   "natSrc": "National Statistics Office of Mongolia (Census)",
+   "natUrl": "https://www.1212.mn/en",
+   "natYear": "2020",
+   "status": "identified"
+  },
+  "mci": {
+   "natSrc": "Otgonbayar 2017 (Ulaanbaatar), via NRN overview",
+   "natUrl": "https://neuroscirn.org/ojs/index.php/nrnotes/article/view/99",
+   "natYear": "2021",
+   "note": "Local dissertation figures only.",
+   "status": "identified"
+  },
+  "prevalence": {
+   "natSrc": "Tuvshinjargal et al. (VCI overview)",
+   "natUrl": "https://neuroscirn.org/ojs/index.php/nrnotes/article/view/99",
+   "natYear": "2021",
+   "note": "Country-specific overview aggregating Mongolian studies; no primary national survey.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "MR": {
+  "aging": {
+   "natSrc": "ANSADE Mauritania (RGPH-5 2023)",
+   "natUrl": "https://ansade.mr",
+   "natYear": "2023",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "MW": {
+  "aging": {
+   "natSrc": "National Statistical Office of Malawi (2018 Census)",
+   "natUrl": "https://www.nsomalawi.mw/census/2018",
+   "natYear": "2018",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "MZ": {
+  "aging": {
+   "natSrc": "INE Moçambique (Censo 2017)",
+   "natUrl": "https://www.ine.gov.mz/en/censo-2017",
+   "natYear": "2017",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "NA": {
+  "aging": {
+   "natSrc": "Namibia Statistics Agency (2023 Census)",
+   "natUrl": "https://nsa.org.na/document/2023-population-and-housing-census-main-report/",
+   "natYear": "2023",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "NC": {
+  "aging": {
+   "natSrc": "ISEE Nouvelle-Calédonie (2019 Census)",
+   "natUrl": "https://www.isee.nc/population/demographie",
+   "natYear": "2019",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "NE": {
+  "aging": {
+   "natSrc": "INS Niger (RGPH 2012)",
+   "natUrl": "https://www.stat-niger.org",
+   "natYear": "2012",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "NG": {
+  "aging": {
+   "natSrc": "National Bureau of Statistics / NPC (2006 Census)",
+   "natUrl": "https://nigerianstat.gov.ng",
+   "natYear": "2006",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Ogunniyi et al. (Indianapolis-Ibadan)",
+   "natUrl": "https://onlinelibrary.wiley.com/doi/10.1046/j.1468-1331.2000.00124.x",
+   "natYear": "2000",
+   "note": "Yoruba/Ibadan cohort; 2.29%.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "NI": {
+  "aging": {
+   "natSrc": "INIDE Nicaragua (proyecciones / IX Censo 2024)",
+   "natUrl": "https://www.inide.gob.ni/docu/estadisticas/sociodemograficas.htm",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Ribeiro et al. LAC systematic review",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC9582196/",
+   "natYear": "2022",
+   "note": "No Nicaragua study; regional LAC pooled.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "NL": {
+  "aging": {
+   "natSrc": "CBS (Statistics Netherlands)",
+   "natUrl": "https://www.cbs.nl/en-gb/figures/detail/85496ENG",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Alzheimer Europe (Yearbook)",
+   "natUrl": "https://www.alzheimer-europe.org/dementia/prevalence-dementia-europe",
+   "natYear": "2019",
+   "status": "identified",
+   "subSrc": "Rotterdam Study (Ott et al.)",
+   "subUrl": "https://pubmed.ncbi.nlm.nih.gov/7728032/",
+   "subYear": "1995"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "NO": {
+  "aging": {
+   "natSrc": "Statistics Norway (SSB)",
+   "natUrl": "https://www.ssb.no/en/befolkning/folketall/statistikk/befolkning",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "mci": {
+   "natSrc": "HUNT4 70+ Study (MCI 35.3%)",
+   "natUrl": "https://journals.sagepub.com/doi/full/10.3233/JAD-201275",
+   "natYear": "2021",
+   "status": "identified"
+  },
+  "prevalence": {
+   "natSrc": "HUNT4 70+ Study (Gjøra et al.)",
+   "natUrl": "https://journals.sagepub.com/doi/full/10.3233/JAD-201275",
+   "natYear": "2021",
+   "note": "Population-based; 14.6% in 70+.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "NP": {
+  "aging": {
+   "natSrc": "National Statistics Office (2021 Census)",
+   "natUrl": "https://censusnepal.cbs.gov.np/",
+   "natYear": "2021",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Thapa et al. (Aging & Cognitive Health in Nepal)",
+   "natUrl": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12725437/",
+   "natYear": "2025",
+   "status": "identified",
+   "subSrc": "House-to-house survey, Dharan (60+)",
+   "subUrl": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12725437/",
+   "subYear": "2025"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "OM": {
+  "aging": {
+   "natSrc": "National Centre for Statistics and Information (NCSI)",
+   "natUrl": "https://data.ncsi.gov.om/?q=dataset/total-population",
+   "natYear": "2023",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Qassem et al. (Dementia in the Arab world)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10375885/",
+   "natYear": "2023",
+   "note": "Regional review; Oman only has a hospital referral study.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "PA": {
+  "aging": {
+   "natSrc": "INEC Panama (XII Censo 2023)",
+   "natUrl": "https://www.inec.gob.pa/publicaciones/Default3.aspx?ID_PUBLICACION=1199&ID_CATEGORIA=19&ID_SUBCATEGORIA=71",
+   "natYear": "2023",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Panama Aging Research Initiative (PARI)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/31401637/",
+   "natYear": "2019",
+   "note": "Cohort (≥65, n=423), not full population prevalence.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "PE": {
+  "aging": {
+   "natSrc": "INEI Peru (Censo 2017 / proyecciones)",
+   "natUrl": "https://m.inei.gob.pe/estadisticas/indice-tematico/population-estimates-and-projections/",
+   "natYear": "2017",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "10/66 Dementia Research Group (Llibre Rodriguez, Lima & Cañete)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC2854470/",
+   "natYear": "2008",
+   "status": "identified",
+   "subSrc": "Puente Piedra, Lima door-to-door",
+   "subUrl": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10622761/",
+   "subYear": "2023"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "PG": {
+  "aging": {
+   "natSrc": "PNG National Statistical Office (2011 Census)",
+   "natUrl": "https://www.nso.gov.pg/statistics/population/",
+   "natYear": "2011",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "PR": {
+  "aging": {
+   "natSrc": "Instituto de Estadísticas de PR / US Census (PRCS)",
+   "natUrl": "https://censo.estadisticas.pr/Comunicado-de-prensa/2024-06-27t152651",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "10/66 Dementia Research Group (San Juan)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7848137/",
+   "natYear": "2020",
+   "note": "Caribbean Hispanic 10/66 review; ~11.6%.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "PS": {
+  "aging": {
+   "natSrc": "Palestinian Central Bureau of Statistics (PCBS)",
+   "natUrl": "https://www.pcbs.gov.ps/portals/_pcbs/PressRelease/Press_En_1-10-2020-elder-en.pdf",
+   "natYear": "2020",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Qassem et al. (Dementia in the Arab world)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10375885/",
+   "natYear": "2023",
+   "note": "Regional Arab-world review.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "PT": {
+  "aging": {
+   "natSrc": "INE Portugal (demographic statistics)",
+   "natUrl": "https://www.ine.pt/xportal/xmain?PUBLICACOESmodo=2&PUBLICACOESpub_boui=280978178&xlang=en&xpgid=ine_publicacoes&xpid=INE",
+   "natYear": "2023",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "10/66 Dementia Research Group (Portugal, Gonçalves-Pereira et al.)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5688818/",
+   "natYear": "2017",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "PY": {
+  "aging": {
+   "natSrc": "INE Paraguay (Censo 2022)",
+   "natUrl": "https://www.ine.gov.py/noticias/2157/el-censo-2022-indica-que-523660-personas-tienen-65-y-mas-anos-de-edad-en-el-pais",
+   "natYear": "2022",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "QA": {
+  "aging": {
+   "natSrc": "Planning and Statistics Authority (PSA Qatar)",
+   "natUrl": "https://www.psa.gov.qa/en/statistics1/StatisticsSite/Pages/Population.aspx",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Qassem et al. (Dementia in the Arab world)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10375885/",
+   "natYear": "2023",
+   "note": "Regional review; Qatar has only a clinic registry.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "RO": {
+  "aging": {
+   "natSrc": "National Institute of Statistics (INSSE Romania)",
+   "natUrl": "https://insse.ro/cms/en/content/demographic-yearbook-romania",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Alzheimer Europe (Yearbook)",
+   "natUrl": "https://www.alzheimer-europe.org/dementia/prevalence-dementia-europe",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "RS": {
+  "aging": {
+   "natSrc": "Statistical Office of the Republic of Serbia (SORS)",
+   "natUrl": "https://www.stat.gov.rs/en-US/oblasti/stanovnistvo/procene-stanovnistva",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Alzheimer Europe (Yearbook)",
+   "natUrl": "https://www.alzheimer-europe.org/dementia/prevalence-dementia-europe",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "RU": {
+  "aging": {
+   "natSrc": "Rosstat (Demographic Yearbook of Russia)",
+   "natUrl": "https://eng.rosstat.gov.ru/Publications/document/13972",
+   "natYear": "2023",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "EVKALIPT national study (Nevrol Neuropsikhiatr Psikhosom)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/38696145/",
+   "natYear": "2024",
+   "note": "First national cognitive-impairment prevalence, ≥65y, 11 regions.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "RW": {
+  "aging": {
+   "natSrc": "National Institute of Statistics of Rwanda (RPHC5 2022)",
+   "natUrl": "https://statistics.gov.rw/data-sources/censuses/Population-and-Housing-Census/fifth-population-and-housing-census-2022/rphc5-thematic-reports/rphc5-thematic-report-population-size-structure-and-distribution",
+   "natYear": "2022",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Older adults in rural & urban Rwanda (JOGH)",
+   "natUrl": "https://jogh.org/2025/jogh-15-04108",
+   "natYear": "2025",
+   "note": "Population-based, probable/possible dementia.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "SA": {
+  "aging": {
+   "natSrc": "General Authority for Statistics (GASTAT, Census 2022)",
+   "natUrl": "https://www.stats.gov.sa/en/w/%D8%A7%D9%84%D8%B3%D9%83%D8%A7%D9%86-%D8%AD%D8%B3%D8%A8-%D8%A7%D9%84%D9%81%D8%A6%D8%A7%D8%AA-%D8%A7%D9%84%D8%B9%D9%85%D8%B1%D9%8A%D8%A9-%D8%A7%D9%84%D8%AA%D9%81%D8%B5%D9%8A%D9%84%D9%8A%D8%A9",
+   "natYear": "2022",
+   "status": "identified"
+  },
+  "mci": {
+   "natSrc": "Alkhunizan et al. (Saudi community-based MCI/dementia)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/29706986/",
+   "natYear": "2018",
+   "status": "identified"
+  },
+  "prevalence": {
+   "natSrc": "Hajjar et al. (KSA National Guard Health System)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/39962762/",
+   "natYear": "2025",
+   "note": "National records-based; community alt. Alkhunizan 2018.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "SB": {
+  "aging": {
+   "natSrc": "Solomon Islands National Statistics Office (2019 Census)",
+   "natUrl": "https://statistics.gov.sb/category/statistics/social-statistics/population/",
+   "natYear": "2019",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "SD": {
+  "aging": {
+   "natSrc": "Central Bureau of Statistics (CBS) Sudan (2008 Census)",
+   "natUrl": "http://cbs.gov.sd/index.php/en/",
+   "natYear": "2008",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "GBD 2021 MENA regional (Sci Rep)",
+   "natUrl": "https://www.nature.com/articles/s41598-025-89899-w",
+   "natYear": "2025",
+   "note": "No Sudan-specific study.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "SE": {
+  "aging": {
+   "natSrc": "Statistics Sweden (SCB)",
+   "natUrl": "https://www.scb.se/en/finding-statistics/statistics-by-subject-area/population-and-living-conditions/population-composition-and-development/population-statistics/",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "SveDem / Alzheimer Europe (Yearbook)",
+   "natUrl": "https://www.alzheimer-europe.org/dementia/prevalence-dementia-europe",
+   "natYear": "2019",
+   "note": "SveDem national registry (PMC4335024).",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "SI": {
+  "aging": {
+   "natSrc": "Statistical Office of Slovenia (SURS)",
+   "natUrl": "https://pxweb.stat.si/sistat/en/Podrocja/Index/100/population",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Alzheimer Europe (Yearbook)",
+   "natUrl": "https://www.alzheimer-europe.org/dementia/prevalence-dementia-europe",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "SK": {
+  "aging": {
+   "natSrc": "Statistical Office of the Slovak Republic",
+   "natUrl": "https://vekovastruktura.statistics.sk/index.php?lang=en",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Alzheimer Europe (Yearbook)",
+   "natUrl": "https://www.alzheimer-europe.org/dementia/prevalence-dementia-europe",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "SL": {
+  "aging": {
+   "natSrc": "Statistics Sierra Leone (2021 Mid-Term Census)",
+   "natUrl": "https://www.statistics.sl",
+   "natYear": "2021",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "SN": {
+  "aging": {
+   "natSrc": "ANSD Senegal (RGPH-5 2023)",
+   "natUrl": "https://www.ansd.sn",
+   "natYear": "2023",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Touré et al. (IPRES Dakar)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC3347874/",
+   "natYear": "2012",
+   "note": "Clinic-based ≥65y, ~8.9%; not community-based.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "SO": {
+  "aging": {
+   "natSrc": "Somali National Bureau of Statistics (PESS 2014)",
+   "natUrl": "https://nbs.gov.so/",
+   "natYear": "2014",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "SR": {
+  "aging": {
+   "natSrc": "Algemeen Bureau voor de Statistiek (ABS Suriname, 2012 Census)",
+   "natUrl": "https://statistics-suriname.org/census-statistics-2012/",
+   "natYear": "2012",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "SS": {
+  "aging": {
+   "natSrc": "National Bureau of Statistics South Sudan (2008 Census / projections)",
+   "natUrl": "https://www.ssnbss.org/home/documents/census-and-surveys/",
+   "natYear": "2008",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "SV": {
+  "aging": {
+   "natSrc": "ONEC-BCR El Salvador (Censo 2024)",
+   "natUrl": "https://onec.bcr.gob.sv/",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "natSrc": "Hernández et al. (El Salvador, MCI 17.09% 60+)",
+   "natUrl": "https://alz-journals.onlinelibrary.wiley.com/doi/10.1016/j.jalz.2017.06.1183",
+   "natYear": "2017",
+   "status": "identified"
+  },
+  "prevalence": {
+   "natSrc": "Hernández et al. (El Salvador national, 60+)",
+   "natUrl": "https://alz-journals.onlinelibrary.wiley.com/doi/10.1016/j.jalz.2017.06.1183",
+   "natYear": "2017",
+   "note": "Dementia 10.25% in 60+.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "SY": {
+  "aging": {
+   "natSrc": "Central Bureau of Statistics Syria",
+   "natUrl": "https://www.cbssyr.org/",
+   "natYear": "2022",
+   "note": "Estimates; last full census 2004. Low confidence.",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Qassem et al. (Dementia in the Arab world)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10375885/",
+   "natYear": "2023",
+   "note": "Regional Arab-world review.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "SZ": {
+  "aging": {
+   "natSrc": "Central Statistical Office Eswatini (2017 Census)",
+   "natUrl": "https://www.gov.sz/index.php?option=com_content&view=article&id=687:central-statistics-office",
+   "natYear": "2017",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "TD": {
+  "aging": {
+   "natSrc": "INSEED Chad (RGPH-2 2009)",
+   "natUrl": "https://www.inseed.td",
+   "natYear": "2009",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "TG": {
+  "aging": {
+   "natSrc": "INSEED Togo (RGPH-5 2022)",
+   "natUrl": "https://inseed.tg",
+   "natYear": "2022",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "TJ": {
+  "aging": {
+   "natSrc": "Agency on Statistics under the President of Tajikistan",
+   "natUrl": "https://www.stat.tj/en/population-and-housing-census/",
+   "natYear": "2020",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "TL": {
+  "aging": {
+   "natSrc": "Instituto Nacional de Estatística Timor-Leste (2022 Census)",
+   "natUrl": "https://inetl-ip.gov.tl/2023/05/18/main-report-timor-leste-population-and-housing-census-2022/",
+   "natYear": "2022",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "TM": {
+  "aging": {
+   "natSrc": "State Committee of Turkmenistan on Statistics (2022 Census)",
+   "natUrl": "https://www.stat.gov.tm/en/population-census",
+   "natYear": "2022",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "TN": {
+  "aging": {
+   "natSrc": "INS (RGPH 2024)",
+   "natUrl": "https://www.ins.tn/en/enquetes/population-and-housing-census-2024",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Épidémiologie des démences en Tunisie (Rev Neurol)",
+   "natUrl": "https://www.sciencedirect.com/science/article/abs/pii/S1627483014000993",
+   "natYear": "2014",
+   "status": "identified",
+   "subSrc": "Épidémiologie Alzheimer en Tunisie",
+   "subUrl": "https://www.sciencedirect.com/science/article/abs/pii/S0035378717303983",
+   "subYear": "2017"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "TT": {
+  "aging": {
+   "natSrc": "Central Statistical Office Trinidad & Tobago (2011 Census)",
+   "natUrl": "https://cso.gov.tt/subjects/population-and-vital-statistics/population/",
+   "natYear": "2011",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Trinidad National Survey of Ageing and Cognition",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC5855448/",
+   "natYear": "2018",
+   "note": "Nationally representative; 24.1% in 70+ (high-vascular-risk).",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "TZ": {
+  "aging": {
+   "natSrc": "National Bureau of Statistics Tanzania (2022 Census)",
+   "natUrl": "https://www.nbs.go.tz/nbs/takwimu/Census2022/Age_and_Sex_Distribution_Key_Finding_Report_Tanzania.pdf",
+   "natYear": "2022",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Hai District study, Kilimanjaro (Paddick/Longdon et al.)",
+   "natUrl": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC3617645/",
+   "natYear": "2013",
+   "note": "Sub-national; DSM-IV ~6.4% in 70+.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "UA": {
+  "aging": {
+   "natSrc": "State Statistics Service of Ukraine (Derzhstat)",
+   "natUrl": "https://stat.gov.ua/en/topics/population-and-migration",
+   "natYear": "2022",
+   "note": "Pre-war estimates; no census since 2001.",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Alzheimer Europe (Yearbook)",
+   "natUrl": "https://www.alzheimer-europe.org/dementia/prevalence-dementia-europe",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "UG": {
+  "aging": {
+   "natSrc": "Uganda Bureau of Statistics (2024 Census)",
+   "natUrl": "https://www.ubos.org/wp-content/uploads/publications/National-Population-and-Housing-Census-2024-Preliminary-Report.pdf",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "ADRD in rural Uganda (PMC)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC7011370/",
+   "natYear": "2020",
+   "note": "Sub-national, rural, population-based.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "UY": {
+  "aging": {
+   "natSrc": "INE Uruguay (Censo 2023 / proyecciones)",
+   "natUrl": "https://www.gub.uy/instituto-nacional-estadistica/datos-y-estadisticas/estadisticas/estimaciones-proyecciones",
+   "natYear": "2023",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "UZ": {
+  "aging": {
+   "natSrc": "Statistics Agency of Uzbekistan",
+   "natUrl": "https://stat.uz/en/official-statistics/demography",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "VE": {
+  "aging": {
+   "natSrc": "INE Venezuela (proyecciones, base Censo 2011)",
+   "natUrl": "https://ine.gob.ve/demograficos/",
+   "natYear": "2011",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Maracaibo Aging Study (Maestre et al.)",
+   "natUrl": "https://pubmed.ncbi.nlm.nih.gov/17940342/",
+   "natYear": "2007",
+   "note": "10/66 Caracas site also covers VE.",
+   "status": "identified",
+   "subSrc": "Maracaibo (Zulia)",
+   "subUrl": "https://pubmed.ncbi.nlm.nih.gov/17940342/",
+   "subYear": "2007"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "VU": {
+  "aging": {
+   "natSrc": "Vanuatu Bureau of Statistics (2020 Census)",
+   "natUrl": "https://vbos.gov.vu/index.php/en/census-and-surveys/census-report",
+   "natYear": "2020",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "XK": {
+  "aging": {
+   "natSrc": "Kosovo Agency of Statistics (ASK, 2024 Census)",
+   "natUrl": "https://askdata.rks-gov.net/pxweb/en/ASKdata/ASKdata__Census%20population__1_Demographic_Characteristics/census2024_00.px/",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "CEE meta-analysis (Cenko et al., MDPI)",
+   "natUrl": "https://www.mdpi.com/2673-5318/2/2/15",
+   "natYear": "2021",
+   "note": "No Kosovo-specific study; GBD subsumes under Serbia. Low confidence.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "YE": {
+  "aging": {
+   "natSrc": "Central Statistical Organization (CSO Yemen)",
+   "natUrl": "https://cso-ye.org/en/",
+   "natYear": "2024",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "Qassem et al. (Dementia in the Arab world)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC10375885/",
+   "natYear": "2023",
+   "note": "Regional Arab-world review.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "ZA": {
+  "aging": {
+   "natSrc": "Statistics South Africa (Mid-year estimates P0302)",
+   "natUrl": "https://www.statssa.gov.za/publications/P0302/P03022025.pdf",
+   "natYear": "2025",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "HAALSI Dementia / Agincourt (Lancet Global Health)",
+   "natUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11987161/",
+   "natYear": "2024",
+   "status": "identified",
+   "subSrc": "Agincourt HDSS (rural Mpumalanga)",
+   "subUrl": "https://pmc.ncbi.nlm.nih.gov/articles/PMC11987161/",
+   "subYear": "2024"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "ZM": {
+  "aging": {
+   "natSrc": "Zambia Statistics Agency (2022 Census)",
+   "natUrl": "https://www.zamstats.gov.zm/2022-census/",
+   "natYear": "2022",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "prevalence": {
+   "natSrc": "CHW dementia assessment in older Zambians (PMC)",
+   "natUrl": "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC11713415/",
+   "natYear": "2025",
+   "note": "Sub-national, Lusaka communities.",
+   "status": "identified"
+  },
+  "scd": {
+   "status": "none"
+  }
+ },
+ "ZW": {
+  "aging": {
+   "natSrc": "Zimbabwe National Statistics Agency (2022 Census)",
+   "natUrl": "https://zimstat.co.zw/population-census/",
+   "natYear": "2022",
+   "status": "identified"
+  },
+  "mci": {
+   "status": "none"
+  },
+  "scd": {
+   "status": "none"
+  }
+ }
+}
