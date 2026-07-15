@@ -365,6 +365,10 @@ import T from '../../components/T.astro';
             <option value="physical_inactivity" data-zh="身體活動不足" data-en="Physical inactivity">身體活動不足</option>
           </select>
         </div>
+        <label class="map-zoom-wrap">
+          <span class="map-country-label"><T zh="縮放" en="Zoom" /></span>
+          <input type="range" id="map-zoom" class="map-zoom" min="0" max="100" value="0" aria-label="zoom" />
+        </label>
       </div>
       <p id="map-prev-note" class="map-prev-note" style="display:none">
         <T zh="※ 台灣以外的失智盛行率地圖需各國政府人口與調查資料（目前政策封鎖，見 data-download-points.md），本輪僅顯示 PM2.5。" en="※ Dementia-prevalence maps outside Taiwan need each country's government population & survey data (currently blocked — see data-download-points.md); this round shows PM2.5 only." />
@@ -373,6 +377,7 @@ import T from '../../components/T.astro';
         <div id="map" class="tw-map"></div>
         <div id="globe-stage" class="tw-map globe-stage" hidden>
           <canvas id="map-globe"></canvas>
+          <button type="button" id="globe-spin" class="globe-ctrl" aria-pressed="true"></button>
           <div id="globe-tip" class="globe-tip" hidden></div>
           <div id="globe-legend" class="globe-legend"></div>
           <div class="globe-hint"><T zh="拖曳旋轉・點國家看細節" en="Drag to spin · click a country to drill in" /></div>
@@ -767,6 +772,15 @@ import T from '../../components/T.astro';
   .globe-legend :global(.lg-title) { font-weight: 700; margin-bottom: 0.2rem; }
   .globe-legend :global(.lg-row) { display: flex; align-items: center; gap: 0.4rem; }
   .globe-legend :global(i) { width: 0.85rem; height: 0.85rem; border-radius: 2px; display: inline-block; flex-shrink: 0; }
+  .globe-ctrl {
+    position: absolute; right: 12px; top: 12px; z-index: 4; cursor: pointer;
+    font: inherit; font-size: 0.72rem; font-weight: 600;
+    background: var(--card-bg); border: 1px solid var(--card-border); box-shadow: var(--card-shadow);
+    color: var(--color-text); padding: 0.3rem 0.6rem; border-radius: 999px;
+  }
+  .globe-ctrl:hover { border-color: var(--color-accent); }
+  .map-zoom-wrap { display: flex; flex-direction: column; gap: 0.25rem; justify-content: flex-end; }
+  .map-zoom { width: 130px; accent-color: var(--color-accent); cursor: pointer; }
 </style>
 
 <script>
@@ -1634,6 +1648,8 @@ async function drawCountry(cc) {
     onEachFeature: (f, layer) => layer.bindTooltip(tooltipFor(f), { sticky: true }),
   }).addTo(map);
   if (d.cfg.fit) map.fitBounds(d.cfg.fit); else map.fitBounds(geoLayer.getBounds(), { padding: [8, 8] });
+  leafFitZoom = map.getZoom();                    // this fitted zoom = the slider's 0 point
+  const zslider = $('map-zoom'); if (zslider) zslider.value = 0;
   buildLegend();
   syncModeButtons();
   setTimeout(() => map && map.invalidateSize(), 150);
@@ -1645,7 +1661,13 @@ async function drawCountry(cc) {
    PAF_COMPOSITE/L()/theme so it matches the flat maps exactly. */
 let worldGeo = null, gcanvas = null, gctx = null, gproj = null, gpath = null, ggrat = null;
 let gW = 0, gH = 0, grot = [-12, -10, 0], gdrag = false, gspin = true, ghover = null, graf = null, gLast = null, gDownXY = null;
+let gZoom = 1, gBaseScale = 0, leafFitZoom = null;   // globe zoom factor, its fitted base scale, Leaflet fitted zoom
 function inWorld() { return mapCountry === 'world'; }
+function updateSpinBtn() {
+  const b = $('globe-spin'); if (!b) return;
+  b.textContent = gspin ? L('⏸ 暫停自轉', '⏸ Pause spin') : L('▶ 自轉', '▶ Auto-spin');
+  b.setAttribute('aria-pressed', String(gspin));
+}
 const WORLD_METRICS = {
   pm25: { prop: 'pm25', bins: PM_BINS, unit: 'µg/m³', zh: 'PM2.5 µg/m³', en: 'PM2.5 µg/m³', dec: 1 },
   composite: { prop: 'paf', bins: PAF_COMPOSITE.bins, unit: '%', zh: PAF_COMPOSITE.legendZh, en: PAF_COMPOSITE.legendEn, dec: 1 },
@@ -1666,7 +1688,13 @@ function gResize() {
   gcanvas.style.width = gW + 'px'; gcanvas.style.height = gH + 'px';
   gctx.setTransform(dpr, 0, 0, dpr, 0, 0);
   gproj.fitExtent([[16, 16], [gW - 16, gH - 16]], { type: 'Sphere' });
+  gBaseScale = gproj.scale();           // fitted scale = zoom 1×; the slider multiplies this
+  gproj.scale(gBaseScale * gZoom);
   gDraw();
+}
+function gSetZoom(factor) {   // factor 1..4 (globe); reapply around the current (centered) translate
+  gZoom = factor;
+  if (gBaseScale) { gproj.scale(gBaseScale * gZoom); gDraw(); }
 }
 function gDraw() {
   if (!gW || !worldGeo) return;
@@ -1733,13 +1761,14 @@ function setupGlobe() {
   gpath = window.d3.geoPath(gproj, gctx);
   ggrat = window.d3.geoGraticule10();
   gproj.rotate(grot);
-  const wrap = $('globe-stage');
-  wrap.addEventListener('pointerdown', (e) => {
-    gdrag = true; gspin = false; gDownXY = [e.clientX, e.clientY]; gLast = [e.clientX, e.clientY];
-    try { wrap.setPointerCapture(e.pointerId); } catch (x) { /* ignore */ }
+  // Pointer handlers live on the canvas (not the stage) so overlay controls — the spin
+  // button, legend, tooltip — never trigger a drag or drill.
+  gcanvas.addEventListener('pointerdown', (e) => {
+    gdrag = true; gspin = false; updateSpinBtn(); gDownXY = [e.clientX, e.clientY]; gLast = [e.clientX, e.clientY];
+    try { gcanvas.setPointerCapture(e.pointerId); } catch (x) { /* ignore */ }
   });
-  wrap.addEventListener('pointermove', gPointerMove);
-  wrap.addEventListener('pointerup', (e) => {
+  gcanvas.addEventListener('pointermove', gPointerMove);
+  gcanvas.addEventListener('pointerup', (e) => {
     gdrag = false;
     const moved = gDownXY ? Math.hypot(e.clientX - gDownXY[0], e.clientY - gDownXY[1]) : 99;
     gLast = null; gDownXY = null;
@@ -1748,7 +1777,9 @@ function setupGlobe() {
       if (cc) { const cs = $('map-country'); if (cs) cs.value = cc; selectView(cc); }
     }
   });
-  wrap.addEventListener('pointerleave', () => { ghover = null; const t = $('globe-tip'); if (t) t.hidden = true; });
+  gcanvas.addEventListener('pointerleave', () => { ghover = null; const t = $('globe-tip'); if (t) t.hidden = true; });
+  const spinBtn = $('globe-spin');
+  if (spinBtn) spinBtn.addEventListener('click', () => { gspin = !gspin; updateSpinBtn(); });
   window.addEventListener('resize', () => { if (inWorld()) gResize(); });
   new MutationObserver(() => { if (inWorld()) gDraw(); })
     .observe(document.documentElement, { attributes: true, attributeFilter: ['data-theme'] });
@@ -1759,12 +1790,14 @@ async function enterWorld() {
   const mapEl = $('map'), stage = $('globe-stage');
   if (mapEl) mapEl.hidden = true;
   if (stage) stage.hidden = false;
+  gZoom = 1; gspin = true;                       // fresh globe view: reset zoom, resume auto-spin
+  const zslider = $('map-zoom'); if (zslider) zslider.value = 0;
   if (!worldGeo) {
     const g = await fetch('/data/geo/world-globe.geojson').then(r => r.ok ? r.json() : null).catch(() => null);
     worldGeo = g ? g.features : [];
     setupGlobe();
   }
-  gResize(); gLegendBuild();
+  gResize(); gLegendBuild(); updateSpinBtn();
   if (!graf) gTickLoop();
   syncModeButtons(); renderMethodBox();
 }
@@ -1798,13 +1831,23 @@ async function initMap() {
     if (fsel) fsel.addEventListener('change', () => { if (fsel.value && !inWorld()) { mapMode = fsel.value; applyMode(); } });
     const cs = $('map-country');
     if (cs) cs.addEventListener('change', () => selectView(cs.value));
+    const zoom = $('map-zoom');   // universal zoom: drives the globe's scale or Leaflet's zoom
+    if (zoom) zoom.addEventListener('input', () => {
+      const v = +zoom.value;
+      if (inWorld()) gSetZoom(1 + v / 100 * 3);                                     // globe 1×–4×
+      else if (map && leafFitZoom != null) map.setZoom(leafFitZoom + v / 100 * 5);  // Leaflet fit .. fit+5
+    });
+    map.on('zoomend', () => {   // keep the slider in sync when Leaflet's own +/- buttons are used
+      if (inWorld() || leafFitZoom == null) return;
+      const z = $('map-zoom'); if (z) z.value = Math.max(0, Math.min(100, (map.getZoom() - leafFitZoom) / 5 * 100));
+    });
   } catch (e) {
     console.error('map init failed:', e);
     el.innerHTML = `<p class="map-fail">${L('地圖資料載入失敗。', 'Map data failed to load.')}</p>`;
   }
 }
 function relabelMap() {
-  if (inWorld()) { gLegendBuild(); renderMethodBox(); gDraw(); }
+  if (inWorld()) { gLegendBuild(); renderMethodBox(); updateSpinBtn(); gDraw(); }
   else if (map && geoLayer) applyMode();
 }
 
