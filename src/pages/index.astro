@@ -356,6 +356,7 @@ import T from '../../components/T.astro';
           <button type="button" class="map-btn is-active" data-mode="prevalence"><T zh="失智盛行（估計）" en="Dementia (modelled)" /></button>
           <button type="button" class="map-btn" data-mode="composite"><T zh="可調控風險 PAF" en="Modifiable risk (PAF)" /></button>
           <button type="button" class="map-btn" data-mode="pm25"><T zh="PM2.5（近 3 年）" en="PM2.5 (recent)" /></button>
+          <button type="button" class="map-btn" data-mode="aging"><T zh="高齡化 65+" en="Aging 65+" /></button>
           <select id="map-factor" class="map-factor" aria-label="single risk factor PAF">
             <option value="" data-zh="單一因子 PAF…" data-en="Single factor PAF…">單一因子 PAF…</option>
             <option value="hypertension" data-zh="高血壓" data-en="Hypertension">高血壓</option>
@@ -1466,11 +1467,12 @@ function modeAvailable(m, layers) {
 }
 function syncModeButtons() {
   const world = inWorld();
-  const layers = world ? ['pm25', 'composite'] : MAP_CFG[mapCountry].layers;
+  const worldModes = ['pm25', 'composite', 'aging'];
+  const layers = world ? worldModes : MAP_CFG[mapCountry].layers;
   document.querySelectorAll('.map-btn').forEach(b => {
-    // Global globe only carries the two cross-country-comparable metrics (PM2.5, composite PAF);
-    // prevalence + single factors need the per-country drill-down.
-    const on = world ? (b.dataset.mode === 'pm25' || b.dataset.mode === 'composite')
+    // Global globe carries the cross-country-comparable / national metrics (PM2.5, composite PAF,
+    // 65+ aging); prevalence + single factors need the per-country drill-down.
+    const on = world ? worldModes.includes(b.dataset.mode)
                      : modeAvailable(b.dataset.mode, layers);
     b.disabled = !on;
     b.classList.toggle('is-disabled', !on);
@@ -1593,16 +1595,22 @@ function renderMethodBox() {
 }
 function renderWorldMethod() {
   const box = $('prev-method'); if (!box) return;
-  const pm = mapMode !== 'composite';
   box.style.display = '';
+  let body;
+  if (mapMode === 'aging') {
+    body = L('每個國家以「65 歲以上人口占比」著色，並依國際高齡化標準分級：&lt;7% 未達高齡化、7–14% 高齡化社會、14–21% 高齡社會、≥21% 超高齡社會。目前為主要國家的種子資料（World Bank／UN 最新估計，台灣為內政部）；完整各國與縣市（admin-1）層級資料補齊中。',
+      'Each country is shaded by its share of population aged 65+, tiered by the international aging-society standard: &lt;7% pre-aging, 7–14% aging, 14–21% aged, ≥21% super-aged. Currently a seed for major countries (latest World Bank/UN estimates; Taiwan: MOI); full country + admin-1 coverage is being filled in.');
+  } else if (mapMode === 'composite') {
+    body = L('每個國家以「可調控失智風險 PAF %」著色（Livingston 2024 的 5 因子合計、全國估計）。目前 27 國有資料，其餘為灰色。此指標跨國可比。點國家看細節。',
+      'Each country is shaded by composite modifiable-risk PAF % (5 factors, national estimate; Livingston 2024). 27 countries have data; the rest are grey. This metric is comparable across countries. Click a country to drill in.');
+  } else {
+    body = L('每個國家以近年全國人口加權 PM2.5（ACAG 衛星，µg/m³）著色，色階與各國地圖同一套 WHO 基準（≤5）。點任一國可下鑽到其行政區細節。',
+      'Each country is shaded by recent national population-weighted PM2.5 (ACAG satellite, µg/m³) on the same WHO-anchored scale (≤5) as the per-country maps. Click a country to drill into its admin-1 detail.');
+  }
+  const src = L('失智盛行率因各國年齡分母不同（如 65+／60+／50+）不宜跨國比較，只在下鑽後的各國地圖顯示。界線 © Natural Earth；PM2.5 © ACAG/WashU（CC BY 4.0）；PAF © Livingston 2024；高齡人口 © World Bank／UN（台灣 內政部）— 皆為模型估計／最新可得估計。',
+    'Dementia prevalence uses different age denominators per country (65+/60+/50+), so it appears only in the per-country drill-down. Boundaries © Natural Earth; PM2.5 © ACAG/WashU (CC BY 4.0); PAF © Livingston 2024; 65+ © World Bank/UN (Taiwan: MOI) — modelled / latest-available estimates.');
   box.innerHTML = `<h3 class="prev-method-h">${L('全球總覽', 'Global overview')}</h3>`
-    + `<p class="prev-method-p">${pm
-      ? L('每個國家以近年全國人口加權 PM2.5（ACAG 衛星，µg/m³）著色，色階與各國地圖同一套 WHO 基準（≤5）。點任一國可下鑽到其行政區細節。',
-          'Each country is shaded by recent national population-weighted PM2.5 (ACAG satellite, µg/m³) on the same WHO-anchored scale (≤5) as the per-country maps. Click a country to drill into its admin-1 detail.')
-      : L('每個國家以「可調控失智風險 PAF %」著色（Livingston 2024 的 5 因子合計、全國估計）。目前 27 國有資料，其餘為灰色。此指標跨國可比。點國家看細節。',
-          'Each country is shaded by composite modifiable-risk PAF % (5 factors, national estimate; Livingston 2024). 27 countries have data; the rest are grey. This metric is comparable across countries. Click a country to drill in.')}</p>`
-    + `<p class="prev-method-src">${L('失智盛行率因各國年齡分母不同（如 65+／60+／50+）不宜跨國比較，故只在下鑽後的各國地圖顯示。界線 © Natural Earth（public domain）；PM2.5 © ACAG/WashU（CC BY 4.0）；PAF © Livingston 2024 Lancet Commission — 皆為模型估計。',
-        'Dementia prevalence uses different age denominators per country (e.g. 65+/60+/50+), so it is not cross-country comparable — it appears only in the per-country drill-down. Boundaries © Natural Earth (public domain); PM2.5 © ACAG/WashU (CC BY 4.0); PAF © Livingston 2024 Lancet Commission — all modelled estimates.')}</p>`;
+    + `<p class="prev-method-p">${body}</p><p class="prev-method-src">${src}</p>`;
 }
 function renderExpoMethod() {
   const box = $('prev-method'); if (!box) return;
@@ -1668,16 +1676,25 @@ function updateSpinBtn() {
   b.textContent = gspin ? L('⏸ 暫停自轉', '⏸ Pause spin') : L('▶ 自轉', '▶ Auto-spin');
   b.setAttribute('aria-pressed', String(gspin));
 }
+// Aging-society layer (globe only): 65+ % of population, tiered by the international standard
+// (<7 pre-aging · 7–14 aging · 14–21 aged · ≥21 super-aged). A distinct BuPu ramp so it doesn't
+// read as "risk" like the YlOrRd layers.
+const AGE_BINS = [7, 14, 21];
+const AGE_RAMP = ['#edf8fb', '#b3cde3', '#8c96c6', '#88419d'];
+const AGE_TIERS = [['未達高齡化 <7%', 'Pre-aging <7%'], ['高齡化社會 7–14%', 'Aging 7–14%'],
+  ['高齡社會 14–21%', 'Aged 14–21%'], ['超高齡社會 ≥21%', 'Super-aged ≥21%']];
 const WORLD_METRICS = {
   pm25: { prop: 'pm25', bins: PM_BINS, unit: 'µg/m³', zh: 'PM2.5 µg/m³', en: 'PM2.5 µg/m³', dec: 1 },
   composite: { prop: 'paf', bins: PAF_COMPOSITE.bins, unit: '%', zh: PAF_COMPOSITE.legendZh, en: PAF_COMPOSITE.legendEn, dec: 1 },
+  aging: { prop: 'pop65', bins: AGE_BINS, ramp: AGE_RAMP, tiers: AGE_TIERS, unit: '%', zh: '高齡人口 65+ %', en: 'Population 65+ %', dec: 1 },
 };
-function gMetric() { return mapMode === 'composite' ? WORLD_METRICS.composite : WORLD_METRICS.pm25; }
+function gMetric() { return WORLD_METRICS[mapMode] || WORLD_METRICS.pm25; }
 function gTheme(dark, light) { return document.documentElement.getAttribute('data-theme') === 'dark' ? dark : light; }
-function gColor(v, bins) {
+function gColor(v, bins, ramp) {
   if (v == null || Number.isNaN(v)) return gTheme('#2b3050', '#e6e6e6');
+  const R = ramp || RAMP;
   let i = 0; while (i < bins.length && v > bins[i]) i++;
-  return RAMP[i];
+  return R[i];
 }
 function gResize() {
   if (!gcanvas) return;
@@ -1704,7 +1721,7 @@ function gDraw() {
   const m = gMetric();
   for (const f of worldGeo) {
     gctx.beginPath(); gpath(f);
-    gctx.fillStyle = gColor(f.properties[m.prop], m.bins); gctx.fill();
+    gctx.fillStyle = gColor(f.properties[m.prop], m.bins, m.ramp); gctx.fill();
     gctx.lineWidth = f === ghover ? 1.3 : 0.4;
     gctx.strokeStyle = f === ghover ? gTheme('#fff', '#111') : gTheme('#2a2f4a', '#fff');
     gctx.stroke();
@@ -1717,10 +1734,16 @@ function gTickLoop() {
 }
 function gLegendBuild() {
   const el = $('globe-legend'); if (!el) return;
-  const m = gMetric(), bins = m.bins, edges = [0, ...bins], rows = [];
-  for (let i = 0; i < RAMP.length; i++) {
-    const lab = bins[i] != null ? `${edges[i]}–${bins[i]}` : `>${edges[edges.length - 1]}`;
-    rows.push(`<span class="lg-row"><i style="background:${RAMP[i]}"></i>${lab}</span>`);
+  const m = gMetric(), bins = m.bins, ramp = m.ramp || RAMP, rows = [];
+  if (m.tiers) {                                   // named tiers (aging society)
+    for (let i = 0; i < ramp.length; i++)
+      rows.push(`<span class="lg-row"><i style="background:${ramp[i]}"></i>${L(m.tiers[i][0], m.tiers[i][1])}</span>`);
+  } else {                                         // numeric ranges
+    const edges = [0, ...bins];
+    for (let i = 0; i < ramp.length; i++) {
+      const lab = bins[i] != null ? `${edges[i]}–${bins[i]}` : `>${edges[edges.length - 1]}`;
+      rows.push(`<span class="lg-row"><i style="background:${ramp[i]}"></i>${lab}</span>`);
+    }
   }
   el.innerHTML = `<div class="lg-title">${L(m.zh, m.en)}</div>` + rows.join('');
 }

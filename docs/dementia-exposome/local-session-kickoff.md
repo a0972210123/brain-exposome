@@ -19,6 +19,40 @@ The `claude.ai/code` build sandbox routes all egress through a **strict policy a
 
 ---
 
+## Data-fill strategy (confirmed: hybrid, global-first) + global sweeps
+
+The owner chose a **hybrid** approach: **do the global-per-metric sweeps first** (any metric with a
+complete global database → one pull covers ~200 countries, uniformly comparable), then per-country
+deep-dives for the gaps (mostly admin-1 detail from national censuses / gov portals / single papers).
+The cloud session can't reach these APIs (World Bank/OWID/UN all 403 there), so they run here.
+
+### ⭐ Global sweep #1 — Aging 65+ (World Bank, one call)
+
+The **aging-society layer already ships** with a partial seed (`SEED_POP65` in `build_data.py`, ~46
+countries). Replace it with the full global set:
+
+- **Fetch:** World Bank indicator **`SP.POP.65UP.TO.ZS`** ("population ages 65+, % of total"),
+  most-recent value per economy:
+  `https://api.worldbank.org/v2/country/all/indicator/SP.POP.65UP.TO.ZS?format=json&per_page=400&mrnev=1`
+- **Save as** `scripts/_data_in/world-65plus.csv` with header `iso2,pct` (map the API's ISO3 → ISO2).
+  `build_data.py` `_load_pop65()` overlays it onto the seed → bakes `pop65` into `world-globe.geojson`.
+  Then `python3 scripts/build_data.py` (or just re-run `build_world_globe_geojson()`).
+- **Admin-1 aging (縣市/州省 65+):** the WorldPop 2020 age surfaces you already downloaded for the
+  prevalence layer contain the 65+ counts. Emit a `{cc}-aging.json` (unit_code → 65+ %) per country
+  and (fast-follow) wire an admin-1 aging layer — same drill-down pattern as prevalence.
+
+### Other global sweeps (same idea, when their DB is reachable here)
+- **GBD 2021/2023 national prevalence** (all countries) — IHME Results Tool export (backbone).
+- **NCD-RisC risk factors** (BP / diabetes / BMI / smoking / inactivity) — extend the exposome layer
+  beyond the current 27 countries.
+- **UN WPP** national by-age — cross-check WorldPop / aging.
+
+### Then: per-country deep-dives (the gaps)
+Admin-1 prevalence where no global study exists, national dementia surveys, etc. — the per-country
+list below (China/India done; Japan/Korea via e-Stat/KOSIS; others via GBD×WorldPop).
+
+---
+
 ## The data list to fetch (priority order)
 
 Exact URLs, export steps, `Save as` filenames, and schemas live in **`data-download-points.md`** — that is the source of truth; this is the ordered summary. Drop every file in `scripts/_data_in/` (gitignored), then run `python3 scripts/build_data.py`.

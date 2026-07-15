@@ -1166,12 +1166,46 @@ def _round_coords(obj, nd=2):
     return obj
 
 
+# Population aged 65+ (% of total), by ISO alpha-2. SEED = rounded latest-available World Bank
+# (SP.POP.65UP.TO.ZS) / UN WPP estimates (Taiwan: 內政部) for the map's countries + majors — a
+# partial seed so the "aging society" layer ships visibly. The full ~200-country pull is a one-call
+# global sweep for a local session (World Bank API is blocked in the build sandbox); drop its output
+# as scripts/_data_in/world-65plus.csv (iso2,pct) and it overrides/extends this seed. Modelled estimate.
+SEED_POP65 = {
+    "JP": 29.9, "IT": 24.1, "PT": 24.0, "FI": 23.3, "GR": 22.7, "DE": 22.4, "FR": 21.7,
+    "NL": 20.5, "SE": 20.3, "DK": 20.3, "ES": 20.3, "AT": 19.6, "PL": 19.4, "BE": 19.4,
+    "GB": 19.2, "CA": 19.0, "TW": 18.0, "KR": 17.5, "UA": 17.4, "AU": 17.2, "US": 17.1,
+    "NZ": 16.6, "RU": 15.6, "TH": 15.2, "CN": 13.7, "CL": 12.8, "AR": 12.4, "BR": 10.5,
+    "CO": 9.6, "TR": 9.5, "VN": 9.0, "MX": 8.3, "MY": 7.4, "IR": 7.0, "ID": 6.9, "IN": 6.9,
+    "MM": 6.9, "ZA": 6.0, "BD": 6.0, "PH": 5.7, "EG": 4.5, "PK": 4.4, "ET": 3.5, "NG": 3.0,
+    "KE": 2.5, "SA": 3.7,
+}
+
+
+def _load_pop65():
+    """SEED_POP65 overlaid by scripts/_data_in/world-65plus.csv (iso2,pct) if present."""
+    out = dict(SEED_POP65)
+    path = os.path.join(DATA_IN, "world-65plus.csv")
+    if os.path.exists(path):
+        for row in _read_csv(path):
+            iso2 = (row.get("iso2") or row.get("iso_a2") or row.get("code") or "").strip().upper()
+            val = row.get("pct") or row.get("pct65") or row.get("value")
+            if iso2 and val not in (None, ""):
+                try:
+                    out[iso2] = round(float(val), 1)
+                except ValueError:
+                    pass
+        log(f"  pop65: overlaid _data_in/world-65plus.csv → {len(out)} countries")
+    return out
+
+
 def build_world_globe_geojson():
-    """geo/world-globe.geojson — admin-0 polygons + national pm25 + composite paf per country."""
+    """geo/world-globe.geojson — admin-0 polygons + national pm25 + composite paf + 65+ % per country."""
     from shapely.geometry import shape, mapping
-    log("World globe geojson (admin-0 + national PM2.5 + composite PAF) …")
+    log("World globe geojson (admin-0 + national PM2.5 + PAF + 65+) …")
     world_pm = json.load(open(os.path.join(OUT, "pm25/world-country-pm25.json")))["countries"]
     expo = json.load(open(os.path.join(OUT, "exposome/exposome.json")))["countries"]
+    pop65 = _load_pop65()
     iso3_to_cc = {v: k for k, v in EXPO_ISO3.items()}
     pm_norm = {_norm_country(k): v["values"][-1] for k, v in world_pm.items()}
     ne = json.loads(http_get(NE_ADMIN0).decode("utf-8", "replace"))
@@ -1195,21 +1229,25 @@ def build_world_globe_geojson():
             unmatched.append(name)
         cc = iso3_to_cc.get(iso3)
         paf = expo[cc].get("composite_paf_pct") if cc in expo else None
+        iso2c = "" if iso2 == "-99" else iso2
+        pop = pop65.get(iso2c)
         g = shape(f["geometry"]).simplify(0.15, preserve_topology=True)
         gm = mapping(g)
         gm = {"type": gm["type"], "coordinates": _round_coords(gm["coordinates"], 2)}
         feats.append({"type": "Feature",
-                      "properties": {"name": name, "iso_a2": ("" if iso2 == "-99" else iso2),
-                                     "pm25": pm, "paf": paf},
+                      "properties": {"name": name, "iso_a2": iso2c,
+                                     "pm25": pm, "paf": paf, "pop65": pop},
                       "geometry": gm})
     write_json("geo/world-globe.geojson", {
         "type": "FeatureCollection",
         "meta": {"pm25": "ACAG SatPM2.5 V6.GL.03 national latest-year (CC BY 4.0)",
                  "paf": "composite modifiable-risk PAF, 27 countries (Livingston 2024 RRs) — modelled",
+                 "pop65": "population aged 65+ (% of total), World Bank/UN latest — partial seed, modelled estimate",
                  "boundaries": "Natural Earth admin-0 110m (public domain)", "built": BUILD_DATE},
         "features": feats})
     npaf = sum(1 for x in feats if x["properties"]["paf"] is not None)
-    log(f"  world-globe: {len(feats)} countries · PM2.5 matched {len(feats) - len(unmatched)} · PAF {npaf}")
+    n65 = sum(1 for x in feats if x["properties"]["pop65"] is not None)
+    log(f"  world-globe: {len(feats)} countries · PM2.5 matched {len(feats) - len(unmatched)} · PAF {npaf} · 65+ {n65}")
     if unmatched:
         log("  PM2.5 unmatched (" + str(len(unmatched)) + "): " + ", ".join(sorted(unmatched)[:50]))
 
@@ -1331,7 +1369,8 @@ def main():
                                         "NCD-RisC (BP/diabetes/BMI) + WHO GHO (smoking/inactivity) + Taiwan NHIS × Livingston 2024 RRs")
     build_world_globe_geojson()
     assets["geo/world-globe.geojson"] = ("Natural Earth admin-0 (public domain) + national PM2.5 "
-                                         "(ACAG V6.GL.03, CC BY 4.0) + composite PAF (Livingston 2024) — for the globe view")
+                                         "(ACAG V6.GL.03, CC BY 4.0) + composite PAF (Livingston 2024) "
+                                         "+ 65+ share (World Bank/UN, partial seed) — for the globe view")
     write_json("manifest.json", {
         "built": BUILD_DATE, "assets": assets,
         "attribution": ["PM2.5 © ACAG/WashU (Shen 2024; van Donkelaar 2021), CC BY 4.0",

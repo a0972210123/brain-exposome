@@ -85,7 +85,7 @@
     "dementia/nz-modelled.json": "New Zealand admin-1 dementia prevalence 60+, GBD 2023 rates × WorldPop 2020 pop — modelled estimate",
     "dementia/tr-modelled.json": "Türkiye admin-1 dementia prevalence 60+, GBD 2023 rates × WorldPop 2020 pop — modelled estimate",
     "exposome/exposome.json": "national modifiable risk factors + composite PAF (27 countries): NCD-RisC (BP/diabetes/BMI) + WHO GHO (smoking/inactivity) + Taiwan NHIS × Livingston 2024 RRs",
-    "geo/world-globe.geojson": "Natural Earth admin-0 (public domain) + national PM2.5 (ACAG V6.GL.03, CC BY 4.0) + composite PAF (Livingston 2024) — for the globe view"
+    "geo/world-globe.geojson": "Natural Earth admin-0 (public domain) + national PM2.5 (ACAG V6.GL.03, CC BY 4.0) + composite PAF (Livingston 2024) + 65+ share (World Bank/UN, partial seed) — for the globe view"
   },
   "attribution": [
     "PM2.5 © ACAG/WashU (Shen 2024; van Donkelaar 2021), CC BY 4.0",
