@@ -402,6 +402,19 @@ import T from '../../components/T.astro';
       <p class="calc-section-desc"><em><T zh="假設與限制：λ = 0.6 與腦齡年數上限是本工具為避免高估所設的參數（非已發表常數）；PM2.5 採 ACAG 衛星年均資料（依居住縣市／國家與年份對應），歷史不足年份以最接近年份外推。這是教育性估計，非個人預測。" en="Assumptions: λ = 0.6 and the brain-age cap are this tool's parameters to avoid overstatement (not published constants); PM2.5 uses ACAG satellite annual data (matched to your county/country and year), with missing historical years extrapolated from the nearest available year. This is an educational estimate, not a personal prediction." /></em></p>
     </section>
 
+    <!-- Data-provenance / availability disclosure -->
+    <section class="calc-section calc-provenance">
+      <p class="section-heading"><T zh="資料齊全度與來源" en="Data coverage & sources" /></p>
+      <p class="calc-section-desc"><T zh="逐一揭露本工具各類資料的齊全度與出處：切換上方資料類型，表列各國的國家級／省縣級資料來源與年份。狀態：✅ 已用於工具・◐ 部分（種子估計）・○ 已找到來源待接入・— 尚無資料。皆為模型估計／最新可得估計，會持續補齊。" en="Full disclosure of each data layer's coverage and provenance: pick a data type; the table lists every country's national / sub-national source and year. Status: ✅ in the tool · ◐ partial (seed) · ○ source identified, not yet wired · — none yet. All modelled / latest-available estimates; being filled in over time." /></p>
+      <div class="dp-tabs" id="dp-tabs"></div>
+      <div class="dp-controls">
+        <input type="search" id="dp-filter" class="dp-filter" aria-label="filter countries" />
+        <label class="dp-only"><input type="checkbox" id="dp-only-data" /> <T zh="只顯示有資料" en="Only with data" /></label>
+      </div>
+      <div class="dp-table-wrap" id="dp-table-wrap"></div>
+      <p class="dp-count" id="dp-count"></p>
+    </section>
+
     <!-- Sources & references -->
     <section class="calc-section calc-refs">
       <p class="section-heading"><T zh="資料來源與參考文獻" en="Sources & references" /></p>
@@ -699,6 +712,38 @@ import T from '../../components/T.astro';
   .calc-refs .ref-list { margin: 0; }
   .calc-refs a { color: var(--color-accent); text-decoration: none; border-bottom: 1px solid transparent; }
   .calc-refs a:hover { border-bottom-color: var(--color-accent); }
+
+  /* Data-provenance table (tabs + rows are innerHTML-generated → :global on dynamic descendants) */
+  .dp-tabs { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 0.7rem; }
+  .calc-provenance :global(.dp-tab) {
+    font: inherit; font-size: 0.76rem; font-weight: 600; cursor: pointer;
+    padding: 0.32rem 0.66rem; border-radius: 999px;
+    border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text-muted);
+  }
+  .calc-provenance :global(.dp-tab:hover) { border-color: var(--color-accent); color: var(--color-text); }
+  .calc-provenance :global(.dp-tab.is-active) { border-color: var(--color-accent); color: #fff; background: var(--color-accent); }
+  .dp-controls { display: flex; gap: 0.9rem; align-items: center; flex-wrap: wrap; margin-bottom: 0.6rem; }
+  .dp-filter {
+    font: inherit; font-size: 0.85rem; padding: 0.35rem 0.6rem; border-radius: 8px;
+    border: 1px solid var(--color-border); background: var(--color-surface); color: var(--color-text); min-width: 180px;
+  }
+  .dp-only { font-size: 0.8rem; color: var(--color-text-muted); display: flex; align-items: center; gap: 0.3rem; cursor: pointer; }
+  .dp-table-wrap { overflow-x: auto; max-height: 560px; overflow-y: auto; border: 1px solid var(--color-border); border-radius: var(--radius-md); }
+  .calc-provenance :global(.dp-table) { width: 100%; border-collapse: collapse; font-size: 0.8rem; min-width: 640px; }
+  .calc-provenance :global(.dp-table th), .calc-provenance :global(.dp-table td) {
+    text-align: left; padding: 0.4rem 0.55rem; border-bottom: 1px solid var(--color-border); vertical-align: top;
+  }
+  .calc-provenance :global(.dp-table th) {
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-text-muted);
+    position: sticky; top: 0; background: var(--color-surface); z-index: 1;
+  }
+  .calc-provenance :global(.dp-table a) { color: var(--color-accent); text-decoration: none; }
+  .calc-provenance :global(.dp-table a:hover) { text-decoration: underline; }
+  .calc-provenance :global(.dp-table tbody tr:hover) { background: var(--color-surface); }
+  .calc-provenance :global(.dp-country) { font-weight: 600; white-space: nowrap; }
+  .calc-provenance :global(.dp-yr) { font-variant-numeric: tabular-nums; white-space: nowrap; color: var(--color-text-muted); }
+  .calc-provenance :global(.dp-badge) { font-size: 0.9rem; }
+  .calc-provenance :global(.dp-count) { font-size: 0.72rem; color: var(--color-text-muted); margin: 0.4rem 0 0; padding: 0 0.55rem; }
 
   /* Regional map */
   .map-controls { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; margin-bottom: 0.8rem; }
@@ -1893,6 +1938,59 @@ function onLdlUnitChange() {
   applyLdlUnit();
 }
 
+/* ── Data-provenance / coverage table (tabs = data type, rows = every country) ── */
+let DP = null, dpType = 'aging', dpOnlyData = false;
+const _dpDN = {};
+function dpName(iso) {
+  const lg = lang() === 'en' ? 'en' : 'zh-Hant';
+  if (!(lg in _dpDN)) { try { _dpDN[lg] = new Intl.DisplayNames([lg], { type: 'region' }); } catch (e) { _dpDN[lg] = null; } }
+  try { return (_dpDN[lg] && _dpDN[lg].of(iso)) || iso; } catch (e) { return iso; }
+}
+function dpBadge(s) {
+  const m = { live: ['✅', 'dp-live'], seed: ['◐', 'dp-seed'], identified: ['○', 'dp-id'], none: ['—', 'dp-none'] };
+  const [sym, cls] = m[s] || m.none;
+  return `<span class="dp-badge ${cls}" title="${s}">${sym}</span>`;
+}
+function dpCell(o, k) {
+  const src = o[k + 'Src'], url = o[k + 'Url'], yr = o[k + 'Year'];
+  const s = (!src || src === '—') ? '—' : (url ? `<a href="${url}" target="_blank" rel="noopener">${src}</a>` : src);
+  return { src: s, yr: yr || '—' };
+}
+function renderDpTable() {
+  if (!DP) return;
+  const t = DP.types.find(x => x.key === dpType) || DP.types[0];
+  const q = ($('dp-filter') ? $('dp-filter').value : '').trim().toLowerCase();
+  const rows = DP.iso.map(iso => ({ iso, name: dpName(iso), o: (DP.overrides[iso] && DP.overrides[iso][dpType]) || t.default }))
+    .filter(r => !q || r.name.toLowerCase().includes(q) || r.iso.toLowerCase().includes(q))
+    .filter(r => !dpOnlyData || r.o.status === 'live' || r.o.status === 'seed')
+    .sort((a, b) => a.name.localeCompare(b.name, lang() === 'en' ? 'en' : 'zh-Hant'));
+  const head = `<tr><th>${L('國家/地區', 'Country')}</th><th>${L('國家級來源', 'National source')}</th><th>${L('年份', 'Year')}</th>`
+    + `<th>${L('省縣級來源', 'Sub-national source')}</th><th>${L('年份', 'Year')}</th><th>${L('狀態', 'Status')}</th></tr>`;
+  const body = rows.map(r => {
+    const n = dpCell(r.o, 'nat'), s = dpCell(r.o, 'sub');
+    return `<tr><td class="dp-country">${r.name}</td><td>${n.src}</td><td class="dp-yr">${n.yr}</td>`
+      + `<td>${s.src}</td><td class="dp-yr">${s.yr}</td><td>${dpBadge(r.o.status)}</td></tr>`;
+  }).join('');
+  $('dp-table-wrap').innerHTML = `<table class="dp-table"><thead>${head}</thead><tbody>${body}</tbody></table>`;
+  const cnt = $('dp-count'); if (cnt) cnt.textContent = `${rows.length} ${L('個國家/地區', 'countries/areas')}`;
+}
+function renderProvenance() {
+  if (!DP) return;
+  $('dp-tabs').innerHTML = DP.types.map(t =>
+    `<button type="button" class="dp-tab${t.key === dpType ? ' is-active' : ''}" data-key="${t.key}">${L(t.zh, t.en)}</button>`).join('');
+  const f = $('dp-filter'); if (f) f.placeholder = L('篩選國家…', 'Filter countries…');
+  renderDpTable();
+}
+async function setupProvenance() {
+  DP = await fetch('/data/data-provenance.json').then(r => r.ok ? r.json() : null).catch(() => null);
+  if (!DP) return;
+  const tabs = $('dp-tabs');
+  if (tabs) tabs.addEventListener('click', e => { const b = e.target.closest('[data-key]'); if (!b) return; dpType = b.dataset.key; renderProvenance(); });
+  const f = $('dp-filter'); if (f) f.addEventListener('input', renderDpTable);
+  const oc = $('dp-only-data'); if (oc) oc.addEventListener('change', () => { dpOnlyData = oc.checked; renderDpTable(); });
+  renderProvenance();
+}
+
 async function init() {
   document.querySelectorAll('[data-goto]').forEach(b => b.addEventListener('click', () => showStep(+b.dataset.goto)));
   document.querySelectorAll('.wizard-steps li').forEach(li => {
@@ -1951,8 +2049,10 @@ async function init() {
     renderResidences();
     if (currentStep === 4 && lastResult) renderResults(lastResult);
     relabelMap();
+    renderProvenance();
   });
   initMap();
+  setupProvenance();
 }
 init();
 </script>
