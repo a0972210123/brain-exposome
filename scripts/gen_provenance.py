@@ -185,6 +185,20 @@ for cc, e in expo.items():
         yr = f"{min(yrs)}–{max(yrs)}" if yrs else ""
         OV[ISO]["paf"] = {"natSrc": f"{e.get('n_factors', len(FKEYS))} 因子合計 × Livingston 2024", "natUrl": LANCET, "natYear": yr, "status": "live"}
 
+# ---- MCI/SCD deep audit (scripts/provenance-audit-cognitive.json) — authority for mci/scd, all countries ----
+# A dedicated MCI + SCD WebSearch pass (incl. the 27 map countries the first audit skipped). Runs last so it
+# is the single source of truth for those two aspects, overriding the scattered mci/scd from pass 1.
+COG_IN = os.path.join(ROOT, "scripts/provenance-audit-cognitive.json")
+cog = json.load(open(COG_IN))
+for ISO, aspects in cog.items():
+    for k in ("mci", "scd"):
+        v = aspects.get(k)
+        if not isinstance(v, dict):
+            continue
+        if v.get("status") == "none" or not v.get("natSrc"):
+            continue
+        OV.setdefault(ISO, {})[k] = {kk: vv for kk, vv in v.items() if kk != "note"}
+
 # ---- final clean: unescape any stray HTML entities in every override string ----
 for ISO in OV:
     for asp, cell in OV[ISO].items():
@@ -195,8 +209,9 @@ doc = {
                      "Per data type: national + sub-national source, year, and status. "
                      "status: live=in the tool · seed=partial estimate · identified=source found, not yet wired · none=no data yet. "
                      "27 map countries hand-authored; ~146 other countries from an all-country WebSearch source audit "
-                     "(scripts/provenance-audit.json). See docs/side-projects/dementia-exposome/data-sourcing-plan.md — "
-                     "modelled/latest-available estimates.",
+                     "(scripts/provenance-audit.json); MCI/SCD from a dedicated cognitive-impairment audit "
+                     "(scripts/provenance-audit-cognitive.json). See docs/side-projects/dementia-exposome/"
+                     "all-country-source-audit.md — modelled/latest-available estimates.",
              "built": "2026-07-15"},
     "types": types,
     "iso": iso,

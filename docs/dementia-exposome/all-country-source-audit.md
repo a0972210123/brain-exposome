@@ -26,18 +26,30 @@ HTML-entity-cleaned, and folded into the generator.
 Regenerate any time with:
 
 ```
-python3 scripts/gen_provenance.py     # reads world-globe.geojson + provenance-audit.json + exposome.json
+python3 scripts/gen_provenance.py     # world-globe.geojson + provenance-audit.json + provenance-audit-cognitive.json + exposome.json
 ```
 
-## Coverage (after the audit)
+## Follow-up passes (owner review)
+
+- **Factor-cell links.** The 27 map countries' 5 risk-factor cells come from `exposome.json` (source + year
+  only), so they rendered as plain text while every other country's factor cell was linked. Fixed in
+  `gen_provenance.py` with a source→URL map (NCD-RisC → ncdrisc.org, WHO GHO → who.int/data/gho, Taiwan NHIS
+  → nhis.nhri.edu.tw) — **every cell on every tab is now a hyperlink.**
+- **MCI/SCD deep audit.** The first audit skipped the 27, so US/China/Japan/Korea/Taiwan had no MCI/SCD entry.
+  A dedicated MCI + SCD WebSearch pass over **all** countries (incl. the 27) lives in
+  `scripts/provenance-audit-cognitive.json` and is the generator's single authority for those two aspects:
+  **99 countries now have an MCI source and 32 an SCD source** (US = Mayo MCSA + CDC BRFSS; China = Jia 2020;
+  Japan = JPSC-AD; Korea = NaSDEK; Taiwan = Sun 2014; Europe via national cohorts / SHARE / Alzheimer Europe).
+
+## Coverage (after the audits)
 
 | | Before | After |
 |---|---|---|
 | Countries with any override | 27 | **171** / 175 |
 | Distinct **dementia-prevalence** source | 27 | **125** (27 map + 98 audited) |
 | National **aging** (65+) source | 27 | **171** |
-| **MCI** source | 0 | **14** |
-| **SCD** source | 0 | **1** |
+| **MCI** source | 0 | **99** |
+| **SCD** source | 0 | **32** |
 
 The 4 countries with **no** override (all defaults): `AQ`, `TF` (uninhabited — no agent run), `ER`
 (Eritrea — never held a census, no public stats portal), `EH` (Western Sahara — disputed, no NSO).
@@ -48,8 +60,10 @@ The 4 countries with **no** override (all defaults): `AQ`, `TF` (uninhabited —
   a sub-national cohort, or a named regional study; the rest keep the **GBD 2023** default.
 - **Aging 65+** — 144 of 146 now point at the country's **own census / statistics office** (more
   specific than the World Bank default).
-- **MCI / SCD** — near-universally absent worldwide, as expected. 14 countries have a real MCI figure
-  (usually reported alongside a dementia study), 1 has an SCD proxy (Luxembourg). Everywhere else: `—`.
+- **MCI / SCD** — after the dedicated cognitive pass, **99** countries have an MCI source and **32** an SCD
+  source. Many are sub-national cohorts or screening studies (flagged in `note`s); SHARE's harmonised 2025
+  paper backstops several EU members, and SCD is dominated by a handful of national instruments (US CDC BRFSS,
+  Canada CLSA, national cohorts in DE/GB/FR/ES/IT/NL/SE/NO). Countries with no study still render `—`.
 - **PM2.5** — already a global **ACAG** default (live at admin-1 for the 27); **not re-audited**.
 - **5 risk factors + composite PAF** — global **NCD-RisC / WHO GHO** defaults; per-country overrides
   exist only for the 27 (pulled from `exposome.json`). Extending them needs numeric NCD-RisC pulls
@@ -78,5 +92,6 @@ located, but the numeric value still has to be fetched by the local session befo
 ## Files
 
 - `public/data/data-provenance.json` — regenerated shipped table data (27 → 171 overrides).
-- `scripts/gen_provenance.py` — the committed generator (types + 27 hand-authored + audit merge + exposome factors).
-- `scripts/provenance-audit.json` — the 146-country audit findings, per-country, with `note` annotations (the editable ledger).
+- `scripts/gen_provenance.py` — the committed generator (types + 27 hand-authored + audit merges + exposome factors + factor-URL map).
+- `scripts/provenance-audit.json` — the 146-country aging/prevalence audit findings, per-country, with `note` annotations.
+- `scripts/provenance-audit-cognitive.json` — the MCI/SCD deep-audit findings (100 countries), the authority for those two tabs.
