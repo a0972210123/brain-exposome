@@ -35,7 +35,7 @@ GHO = "https://www.who.int/data/gho"
 LANCET = "https://doi.org/10.1016/S0140-6736(24)01296-0"
 types = [
     {"key": "aging", "zh": "老年人口 65+", "en": "Population 65+",
-     "default": {"natSrc": "World Bank / UN WPP 2024", "natUrl": WB, "natYear": "2024", "status": "live"}},
+     "default": {"natSrc": "World Bank 2025 (SP.POP.65UP.TO.ZS)", "natUrl": WB, "natYear": "2025", "status": "live"}},
     {"key": "prevalence", "zh": "失智盛行率", "en": "Dementia prevalence",
      "default": {"natSrc": "GBD 2023 (IHME) 60+", "natUrl": GBD, "natYear": "2023", "status": "live"}},
     {"key": "mci", "zh": "MCI 盛行率", "en": "MCI prevalence", "planned": True,
@@ -80,7 +80,7 @@ OV = {
         "prevalence": p("NHRI 全國調查", "https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12726225/", "2019–2023")},
  "JP": {"aging": a("e-Stat", "https://www.e-stat.go.jp/en/", "2024", "e-Stat 都道府県", "https://www.e-stat.go.jp/en/", "2024"),
         "prevalence": p("Hisayama/Ninomiya", "https://doi.org/10.1186/s13195-025-01909-1", "2022", "Toyama 都道府県推估", "https://doi.org/10.1186/s12877-021-02540-z", "2020–45")},
- "KR": {"aging": a("KOSIS", "https://kosis.kr/eng/", "2024", "KOSIS 시도", "https://kosis.kr/eng/", "2024"),
+ "KR": {"aging": a("KOSIS / World Bank", "https://kosis.kr/eng/", "2025", "KOSIS 시도", "https://kosis.kr/eng/", "2024"),
         "prevalence": p("NaSDEK / 중앙치매센터", "https://www.nid.or.kr", "2023", "NID 시도", "https://www.nid.or.kr", "2023")},
  "CN": {"aging": a("國家統計局 7 普", "https://www.stats.gov.cn/english/", "2020", "NBS 省級", "https://www.stats.gov.cn/english/", "2020"),
         "prevalence": p("Jia 2020", "https://www.thelancet.com/journals/lanpub/article/PIIS2468-2667(20)30185-7/fulltext", "2015–18", "Liu-Gao 2024（28 省）", "https://pmc.ncbi.nlm.nih.gov/articles/PMC11225804/", "2018")},
