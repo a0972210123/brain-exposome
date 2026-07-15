@@ -44,19 +44,19 @@ types = [
      "default": {"natSrc": "—", "natYear": "—", "status": "none"}},
     {"key": "pm25", "zh": "PM2.5 空污", "en": "PM2.5",
      "default": {"natSrc": "ACAG V6.GL.03", "natUrl": ACAG, "natYear": "2024", "status": "live",
-                 "subSrc": "ACAG zonal admin-1（27 國）", "subUrl": ACAG, "subYear": "2022–24"}},
+                 "subSrc": "ACAG zonal admin-1", "subUrl": ACAG, "subYear": "2022–24"}},
     {"key": "hypertension", "zh": "高血壓", "en": "Hypertension",
-     "default": {"natSrc": "NCD-RisC raised BP", "natUrl": NCD, "natYear": "2019", "status": "identified"}},
+     "default": {"natSrc": "NCD-RisC raised BP (adult, age-std)", "natUrl": NCD, "natYear": "2015", "status": "identified"}},
     {"key": "diabetes", "zh": "糖尿病", "en": "Diabetes",
-     "default": {"natSrc": "NCD-RisC diabetes", "natUrl": NCD, "natYear": "2022", "status": "identified"}},
+     "default": {"natSrc": "NCD-RisC diabetes (adult, age-std)", "natUrl": NCD, "natYear": "2022", "status": "identified"}},
     {"key": "obesity", "zh": "肥胖", "en": "Obesity",
-     "default": {"natSrc": "NCD-RisC BMI≥30", "natUrl": NCD, "natYear": "2022", "status": "identified"}},
+     "default": {"natSrc": "NCD-RisC BMI≥30 (adult, age-std)", "natUrl": NCD, "natYear": "2024", "status": "identified"}},
     {"key": "smoking", "zh": "吸菸", "en": "Smoking",
-     "default": {"natSrc": "WHO GHO tobacco", "natUrl": GHO, "natYear": "2021", "status": "identified"}},
+     "default": {"natSrc": "WHO GHO current tobacco (age-std)", "natUrl": GHO, "natYear": "2025", "status": "identified"}},
     {"key": "physical_inactivity", "zh": "身體活動不足", "en": "Physical inactivity",
      "default": {"natSrc": "WHO GHO insufficient activity", "natUrl": GHO, "natYear": "2022", "status": "identified"}},
     {"key": "paf", "zh": "可調控風險 PAF（合計）", "en": "Composite PAF",
-     "default": {"natSrc": "5 因子 × Livingston 2024 RRs", "natUrl": LANCET, "natYear": "2019–22", "status": "identified"}},
+     "default": {"natSrc": "5 因子 × Livingston 2024 RRs", "natUrl": LANCET, "natYear": "2015–2025", "status": "identified"}},
 ]
 
 # ---- hand-authored aging + prevalence overrides for the 27 map countries (from data-sourcing-plan.md) ----
@@ -200,9 +200,22 @@ for ISO, aspects in cog.items():
         OV.setdefault(ISO, {})[k] = {kk: vv for kk, vv in v.items() if kk != "note"}
 
 # ---- final clean: unescape any stray HTML entities in every override string ----
+SRC_CANON = {   # same underlying source must read identically map-vs-nonmap countries
+    "ACAG zonal admin-1（27 國）": "ACAG zonal admin-1",
+    "WHO GHO tobacco": "WHO GHO current tobacco (age-std)",
+    "NCD-RisC raised BP": "NCD-RisC raised BP (adult, age-std)",
+    "NCD-RisC diabetes": "NCD-RisC diabetes (adult, age-std)",
+    "NCD-RisC diabetes 18+ (age-std)": "NCD-RisC diabetes (adult, age-std)",
+    "NCD-RisC BMI≥30": "NCD-RisC BMI≥30 (adult, age-std)",
+    "5 因子合計 × Livingston 2024": "5 因子 × Livingston 2024 RRs",
+}
 for ISO in OV:
     for asp, cell in OV[ISO].items():
-        OV[ISO][asp] = {k: (html.unescape(v) if isinstance(v, str) else v) for k, v in cell.items()}
+        cell = {k: (html.unescape(v) if isinstance(v, str) else v) for k, v in cell.items()}
+        for _f in ("natSrc", "subSrc"):
+            if cell.get(_f) in SRC_CANON:
+                cell[_f] = SRC_CANON[cell[_f]]
+        OV[ISO][asp] = cell
 
 doc = {
     "meta": {"note": "Data-provenance / completeness ledger for the dementia-exposome map. "
