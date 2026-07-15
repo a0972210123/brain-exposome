@@ -300,9 +300,21 @@ import T from '../../components/T.astro';
       </section>
     </div>
 
+    <!-- How it's calculated (brain-age model) — after the personal result, before the map -->
+    <section class="calc-section calc-method">
+      <p class="section-heading"><T zh="計算方式" en="How this is calculated" /></p>
+      <p class="calc-section-desc">
+        <T
+          zh="每個「有」的因子會帶入已發表的相對風險（RR，主要來自 2024 年 Lancet 委員會與其引用的統合分析）。因為這些因子彼此相關、會重複計算，我們在合併時乘上一個縮減係數 λ = 0.6（近似委員會的 communality 調整），並設上限，避免高估。合併後的有效 RR 再換算成「腦齡加速」年數：Δ年 ≈ log₂(RR) × 5.5（失智風險大約每 5–6 年翻倍）。空氣污染以連續劑量處理（每 +5 µg/m³ 約 HR 1.08），因此不再重複計入委員會的類別式空污因子。"
+          en="Each 'yes' factor contributes a published relative risk (RR, mainly from the 2024 Lancet Commission and the meta-analyses it cites). Because these factors are correlated and would double-count, we combine them with a shrinkage factor λ = 0.6 (approximating the Commission's communality adjustment) and cap the total to avoid overstating. The combined effective RR is converted to 'brain-age acceleration' years: Δyears ≈ log₂(RR) × 5.5 (dementia risk roughly doubles every 5–6 years). PM2.5 is handled continuously (≈ HR 1.08 per +5 µg/m³), so the Commission's categorical air-pollution factor is not added on top."
+        />
+      </p>
+      <p class="calc-section-desc"><em><T zh="假設與限制：λ = 0.6 與腦齡年數上限是本工具為避免高估所設的參數（非已發表常數）；PM2.5 採 ACAG 衛星年均資料（依居住縣市／國家與年份對應），歷史不足年份以最接近年份外推。這是教育性估計，非個人預測。" en="Assumptions: λ = 0.6 and the brain-age cap are this tool's parameters to avoid overstatement (not published constants); PM2.5 uses ACAG satellite annual data (matched to your county/country and year), with missing historical years extrapolated from the nearest available year. This is an educational estimate, not a personal prediction." /></em></p>
+    </section>
+
     <!-- Regional map (Taiwan / Japan / Korea / China / USA / India) -->
     <section class="calc-section map-section">
-      <p class="section-heading"><T zh="地圖：空污與失智概況" en="Map: air pollution & dementia" /></p>
+      <p class="section-heading"><T zh="全球地圖：高齡化、認知退化與危險因子概況" en="Global map: aging, cognitive decline & risk factors" /></p>
       <p class="calc-section-desc"><T zh="預設是「🌍 全球總覽」地球儀——每個國家以近年 PM2.5 或可調控失智風險（PAF）著色，色階以 WHO 標準（≤5 µg/m³）為基準、可跨國比較。點任一國（或用選單切換到 20 多國）即可下鑽到該國各行政區的細節地圖，看更細的 PM2.5 與失智盛行「模型估計值」。把游標移到區域上看數值。" en="The default is a 🌍 global overview globe — each country shaded by recent PM2.5 or modifiable dementia risk (PAF), on a WHO-anchored scale (≤5 µg/m³) comparable across countries. Click a country (or pick one of 20+ from the dropdown) to drill into its admin-1 detail map, with finer PM2.5 and MODELLED dementia-prevalence estimates. Hover a district for values." /></p>
       <div class="map-controls">
         <label class="map-country-wrap">
@@ -388,18 +400,6 @@ import T from '../../components/T.astro';
         <T zh="※ 台灣失智盛行率為鄉鎮市區層級「65 歲以上盛行率」的模型估計（NHRI 年齡別盛行率 × 內政部 #77132 各區單一年齡人口，見下方說明表），非實測。PM2.5 為 ACAG 衛星資料（V6.GL.03）；台灣以外為各行政區（Natural Earth 界線）的衛星網格平均值。美國為本土 48 州＋DC（不含阿拉斯加／夏威夷）。" en="※ Taiwan dementia prevalence is a township-level modelled estimate of prevalence among residents aged 65+ (NHRI age-band rates × MOI #77132 single-year-age population per township — see the method table below), not measured. PM2.5 is ACAG satellite data (V6.GL.03); outside Taiwan, values are grid means per admin-1 unit (Natural Earth boundaries). USA shows the contiguous 48 states + DC (Alaska/Hawaii excluded)." />
       </p>
       <div id="prev-method" class="prev-method" style="display:none"></div>
-    </section>
-
-    <!-- How it's calculated -->
-    <section class="calc-section calc-method">
-      <p class="section-heading"><T zh="計算方式" en="How this is calculated" /></p>
-      <p class="calc-section-desc">
-        <T
-          zh="每個「有」的因子會帶入已發表的相對風險（RR，主要來自 2024 年 Lancet 委員會與其引用的統合分析）。因為這些因子彼此相關、會重複計算，我們在合併時乘上一個縮減係數 λ = 0.6（近似委員會的 communality 調整），並設上限，避免高估。合併後的有效 RR 再換算成「腦齡加速」年數：Δ年 ≈ log₂(RR) × 5.5（失智風險大約每 5–6 年翻倍）。空氣污染以連續劑量處理（每 +5 µg/m³ 約 HR 1.08），因此不再重複計入委員會的類別式空污因子。"
-          en="Each 'yes' factor contributes a published relative risk (RR, mainly from the 2024 Lancet Commission and the meta-analyses it cites). Because these factors are correlated and would double-count, we combine them with a shrinkage factor λ = 0.6 (approximating the Commission's communality adjustment) and cap the total to avoid overstating. The combined effective RR is converted to 'brain-age acceleration' years: Δyears ≈ log₂(RR) × 5.5 (dementia risk roughly doubles every 5–6 years). PM2.5 is handled continuously (≈ HR 1.08 per +5 µg/m³), so the Commission's categorical air-pollution factor is not added on top."
-        />
-      </p>
-      <p class="calc-section-desc"><em><T zh="假設與限制：λ = 0.6 與腦齡年數上限是本工具為避免高估所設的參數（非已發表常數）；PM2.5 採 ACAG 衛星年均資料（依居住縣市／國家與年份對應），歷史不足年份以最接近年份外推。這是教育性估計，非個人預測。" en="Assumptions: λ = 0.6 and the brain-age cap are this tool's parameters to avoid overstatement (not published constants); PM2.5 uses ACAG satellite annual data (matched to your county/country and year), with missing historical years extrapolated from the nearest available year. This is an educational estimate, not a personal prediction." /></em></p>
     </section>
 
     <!-- Data-provenance / availability disclosure -->
