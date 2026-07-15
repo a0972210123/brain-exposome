@@ -147,6 +147,22 @@ for ISO, aspects in audit.items():
         OV.setdefault(ISO, {})[k] = cell
 
 # ---- factor + composite overrides straight from exposome.json (27 countries, all "live" in the tool) ----
+# exposome.json carries factor `source`+`year` but no URL, so map the source label → its canonical link
+# (keeps every factor cell hyperlinked, matching the audited rows rather than rendering as bare text).
+NHIS_TW = "https://nhis.nhri.edu.tw/"
+
+
+def _factor_url(src):
+    s = src or ""
+    if "NCD-RisC" in s:
+        return NCD
+    if "GHO" in s:
+        return GHO
+    if "NHIS" in s and "Taiwan" in s:
+        return NHIS_TW
+    return None
+
+
 expo = json.load(open(os.path.join(ROOT, "public/data/exposome/exposome.json")))["countries"]
 FKEYS = ["hypertension", "diabetes", "obesity", "smoking", "physical_inactivity"]
 for cc, e in expo.items():
@@ -157,7 +173,12 @@ for cc, e in expo.items():
         f = e.get("factors", {}).get(fk)
         if not f:
             continue
-        OV[ISO][fk] = {"natSrc": f.get("source", "—"), "natYear": str(f.get("year", "")), "status": "live"}
+        src = f.get("source", "—")
+        cell = {"natSrc": src, "natYear": str(f.get("year", "")), "status": "live"}
+        url = _factor_url(src)
+        if url:
+            cell["natUrl"] = url
+        OV[ISO][fk] = cell
         if f.get("year"):
             yrs.append(int(f["year"]))
     if e.get("composite_paf_pct") is not None:
