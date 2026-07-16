@@ -1038,36 +1038,55 @@ def write_json(rel, obj):
 # documented modest over-estimate). HTN/diabetes/obesity from NCD-RisC (adult age-std, incl. Taiwan
 # natively); smoking/inactivity from WHO GHO + Taiwan 2021 NHIS override (GHO has no Taiwan row).
 EXPO_RR = {"hypertension": 1.2, "diabetes": 1.7, "obesity": 1.3, "smoking": 1.3, "physical_inactivity": 1.2}
-NCDRISC_NAME = {
-    "tw": "Taiwan", "cn": "China", "in": "India", "us": "United States of America", "br": "Brazil",
-    "mx": "Mexico", "jp": "Japan", "kr": "South Korea", "ir": "Iran", "th": "Thailand", "vn": "Viet Nam",
-    "id": "Indonesia", "ph": "Philippines", "my": "Malaysia", "pk": "Pakistan", "bd": "Bangladesh",
-    "mm": "Myanmar", "gb": "United Kingdom", "de": "Germany", "fr": "France", "it": "Italy",
-    "es": "Spain", "pl": "Poland", "ca": "Canada", "au": "Australia", "nz": "New Zealand", "tr": "Turkey"}
-EXPO_ISO3 = {
-    "tw": "TWN", "cn": "CHN", "in": "IND", "us": "USA", "br": "BRA", "mx": "MEX", "jp": "JPN",
-    "kr": "KOR", "ir": "IRN", "th": "THA", "vn": "VNM", "id": "IDN", "ph": "PHL", "my": "MYS",
-    "pk": "PAK", "bd": "BGD", "mm": "MMR", "gb": "GBR", "de": "DEU", "fr": "FRA", "it": "ITA",
-    "es": "ESP", "pl": "POL", "ca": "CAN", "au": "AUS", "nz": "NZL", "tr": "TUR"}
+# ISO alpha-3 -> alpha-2 for the 200 NCD-RisC countries (World Bank iso2 + Taiwan/Pacific, which WB omits).
+# The exposome is built globally off the NCD-RisC ISO column; this maps to the iso2 keys the frontend uses.
+ISO3_ISO2 = {
+    "AFG":"AF","AGO":"AO","ALB":"AL","AND":"AD","ARE":"AE","ARG":"AR","ARM":"AM","ASM":"AS","ATG":"AG",
+    "AUS":"AU","AUT":"AT","AZE":"AZ","BDI":"BI","BEL":"BE","BEN":"BJ","BFA":"BF","BGD":"BD","BGR":"BG",
+    "BHR":"BH","BHS":"BS","BIH":"BA","BLR":"BY","BLZ":"BZ","BMU":"BM","BOL":"BO","BRA":"BR","BRB":"BB",
+    "BRN":"BN","BTN":"BT","BWA":"BW","CAF":"CF","CAN":"CA","CHE":"CH","CHL":"CL","CHN":"CN","CIV":"CI",
+    "CMR":"CM","COD":"CD","COG":"CG","COK":"CK","COL":"CO","COM":"KM","CPV":"CV","CRI":"CR","CUB":"CU",
+    "CYP":"CY","CZE":"CZ","DEU":"DE","DJI":"DJ","DMA":"DM","DNK":"DK","DOM":"DO","DZA":"DZ","ECU":"EC",
+    "EGY":"EG","ERI":"ER","ESP":"ES","EST":"EE","ETH":"ET","FIN":"FI","FJI":"FJ","FRA":"FR","FSM":"FM",
+    "GAB":"GA","GBR":"GB","GEO":"GE","GHA":"GH","GIN":"GN","GMB":"GM","GNB":"GW","GNQ":"GQ","GRC":"GR",
+    "GRD":"GD","GRL":"GL","GTM":"GT","GUY":"GY","HND":"HN","HRV":"HR","HTI":"HT","HUN":"HU","IDN":"ID",
+    "IND":"IN","IRL":"IE","IRN":"IR","IRQ":"IQ","ISL":"IS","ISR":"IL","ITA":"IT","JAM":"JM","JOR":"JO",
+    "JPN":"JP","KAZ":"KZ","KEN":"KE","KGZ":"KG","KHM":"KH","KIR":"KI","KNA":"KN","KOR":"KR","KWT":"KW",
+    "LAO":"LA","LBN":"LB","LBR":"LR","LBY":"LY","LCA":"LC","LKA":"LK","LSO":"LS","LTU":"LT","LUX":"LU",
+    "LVA":"LV","MAR":"MA","MDA":"MD","MDG":"MG","MDV":"MV","MEX":"MX","MHL":"MH","MKD":"MK","MLI":"ML",
+    "MLT":"MT","MMR":"MM","MNE":"ME","MNG":"MN","MOZ":"MZ","MRT":"MR","MUS":"MU","MWI":"MW","MYS":"MY",
+    "NAM":"NA","NER":"NE","NGA":"NG","NIC":"NI","NIU":"NU","NLD":"NL","NOR":"NO","NPL":"NP","NRU":"NR",
+    "NZL":"NZ","OMN":"OM","PAK":"PK","PAN":"PA","PER":"PE","PHL":"PH","PLW":"PW","PNG":"PG","POL":"PL",
+    "PRI":"PR","PRK":"KP","PRT":"PT","PRY":"PY","PSE":"PS","PYF":"PF","QAT":"QA","ROU":"RO","RUS":"RU",
+    "RWA":"RW","SAU":"SA","SDN":"SD","SEN":"SN","SGP":"SG","SLB":"SB","SLE":"SL","SLV":"SV","SOM":"SO",
+    "SRB":"RS","SSD":"SS","STP":"ST","SUR":"SR","SVK":"SK","SVN":"SI","SWE":"SE","SWZ":"SZ","SYC":"SC",
+    "SYR":"SY","TCD":"TD","TGO":"TG","THA":"TH","TJK":"TJ","TKL":"TK","TKM":"TM","TLS":"TL","TON":"TO",
+    "TTO":"TT","TUN":"TN","TUR":"TR","TUV":"TV","TWN":"TW","TZA":"TZ","UGA":"UG","UKR":"UA","URY":"UY",
+    "USA":"US","UZB":"UZ","VCT":"VC","VEN":"VE","VNM":"VN","VUT":"VU","WSM":"WS","YEM":"YE","ZAF":"ZA",
+    "ZMB":"ZM","ZWE":"ZW",
+}
 
 
 def _paf(p_frac, rr):
     return p_frac * (rr - 1) / (1 + p_frac * (rr - 1))
 
 
-def _ncdrisc_latest(fname, field_substr, country_col, sex_col, year_col, names):
-    """{country_name: (year, both-sexes fraction)} at the latest year, mean of the Men/Women rows.
-       field_substr picks the point-estimate column (first header containing it, before its CIs)."""
+def _ncdrisc_latest(fname, field_substr):
+    """{iso3: (year, both-sexes fraction)} at the latest year, mean of the Men/Women rows, for EVERY
+       country in the file. field_substr picks the point-estimate column (first header containing it,
+       before its CIs); ISO/Sex/Year columns are found by header name (files differ in column order)."""
     import csv
-    acc = {}   # name -> {year: {sex: value}}
     with io.open(os.path.join(DATA_IN, "ncdrisc", fname), encoding="utf-8-sig") as f:
         r = csv.reader(f); hdr = next(r)
         pi = next(i for i, h in enumerate(hdr) if field_substr in h)
+        ii = next(i for i, h in enumerate(hdr) if h.strip().lower() == "iso")
+        si = next(i for i, h in enumerate(hdr) if h.strip().lower() == "sex")
+        yi = next(i for i, h in enumerate(hdr) if h.strip().lower() == "year")
+        acc = {}   # iso3 -> {year: {sex: value}}
         for row in r:
-            nm = row[country_col].strip('"')
-            if nm in names:
-                acc.setdefault(nm, {}).setdefault(int(float(row[year_col])), {})[row[sex_col].strip('"')] = float(row[pi])
-    return {nm: (max(byyr), sum(byyr[max(byyr)].values()) / len(byyr[max(byyr)])) for nm, byyr in acc.items()}
+            iso = row[ii].strip('"')
+            acc.setdefault(iso, {}).setdefault(int(float(row[yi])), {})[row[si].strip('"')] = float(row[pi])
+    return {iso: (max(byyr), sum(byyr[max(byyr)].values()) / len(byyr[max(byyr)])) for iso, byyr in acc.items()}
 
 
 def _who_gho_latest(indicator, iso3s):
@@ -1086,37 +1105,35 @@ def _who_gho_latest(indicator, iso3s):
 
 
 def build_exposome():
-    """National modifiable-risk-factor prevalence + PAF + composite for all 27 countries ->
-       public/data/exposome/exposome.json (one national value per country)."""
-    ALIAS = {"tr": ["Turkiye"]}   # newer NCD-RisC releases (diabetes 2024, BMI 2026) renamed Turkey -> Turkiye
-    names = set(NCDRISC_NAME.values()) | {a for al in ALIAS.values() for a in al}
-    htn = _ncdrisc_latest("NCD_RisC_Lancet_2017_BP_age_standardised_countries.csv", "raised blood pressure", 0, 2, 3, names)
-    dm  = _ncdrisc_latest("NCD_RisC_Lancet_2024_Diabetes_age_standardised_countries.csv", "diabetes (18+", 0, 2, 3, names)
-    obe = _ncdrisc_latest("NCD_RisC_Nature_2026_BMI_age_standardised_country.csv", "BMI>=30", 2, 1, 0, names)
-    smk = _who_gho_latest("M_Est_tob_curr", set(EXPO_ISO3.values()))
-    pac = _who_gho_latest("NCD_PAC", set(EXPO_ISO3.values()))
+    """National modifiable-risk-factor prevalence + PAF + composite for EVERY NCD-RisC country (~200) ->
+       public/data/exposome/exposome.json (one national value per country, keyed by ISO alpha-2).
+       HTN/diabetes/obesity from NCD-RisC (all 200 natively, incl. Taiwan); smoking/inactivity from
+       WHO GHO where available (+ Taiwan 2021 NHIS, since GHO has no Taiwan row)."""
+    htn = _ncdrisc_latest("NCD_RisC_Lancet_2017_BP_age_standardised_countries.csv", "raised blood pressure")
+    dm  = _ncdrisc_latest("NCD_RisC_Lancet_2024_Diabetes_age_standardised_countries.csv", "diabetes (18+")
+    obe = _ncdrisc_latest("NCD_RisC_Nature_2026_BMI_age_standardised_country.csv", "BMI>=30")
+    universe = set(htn) | set(dm) | set(obe)                    # ~200 ISO alpha-3
+    smk = _who_gho_latest("M_Est_tob_curr", universe)
+    pac = _who_gho_latest("NCD_PAC", universe)
     twf = json.load(io.open(os.path.join(DATA_IN, "tw-riskfactors.json"), encoding="utf-8"))["factors"]
     SRC = {"hypertension": "NCD-RisC raised BP (adult, age-std)", "diabetes": "NCD-RisC diabetes 18+ (age-std)",
            "obesity": "NCD-RisC BMI≥30 (adult, age-std)", "smoking": "WHO GHO current tobacco (age-std)",
            "physical_inactivity": "WHO GHO insufficient activity"}
     out = {}
-    def pick(dct, cc):
-        for nm in [NCDRISC_NAME[cc]] + ALIAS.get(cc, []):
-            if nm in dct:
-                return dct[nm]
-        return None
-    for cc in NCDRISC_NAME:
-        iso = EXPO_ISO3[cc]; pv = {}   # factor -> (percent, year, source)
-        h, dd, o = pick(htn, cc), pick(dm, cc), pick(obe, cc)
-        if h:  pv["hypertension"] = (round(h[1] * 100, 1), h[0], SRC["hypertension"])
-        if dd: pv["diabetes"]     = (round(dd[1] * 100, 1), dd[0], SRC["diabetes"])
-        if o:  pv["obesity"]      = (round(o[1] * 100, 1), o[0], SRC["obesity"])
-        if cc == "tw":
+    for iso3 in sorted(universe):
+        cc = ISO3_ISO2.get(iso3)
+        if not cc:
+            continue                                            # no known iso2 mapping — skip
+        cc = cc.lower(); pv = {}                                # factor -> (percent, year, source)
+        if iso3 in htn: pv["hypertension"] = (round(htn[iso3][1] * 100, 1), htn[iso3][0], SRC["hypertension"])
+        if iso3 in dm:  pv["diabetes"]     = (round(dm[iso3][1] * 100, 1),  dm[iso3][0],  SRC["diabetes"])
+        if iso3 in obe: pv["obesity"]      = (round(obe[iso3][1] * 100, 1), obe[iso3][0], SRC["obesity"])
+        if iso3 == "TWN":
             for f in ("smoking", "physical_inactivity"):
                 pv[f] = (twf[f]["value_pct"], twf[f]["year"], "2021 Taiwan NHIS")
         else:
-            if iso in smk: pv["smoking"] = (round(smk[iso][1], 1), smk[iso][0], SRC["smoking"])
-            if iso in pac: pv["physical_inactivity"] = (round(pac[iso][1], 1), pac[iso][0], SRC["physical_inactivity"])
+            if iso3 in smk: pv["smoking"] = (round(smk[iso3][1], 1), smk[iso3][0], SRC["smoking"])
+            if iso3 in pac: pv["physical_inactivity"] = (round(pac[iso3][1], 1), pac[iso3][0], SRC["physical_inactivity"])
         factors, keep = {}, 1.0
         for f, rr in EXPO_RR.items():
             if f not in pv:
@@ -1127,7 +1144,8 @@ def build_exposome():
         out[cc] = {"factors": factors, "composite_paf_pct": round((1 - keep) * 100, 1), "n_factors": len(factors)}
     meta = {"metric": "modifiable dementia risk factors — national adult prevalence + PAF",
             "note": ("PAF=P(RR-1)/(1+P(RR-1)); composite=1-Π(1-PAF) over factors present, independence-assumed. "
-                     "Covers 5 of the Livingston 2024 modifiable factors sourced at national level — a floor, not the full ~45%."),
+                     "Up to 5 of the Livingston 2024 modifiable factors at national level — a floor, not the full ~45%. "
+                     "n_factors varies: NCD-RisC covers all ~200 for BP/diabetes/obesity; WHO GHO smoking/inactivity may be absent for some."),
             "rr_source": "Livingston et al., Lancet 2024 Commission (Table 1)", "built": BUILD_DATE}
     write_json("exposome/exposome.json", {"meta": meta, "countries": out})
     log(f"  exposome: {len(out)} countries × up to 5 factors + composite PAF")
@@ -1137,7 +1155,7 @@ def build_exposome():
 # ---------- World globe asset: admin-0 boundaries + national PM2.5 + composite PAF ----------
 # For the 3D/2.5D globe prototypes. Natural Earth admin-0 (110m) polygons, with two national
 # metrics baked per country: PM2.5 (world-country-pm25.json, 246 countries, latest year) and
-# composite modifiable-risk PAF (exposome.json, 27 countries). Standalone — reads the two
+# composite modifiable-risk PAF (exposome.json, ~200 countries). Standalone — reads the two
 # already-built JSONs, so it can run without re-fetching ACAG.
 def _norm_country(s):
     import unicodedata as _u, re as _re
@@ -1208,7 +1226,6 @@ def build_world_globe_geojson():
     world_pm = json.load(open(os.path.join(OUT, "pm25/world-country-pm25.json"), encoding="utf-8"))["countries"]
     expo = json.load(open(os.path.join(OUT, "exposome/exposome.json"), encoding="utf-8"))["countries"]
     pop65 = _load_pop65()
-    iso3_to_cc = {v: k for k, v in EXPO_ISO3.items()}
     pm_norm = {_norm_country(k): v["values"][-1] for k, v in world_pm.items()}
     prev_norm = {_norm_country(k): v for k, v in load_gbd_prev60().items()}   # GBD dementia % among 60+ (national + subnat)
     ne = json.loads(http_get(NE_ADMIN0).decode("utf-8", "replace"))
@@ -1217,7 +1234,6 @@ def build_world_globe_geojson():
         p = f["properties"]
         name = p.get("NAME") or p.get("NAME_LONG") or p.get("ADMIN")
         iso2 = p.get("ISO_A2_EH") or p.get("ISO_A2") or ""
-        iso3 = p.get("ISO_A3_EH") or p.get("ISO_A3") or ""
         pm = None
         for fld in ("NAME", "NAME_LONG", "ADMIN", "GEOUNIT", "BRK_NAME", "NAME_EN", "FORMAL_EN"):
             nm = p.get(fld)
@@ -1230,9 +1246,8 @@ def build_world_globe_geojson():
                 break
         if pm is None and _norm_country(name) != "antarctica":
             unmatched.append(name)
-        cc = iso3_to_cc.get(iso3)
-        paf = expo[cc].get("composite_paf_pct") if cc in expo else None
         iso2c = "" if iso2 == "-99" else iso2
+        paf = expo.get(iso2c.lower(), {}).get("composite_paf_pct") if iso2c else None   # composite PAF, matched by iso2
         pop = pop65.get(iso2c)
         prev = None   # national dementia prevalence among 60+ (%) from GBD, matched by country name
         for fld in ("NAME", "NAME_LONG", "ADMIN", "GEOUNIT", "BRK_NAME", "NAME_EN", "FORMAL_EN"):
@@ -1250,7 +1265,7 @@ def build_world_globe_geojson():
     write_json("geo/world-globe.geojson", {
         "type": "FeatureCollection",
         "meta": {"pm25": "ACAG SatPM2.5 V6.GL.03 national latest-year (CC BY 4.0)",
-                 "paf": "composite modifiable-risk PAF, 27 countries (Livingston 2024 RRs) — modelled",
+                 "paf": "composite modifiable-risk PAF, ~200 countries (NCD-RisC + WHO GHO × Livingston 2024 RRs) — modelled",
                  "pop65": "population aged 65+ (% of total) — World Bank 2025 (SP.POP.65UP.TO.ZS), 217 economies + Taiwan 內政部戶政司 2025; modelled estimate",
                  "prev": "GBD 2023 dementia prevalence among 60+ (%), national — modelled (IHME non-commercial)",
                  "boundaries": "Natural Earth admin-0 110m (public domain)", "built": BUILD_DATE},
@@ -1376,7 +1391,7 @@ def main():
         assets[f"dementia/{key}-modelled.json"] = (f"{gname} admin-1 dementia prevalence 60+, "
                                                    "GBD 2023 rates × WorldPop 2020 pop — modelled estimate")
     build_exposome()
-    assets["exposome/exposome.json"] = ("national modifiable risk factors + composite PAF (27 countries): "
+    assets["exposome/exposome.json"] = ("national modifiable risk factors + composite PAF (~200 countries): "
                                         "NCD-RisC (BP/diabetes/BMI) + WHO GHO (smoking/inactivity) + Taiwan NHIS × Livingston 2024 RRs")
     build_world_globe_geojson()
     assets["geo/world-globe.geojson"] = ("Natural Earth admin-0 (public domain) + national PM2.5 "

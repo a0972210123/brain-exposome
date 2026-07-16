@@ -1653,8 +1653,8 @@ function renderWorldMethod() {
     body = L('每個國家以「65 歲以上人口占比」著色，依聯合國高齡化分級：&lt;7% 未達高齡化、7–14% 高齡化社會、14–20% 高齡社會、≥20% 超高齡社會。各國數值為 World Bank 2025 最新估計（台灣不在 World Bank 資料庫，改採內政部戶政司 2025 年底 20.06%）；縣市（admin-1）層級資料補齊中。（高齡化分級標準的完整來源見文末參考文獻）',
       'Each country is shaded by its share of population aged 65+, tiered by the UN aging-society standard: &lt;7% pre-aging, 7–14% aging, 14–20% aged, ≥20% super-aged. Values are latest World Bank 2025 estimates (Taiwan, excluded from the World Bank database, uses MOI 2025: 20.06%); admin-1 coverage is being filled in. (Full source for these tiers is in the references below.)');
   } else if (mapMode === 'composite') {
-    body = L('每個國家以「可調控失智風險 PAF %」著色（Livingston 2024 的 5 因子合計、全國估計）。目前 27 國有資料，其餘為灰色。此指標跨國可比。點國家看細節。',
-      'Each country is shaded by composite modifiable-risk PAF % (5 factors, national estimate; Livingston 2024). 27 countries have data; the rest are grey. This metric is comparable across countries. Click a country to drill in.');
+    body = L('每個國家以「可調控失智風險 PAF %」著色（Livingston 2024，最多 5 因子、全國估計）。約 170 國有資料，其餘為灰色。此指標跨國可比，為下限估計。點國家看細節。',
+      'Each country is shaded by composite modifiable-risk PAF % (up to 5 factors, national estimate; Livingston 2024). ~170 countries have data; the rest are grey. This metric is comparable across countries and is a floor estimate. Click a country to drill in.');
   } else if (mapMode === 'prevalence') {
     body = L('每個國家以「失智盛行率（60 歲以上，GBD 2023）」著色。全球採單一年齡分母（皆 60+），因此可跨國比較；與下鑽後各國地圖採各自年齡分母（65+／60+／50+）的最佳估計不同。點國家看細節。',
       'Each country is shaded by dementia prevalence among adults 60+ (GBD 2023). It uses one age denominator (60+) for every country, so it IS comparable across countries — unlike the per-country drill-down maps, which use each country’s own denominator (65+/60+/50+). Click a country to drill in.');
