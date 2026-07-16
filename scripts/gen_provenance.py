@@ -146,7 +146,7 @@ for ISO, aspects in audit.items():
         cell = {kk: vv for kk, vv in v.items() if kk != "note"}
         OV.setdefault(ISO, {})[k] = cell
 
-# ---- factor + composite overrides straight from exposome.json (27 countries, all "live" in the tool) ----
+# ---- factor + composite overrides straight from exposome.json (~200 countries, all "live" in the tool) ----
 # exposome.json carries factor `source`+`year` but no URL, so map the source label → its canonical link
 # (keeps every factor cell hyperlinked, matching the audited rows rather than rendering as bare text).
 NHIS_TW = "https://nhis.nhri.edu.tw/"
@@ -183,7 +183,7 @@ for cc, e in expo.items():
             yrs.append(int(f["year"]))
     if e.get("composite_paf_pct") is not None:
         yr = f"{min(yrs)}–{max(yrs)}" if yrs else ""
-        OV[ISO]["paf"] = {"natSrc": f"{e.get('n_factors', len(FKEYS))} 因子合計 × Livingston 2024", "natUrl": LANCET, "natYear": yr, "status": "live"}
+        OV[ISO]["paf"] = {"natSrc": f"{e.get('n_factors', len(FKEYS))} 因子 × Livingston 2024 RRs", "natUrl": LANCET, "natYear": yr, "status": "live"}
 
 # ---- MCI/SCD deep audit (scripts/provenance-audit-cognitive.json) — authority for mci/scd, all countries ----
 # A dedicated MCI + SCD WebSearch pass (incl. the 27 map countries the first audit skipped). Runs last so it
