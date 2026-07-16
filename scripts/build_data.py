@@ -1152,6 +1152,36 @@ def build_exposome():
     return True
 
 
+# National MCI (mild cognitive impairment) prevalence — a FEW strong-data countries only.
+# There is NO harmonised global MCI dataset (GBD does not produce MCI), and national studies are
+# HETEROGENEOUS (different age bands, diagnostic criteria, survey years) → NOT comparable across
+# countries. Each country therefore carries its own source + criteria and the layer is shown on its
+# own scale with an explicit "indicative, not cross-country comparable" caveat in the UI.
+MCI_NATIONAL = {
+    "tw": {"prev_pct": 18.8, "year": 2014, "age": "65+", "crit": "門到門全國調查 / door-to-door",
+           "src": "Sun et al. 2014, PLoS ONE", "url": "https://doi.org/10.1371/journal.pone.0100303"},
+    "jp": {"prev_pct": 15.5, "year": 2022, "age": "65+", "crit": "厚労省推計 / MHLW estimate",
+           "src": "MHLW 2024（二宮研究班）", "url": "https://www.mhlw.go.jp/content/001279920.pdf"},
+    "kr": {"prev_pct": 22.7, "year": 2020, "age": "65+", "crit": "全國調查 NaSDEK / KDO",
+           "src": "Korea Dementia Observatory 2020", "url": "https://www.nid.or.kr"},
+    "in": {"prev_pct": 17.6, "year": 2024, "age": "60+", "crit": "DSM-5 mild NCD",
+           "src": "LASI-DAD (Lee et al.)", "url": "https://doi.org/10.1002/alz.12928"},
+}
+
+
+def build_mci_national():
+    """public/data/mci/mci-national.json — national MCI prevalence for a few strong-data countries.
+       Deliberately sparse + heterogeneous; the UI shows it on its own scale, not cross-comparable."""
+    meta = {"metric": "MCI prevalence — national estimate (few strong-data countries)",
+            "note": ("Heterogeneous: different age bands, diagnostic criteria and survey years — NOT "
+                     "comparable across countries. No harmonised global MCI dataset exists (GBD does not "
+                     "produce MCI). Each country carries its own source + criteria; shown on its own scale."),
+            "built": BUILD_DATE}
+    write_json("mci/mci-national.json", {"meta": meta, "countries": MCI_NATIONAL})
+    log(f"  mci: {len(MCI_NATIONAL)} strong-data countries (national estimate, heterogeneous)")
+    return True
+
+
 # ---------- World globe asset: admin-0 boundaries + national PM2.5 + composite PAF ----------
 # For the 3D/2.5D globe prototypes. Natural Earth admin-0 (110m) polygons, with two national
 # metrics baked per country: PM2.5 (world-country-pm25.json, 246 countries, latest year) and
@@ -1225,6 +1255,8 @@ def build_world_globe_geojson():
     log("World globe geojson (admin-0 + national PM2.5 + PAF + 65+) …")
     world_pm = json.load(open(os.path.join(OUT, "pm25/world-country-pm25.json"), encoding="utf-8"))["countries"]
     expo = json.load(open(os.path.join(OUT, "exposome/exposome.json"), encoding="utf-8"))["countries"]
+    _mci_path = os.path.join(OUT, "mci/mci-national.json")   # a few strong-data countries; existence-guarded
+    mci = json.load(open(_mci_path, encoding="utf-8"))["countries"] if os.path.exists(_mci_path) else {}
     pop65 = _load_pop65()
     pm_norm = {_norm_country(k): v["values"][-1] for k, v in world_pm.items()}
     prev_norm = {_norm_country(k): v for k, v in load_gbd_prev60().items()}   # GBD dementia % among 60+ (national + subnat)
@@ -1249,6 +1281,7 @@ def build_world_globe_geojson():
         iso2c = "" if iso2 == "-99" else iso2
         paf = expo.get(iso2c.lower(), {}).get("composite_paf_pct") if iso2c else None   # composite PAF, matched by iso2
         pop = pop65.get(iso2c)
+        mci_v = mci.get(iso2c.lower(), {}).get("prev_pct") if iso2c else None            # national MCI (few strong-data countries)
         prev = None   # national dementia prevalence among 60+ (%) from GBD, matched by country name
         for fld in ("NAME", "NAME_LONG", "ADMIN", "GEOUNIT", "BRK_NAME", "NAME_EN", "FORMAL_EN"):
             nm = p.get(fld)
@@ -1260,7 +1293,7 @@ def build_world_globe_geojson():
         gm = {"type": gm["type"], "coordinates": _round_coords(gm["coordinates"], 2)}
         feats.append({"type": "Feature",
                       "properties": {"name": name, "iso_a2": iso2c,
-                                     "pm25": pm, "paf": paf, "pop65": pop, "prev": prev},
+                                     "pm25": pm, "paf": paf, "pop65": pop, "prev": prev, "mci": mci_v},
                       "geometry": gm})
     write_json("geo/world-globe.geojson", {
         "type": "FeatureCollection",
@@ -1268,6 +1301,7 @@ def build_world_globe_geojson():
                  "paf": "composite modifiable-risk PAF, ~200 countries (NCD-RisC + WHO GHO × Livingston 2024 RRs) — modelled",
                  "pop65": "population aged 65+ (% of total) — World Bank 2025 (SP.POP.65UP.TO.ZS), 217 economies + Taiwan 內政部戶政司 2025; modelled estimate",
                  "prev": "GBD 2023 dementia prevalence among 60+ (%), national — modelled (IHME non-commercial)",
+                 "mci": "national MCI prevalence, few strong-data countries — heterogeneous, NOT cross-comparable (own-scale national estimate)",
                  "boundaries": "Natural Earth admin-0 110m (public domain)", "built": BUILD_DATE},
         "features": feats})
     npaf = sum(1 for x in feats if x["properties"]["paf"] is not None)
@@ -1393,6 +1427,9 @@ def main():
     build_exposome()
     assets["exposome/exposome.json"] = ("national modifiable risk factors + composite PAF (~200 countries): "
                                         "NCD-RisC (BP/diabetes/BMI) + WHO GHO (smoking/inactivity) + Taiwan NHIS × Livingston 2024 RRs")
+    build_mci_national()
+    assets["mci/mci-national.json"] = ("national MCI prevalence, few strong-data countries (TW/JP/KR/IN) — "
+                                       "heterogeneous, not cross-comparable: Sun 2014 / MHLW 2024 / KDO 2020 / LASI-DAD")
     build_world_globe_geojson()
     assets["geo/world-globe.geojson"] = ("Natural Earth admin-0 (public domain) + national PM2.5 "
                                          "(ACAG V6.GL.03, CC BY 4.0) + composite PAF (Livingston 2024) "

@@ -199,6 +199,12 @@ for ISO, aspects in cog.items():
             continue
         OV.setdefault(ISO, {})[k] = {kk: vv for kk, vv in v.items() if kk != "note"}
 
+# ---- MCI: the few strong-data countries actually wired into the map (mci-national.json) → status "live" ----
+# (runs after the cognitive audit so it wins for the countries whose MCI is now on the globe)
+_mci = json.load(open(os.path.join(ROOT, "public/data/mci/mci-national.json"), encoding="utf-8"))["countries"]
+for _cc, _m in _mci.items():
+    OV.setdefault(_cc.upper(), {})["mci"] = {"natSrc": _m["src"], "natUrl": _m["url"], "natYear": str(_m["year"]), "status": "live"}
+
 # ---- final clean: unescape any stray HTML entities in every override string ----
 SRC_CANON = {   # same underlying source must read identically map-vs-nonmap countries
     "ACAG zonal admin-1（27 國）": "ACAG zonal admin-1",
