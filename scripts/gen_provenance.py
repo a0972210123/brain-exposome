@@ -206,6 +206,12 @@ for _cc, _m in _mci.items():
     _st = "live" if _m.get("kind") == "national" else "seed"   # national study = live; Bai-2022 regional baseline = seed
     OV.setdefault(_cc.upper(), {})["mci"] = {"natSrc": _m["src"], "natUrl": _m["url"], "natYear": str(_m["year"]), "status": _st}
 
+# ---- SCD: countries with a national self-report value (scd-national.json) → status "seed" (heterogeneous) ----
+_scd_path = os.path.join(ROOT, "public/data/scd/scd-national.json")
+if os.path.exists(_scd_path):
+    for _cc, _s in json.load(open(_scd_path, encoding="utf-8"))["countries"].items():
+        OV.setdefault(_cc.upper(), {})["scd"] = {"natSrc": _s["src"], "natUrl": _s["url"], "natYear": str(_s["year"]), "status": "seed"}
+
 # ---- final clean: unescape any stray HTML entities in every override string ----
 SRC_CANON = {   # same underlying source must read identically map-vs-nonmap countries
     "ACAG zonal admin-1（27 國）": "ACAG zonal admin-1",

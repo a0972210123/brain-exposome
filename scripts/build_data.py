@@ -1202,25 +1202,83 @@ MCI_NATIONAL = {
 }
 
 
+SOURCES_JSON = os.path.join(ROOT, "scripts/mci-scd-sources.json")   # cloud deep-research (97 countries)
+MCI_PLAUSIBLE = (3.0, 40.0)   # sane MCI window; values outside (MoCA "any impairment" 40–93%) → regional
+
+
+def _cog_sources():
+    return json.load(io.open(SOURCES_JSON, encoding="utf-8"))["countries"] if os.path.exists(SOURCES_JSON) else {}
+
+
+def _short_cite(c):
+    import re
+    c = (c or "").strip()
+    m = re.match(r"(.{5,70}?\b(?:19|20)\d\d)", c)   # first author … year
+    return (m.group(1) if m else c.split(".")[0])[:70]
+
+
 def build_mci_national():
-    """public/data/mci/mci-national.json — MCI prevalence per country: Bai 2022 WB-region baseline
-       (modelled, kind=regional) + national-study overrides (kind=national). Criteria vary → modelled."""
+    """public/data/mci/mci-national.json — Bai 2022 WB-region baseline (kind=regional) overlaid with
+       NATIONAL values from scripts/mci-scd-sources.json where the estimate is a plausible MCI figure
+       (3–40%); implausible screening artifacts (MoCA 'any impairment' 40–93%) revert to the regional
+       baseline to keep the layer comparable. Criteria/confidence kept per country for the UI caveat."""
+    src = _cog_sources()
     out = {}
     for i2, region in WB_REGION.items():
         if region in BAI_MCI:
-            out[i2.lower()] = {"prev_pct": BAI_MCI[region], "year": 2022, "age": "50+",
+            out[i2.lower()] = {"prev_pct": BAI_MCI[region], "year": "2022", "age": "50+",
                                "crit": f"WB {region} 區域統合 / regional pool", "src": BAI_SRC,
-                               "url": BAI_URL, "kind": "regional"}
-    for cc, m in MCI_NATIONAL.items():
-        out[cc] = {**m, "kind": "national"}
+                               "url": BAI_URL, "conf": "regional", "kind": "regional"}
+    lo, hi = MCI_PLAUSIBLE
+    for cc, v in src.items():
+        m = v.get("mci")
+        if not (isinstance(m, dict) and isinstance(m.get("prev_pct"), (int, float))):
+            continue
+        if lo <= float(m["prev_pct"]) <= hi:
+            out[cc.lower()] = {"prev_pct": round(float(m["prev_pct"]), 1), "year": str(m.get("year", ""))[:9],
+                               "age": m.get("age") or "", "crit": (m.get("criteria") or "")[:70],
+                               "src": _short_cite(m.get("citation")), "url": m.get("doi_url"),
+                               "conf": m.get("confidence") or "", "kind": "national"}
+    for cc, m in MCI_NATIONAL.items():        # curated 5 (TW/JP/KR/IN/CN) — hand-verified, always win
+        out[cc] = {**m, "conf": "high", "kind": "national"}
     nnat = sum(1 for v in out.values() if v["kind"] == "national")
-    meta = {"metric": "MCI prevalence — regional meta-analysis baseline + national overrides",
-            "note": ("Regional baseline: Bai et al. 2022 (Age & Ageing) pooled MCI by World Bank region "
-                     "(adults 50+, community-dwelling). A few countries use a national study instead "
-                     "(kind=national). MCI criteria/age bands vary → modelled estimate, indicative only."),
-            "regionalSrc": BAI_SRC, "regionalUrl": BAI_URL, "built": BUILD_DATE}
+    excl = sorted(cc for cc, v in src.items() if isinstance(v.get("mci"), dict)
+                  and isinstance(v["mci"].get("prev_pct"), (int, float)) and not (lo <= v["mci"]["prev_pct"] <= hi))
+    meta = {"metric": "MCI prevalence — Bai 2022 WB-region baseline + national values (mci-scd-sources.json)",
+            "note": ("Baseline: Bai et al. 2022 (Age & Ageing) pooled MCI by World Bank region (50+, community). "
+                     "National values from the cloud deep-research set where plausible (3–40%); screening "
+                     "artifacts (MoCA 'any impairment' >40%) revert to the regional baseline. Criteria/age/"
+                     "confidence vary → modelled, indicative only, NOT comparable across countries."),
+            "regionalSrc": BAI_SRC, "regionalUrl": BAI_URL, "excludedOutliers": excl, "built": BUILD_DATE}
     write_json("mci/mci-national.json", {"meta": meta, "countries": out})
-    log(f"  mci: {len(out)} countries ({nnat} national overrides, rest Bai-2022 regional)")
+    log(f"  mci: {len(out)} countries ({nnat} national, rest regional; {len(excl)} outliers→regional)")
+    return True
+
+
+def build_scd_national():
+    """public/data/scd/scd-national.json — SCD (subjective cognitive decline) national values from
+       scripts/mci-scd-sources.json (~38 countries). ALL heterogeneous self-report with NO global-meta
+       baseline → sparse, own scale, each flagged self-report vs structured. Indicative, NOT comparable
+       (single-item self-report inflates to 40–76%, varies with question wording)."""
+    src = _cog_sources()
+    out = {}
+    for cc, v in src.items():
+        s = v.get("scd")
+        if not (isinstance(s, dict) and isinstance(s.get("prev_pct"), (int, float))):
+            continue
+        crit = s.get("criteria") or ""
+        out[cc.lower()] = {"prev_pct": round(float(s["prev_pct"]), 1), "year": str(s.get("year", ""))[:9],
+                           "age": s.get("age") or "", "crit": crit[:70], "src": _short_cite(s.get("citation")),
+                           "url": s.get("doi_url"), "conf": s.get("confidence") or "",
+                           "instrument": "self-report" if "self-report" in crit.lower() else "structured"}
+    meta = {"metric": "SCD prevalence — national values (self-report; no global baseline)",
+            "note": ("Subjective cognitive decline. There is NO harmonised global SCD dataset, and estimates "
+                     "are dominated by single-item self-report (memory complaints) that inflates to 40–76% and "
+                     "varies with question wording → shown on its own scale, per-country criteria displayed, "
+                     "indicative only and NOT comparable across countries."),
+            "built": BUILD_DATE}
+    write_json("scd/scd-national.json", {"meta": meta, "countries": out})
+    log(f"  scd: {len(out)} countries (self-report/heterogeneous — indicative only)")
     return True
 
 
@@ -1297,8 +1355,10 @@ def build_world_globe_geojson():
     log("World globe geojson (admin-0 + national PM2.5 + PAF + 65+) …")
     world_pm = json.load(open(os.path.join(OUT, "pm25/world-country-pm25.json"), encoding="utf-8"))["countries"]
     expo = json.load(open(os.path.join(OUT, "exposome/exposome.json"), encoding="utf-8"))["countries"]
-    _mci_path = os.path.join(OUT, "mci/mci-national.json")   # a few strong-data countries; existence-guarded
+    _mci_path = os.path.join(OUT, "mci/mci-national.json")   # existence-guarded
     mci = json.load(open(_mci_path, encoding="utf-8"))["countries"] if os.path.exists(_mci_path) else {}
+    _scd_path = os.path.join(OUT, "scd/scd-national.json")
+    scd = json.load(open(_scd_path, encoding="utf-8"))["countries"] if os.path.exists(_scd_path) else {}
     pop65 = _load_pop65()
     pm_norm = {_norm_country(k): v["values"][-1] for k, v in world_pm.items()}
     prev_norm = {_norm_country(k): v for k, v in load_gbd_prev60().items()}   # GBD dementia % among 60+ (national + subnat)
@@ -1323,7 +1383,8 @@ def build_world_globe_geojson():
         iso2c = "" if iso2 == "-99" else iso2
         paf = expo.get(iso2c.lower(), {}).get("composite_paf_pct") if iso2c else None   # composite PAF, matched by iso2
         pop = pop65.get(iso2c)
-        mci_v = mci.get(iso2c.lower(), {}).get("prev_pct") if iso2c else None            # national MCI (few strong-data countries)
+        mci_v = mci.get(iso2c.lower(), {}).get("prev_pct") if iso2c else None            # MCI (Bai regional + national)
+        scd_v = scd.get(iso2c.lower(), {}).get("prev_pct") if iso2c else None            # SCD (national self-report, ~38 countries)
         prev = None   # national dementia prevalence among 60+ (%) from GBD, matched by country name
         for fld in ("NAME", "NAME_LONG", "ADMIN", "GEOUNIT", "BRK_NAME", "NAME_EN", "FORMAL_EN"):
             nm = p.get(fld)
@@ -1335,7 +1396,7 @@ def build_world_globe_geojson():
         gm = {"type": gm["type"], "coordinates": _round_coords(gm["coordinates"], 2)}
         feats.append({"type": "Feature",
                       "properties": {"name": name, "iso_a2": iso2c,
-                                     "pm25": pm, "paf": paf, "pop65": pop, "prev": prev, "mci": mci_v},
+                                     "pm25": pm, "paf": paf, "pop65": pop, "prev": prev, "mci": mci_v, "scd": scd_v},
                       "geometry": gm})
     write_json("geo/world-globe.geojson", {
         "type": "FeatureCollection",
@@ -1343,7 +1404,8 @@ def build_world_globe_geojson():
                  "paf": "composite modifiable-risk PAF, ~200 countries (NCD-RisC + WHO GHO × Livingston 2024 RRs) — modelled",
                  "pop65": "population aged 65+ (% of total) — World Bank 2025 (SP.POP.65UP.TO.ZS), 217 economies + Taiwan 內政部戶政司 2025; modelled estimate",
                  "prev": "GBD 2023 dementia prevalence among 60+ (%), national — modelled (IHME non-commercial)",
-                 "mci": "national MCI prevalence, few strong-data countries — heterogeneous, NOT cross-comparable (own-scale national estimate)",
+                 "mci": "MCI prevalence — Bai 2022 WB-region baseline + national values (mci-scd-sources.json); modelled, NOT cross-comparable",
+                 "scd": "SCD prevalence — national self-report (~38 countries, scd-national.json); heterogeneous, NOT cross-comparable",
                  "boundaries": "Natural Earth admin-0 110m (public domain)", "built": BUILD_DATE},
         "features": feats})
     npaf = sum(1 for x in feats if x["properties"]["paf"] is not None)
@@ -1470,8 +1532,11 @@ def main():
     assets["exposome/exposome.json"] = ("national modifiable risk factors + composite PAF (~200 countries): "
                                         "NCD-RisC (BP/diabetes/BMI) + WHO GHO (smoking/inactivity) + Taiwan NHIS × Livingston 2024 RRs")
     build_mci_national()
-    assets["mci/mci-national.json"] = ("MCI prevalence — Bai 2022 (Age & Ageing) WB-region meta-analysis "
-                                       "baseline + national overrides (TW/JP/KR/IN/CN); modelled estimate")
+    assets["mci/mci-national.json"] = ("MCI prevalence — Bai 2022 (Age & Ageing) WB-region baseline + "
+                                       "national values (cloud deep-research, plausible 3–40%); modelled estimate")
+    build_scd_national()
+    assets["scd/scd-national.json"] = ("SCD prevalence — national self-report values (~38 countries, cloud "
+                                       "deep-research); heterogeneous, indicative only, not comparable")
     build_world_globe_geojson()
     assets["geo/world-globe.geojson"] = ("Natural Earth admin-0 (public domain) + national PM2.5 "
                                          "(ACAG V6.GL.03, CC BY 4.0) + composite PAF (Livingston 2024) "
