@@ -85,7 +85,8 @@
     "dementia/nz-modelled.json": "New Zealand admin-1 dementia prevalence 60+, GBD 2023 rates × WorldPop 2020 pop — modelled estimate",
     "dementia/tr-modelled.json": "Türkiye admin-1 dementia prevalence 60+, GBD 2023 rates × WorldPop 2020 pop — modelled estimate",
     "exposome/exposome.json": "national modifiable risk factors + composite PAF (~200 countries): NCD-RisC (BP/diabetes/BMI) + WHO GHO (smoking/inactivity) + Taiwan NHIS × Livingston 2024 RRs",
-    "mci/mci-national.json": "MCI prevalence — Bai 2022 (Age & Ageing) WB-region meta-analysis baseline + national overrides (TW/JP/KR/IN/CN); modelled estimate",
+    "mci/mci-national.json": "MCI prevalence — Bai 2022 WB-region baseline + national values (cloud deep-research, plausible 3-40%); modelled estimate",
+    "scd/scd-national.json": "SCD prevalence — national self-report values (~38 countries, cloud deep-research); heterogeneous, indicative only, not comparable",
     "geo/world-globe.geojson": "Natural Earth admin-0 (public domain) + national PM2.5 (ACAG V6.GL.03, CC BY 4.0) + composite PAF (Livingston 2024) + 65+ share (World Bank/UN, partial seed) — for the globe view",
     "data-provenance.json": "data-coverage / source-provenance ledger per country × data type (national + sub-national source, year, status) — see docs/side-projects/dementia-exposome/data-sourcing-plan.md"
   },
