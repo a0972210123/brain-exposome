@@ -369,6 +369,7 @@ import T from '../../components/T.astro';
           <button type="button" class="map-btn" data-mode="composite"><T zh="可調控風險 PAF" en="Modifiable risk (PAF)" /></button>
           <button type="button" class="map-btn" data-mode="pm25"><T zh="PM2.5（近 3 年）" en="PM2.5 (recent)" /></button>
           <button type="button" class="map-btn" data-mode="aging"><T zh="高齡化 65+" en="Aging 65+" /></button>
+          <button type="button" class="map-btn" data-mode="mci"><T zh="MCI（估計）" en="MCI (modelled)" /></button>
           <select id="map-factor" class="map-factor" aria-label="single risk factor PAF">
             <option value="" data-zh="單一因子 PAF…" data-en="Single factor PAF…">單一因子 PAF…</option>
             <option value="hypertension" data-zh="高血壓" data-en="Hypertension">高血壓</option>
@@ -437,6 +438,8 @@ import T from '../../components/T.astro';
         <li><T zh="印度：" en="India: " />Lee J, et al. Prevalence of dementia in India: national and state estimates (LASI-DAD). <em>Alzheimer's &amp; Dementia</em> 2023. <a href="https://doi.org/10.1002/alz.12928" target="_blank" rel="noopener">doi:10.1002/alz.12928</a></li>
         <li><T zh="日本：" en="Japan: " />Ninomiya T, et al. <T zh="久山町研究（37 年趨勢，年齡別盛行率）" en="Hisayama Study (37-year trends, age-specific prevalence)" />. <em>Alzheimer's Research &amp; Therapy</em> 2025. <a href="https://doi.org/10.1186/s13195-025-01909-1" target="_blank" rel="noopener">doi:10.1186/s13195-025-01909-1</a> · <T zh="厚生労働省 全國認知症・MCI 高齡者推計（Ninomiya 研究班，2024）" en="MHLW nationwide dementia &amp; MCI estimates (Ninomiya group, 2024)" /> <a href="https://www.mhlw.go.jp/" target="_blank" rel="noopener">mhlw.go.jp</a></li>
         <li><T zh="韓國：" en="Korea: " /><T zh="중앙치매센터 國立失智症中心《大韓民國失智現況》（年齡別유병률・MCI）" en="National Institute of Dementia — Korean Dementia Observatory (age-specific prevalence &amp; MCI)" /> <a href="https://www.nid.or.kr/" target="_blank" rel="noopener">nid.or.kr</a></li>
+        <li><T zh="MCI（輕度認知障礙）圖層 — 底色為區域統合估計：Bai et al. 2022《Age &amp; Ageing》依世界銀行區域的 MCI 盛行率（50 歲以上、社區）。少數國家改用全國研究：台灣 Sun 2014/2017（65+ 18.7%）、日本 厚生労働省 2024（65+ 15.5%）、南韓 KDO 2020（65+ 22.7%）、印度 LASI-DAD（60+ 17.6%）、中國 Xue 2021 統合（55+ 15.4%）。各研究定義／年齡層不一，為模型估計。" en="MCI (mild cognitive impairment) layer — baseline is a regional pooled estimate: Bai et al. 2022 (Age &amp; Ageing), MCI prevalence by World Bank region (adults 50+, community). A few countries use a national study: Taiwan Sun 2014/2017 (65+ 18.7%), Japan MHLW 2024 (65+ 15.5%), Korea KDO 2020 (65+ 22.7%), India LASI-DAD (60+ 17.6%), China Xue 2021 meta (55+ 15.4%). Definitions/age bands vary — a modelled estimate." /> <a href="https://doi.org/10.1093/ageing/afac173" target="_blank" rel="noopener">Bai 2022</a> · <a href="https://www.mhlw.go.jp/content/001279920.pdf" target="_blank" rel="noopener">MHLW</a></li>
+        <li><T zh="MCI 佐證：多篇全球統合估計一致支持上列區域底色 — Song 2023 全球 19.7%、Salari 2025 老年族群 23.7%、拉丁美洲專屬統合 14.95%（2021）、中國 Lu 2021 12.2% / Xue 2021 15.4%（差異源於年齡切點與量表）。SCD（主觀認知衰退）目前無全球一致資料、暫未上圖：現有可取得數據多為中國且自述量表差異極大（clinical 準則 ~14–19% vs 自述 ~46%）。" en="MCI corroboration: several global meta-analyses agree with the regional baseline above — Song 2023 global 19.7%, Salari 2025 geriatric 23.7%, Latin America pooled 14.95% (2021), China Lu 2021 12.2% / Xue 2021 15.4% (differences reflect age cut-off and instrument). SCD (subjective cognitive decline) has no harmonised global dataset yet, so it is not mapped: accessible data are mostly China and self-report scales vary widely (clinical criteria ~14–19% vs self-report ~46%)." /> <a href="https://doi.org/10.3389/fnagi.2023.1227112" target="_blank" rel="noopener">Song 2023</a> · <a href="https://doi.org/10.1186/s12877-025-05967-w" target="_blank" rel="noopener">Salari 2025</a></li>
       </ul>
 
       <p class="ref-cat"><T zh="③ 空氣污染（PM2.5）" en="③ Air pollution (PM2.5)" /></p>
@@ -1381,7 +1384,7 @@ function applyOptionLangs() {
      (prevalence needs gov population/survey data — see data-download-points.md). ── */
 let map = null, geoLayer = null, legendCtl = null;
 let mapCountry = 'tw', mapMode = 'prevalence';
-let EXPOSOME = null, PREV_META = null;   // national exposome data (all countries) + current prevalence meta
+let EXPOSOME = null, PREV_META = null, MCI_NAT = null;   // national exposome (all countries) + prevalence meta + MCI (few strong-data countries)
 let GEO = null;                    // current FeatureCollection
 let VAL = { prev: {}, pm: {} };    // current country: code -> value
 let NAMES = {};                    // current country: code -> {zh, en}
@@ -1519,7 +1522,7 @@ function modeAvailable(m, layers) {
 }
 function syncModeButtons() {
   const world = inWorld();
-  const worldModes = ['prevalence', 'pm25', 'composite', 'aging'];
+  const worldModes = ['prevalence', 'pm25', 'composite', 'aging', 'mci'];
   const layers = world ? worldModes : MAP_CFG[mapCountry].layers;
   document.querySelectorAll('.map-btn').forEach(b => {
     // Global globe carries the cross-country-comparable / national metrics (PM2.5, composite PAF,
@@ -1658,14 +1661,27 @@ function renderWorldMethod() {
   } else if (mapMode === 'prevalence') {
     body = L('每個國家以「失智盛行率（60 歲以上，GBD 2023）」著色。全球採單一年齡分母（皆 60+），因此可跨國比較；與下鑽後各國地圖採各自年齡分母（65+／60+／50+）的最佳估計不同。點國家看細節。',
       'Each country is shaded by dementia prevalence among adults 60+ (GBD 2023). It uses one age denominator (60+) for every country, so it IS comparable across countries — unlike the per-country drill-down maps, which use each country’s own denominator (65+/60+/50+). Click a country to drill in.');
+  } else if (mapMode === 'mci') {
+    body = L('MCI（輕度認知障礙）沒有像失智盛行率那樣的全球逐國資料。此層以 Bai 2022（Age &amp; Ageing）依世界銀行區域的統合估計（50 歲以上、社區）為底色，少數國家改用全國研究（下表）。各研究定義／年齡層不一，為<strong>模型估計、僅供概覽</strong>。',
+      'MCI (mild cognitive impairment) has no global per-country dataset like dementia prevalence. This layer uses Bai 2022 (Age &amp; Ageing) pooled estimates by World Bank region (adults 50+, community) as the baseline, with a few countries refined by a national study (table below). Definitions/age bands vary — <strong>a modelled estimate, indicative only</strong>.');
   } else {
     body = L('每個國家以近年全國人口加權 PM2.5（ACAG 衛星，µg/m³）著色，色階與各國地圖同一套 WHO 基準（≤5）。點任一國可下鑽到其行政區細節。',
       'Each country is shaded by recent national population-weighted PM2.5 (ACAG satellite, µg/m³) on the same WHO-anchored scale (≤5) as the per-country maps. Click a country to drill into its admin-1 detail.');
   }
-  const src = L('全球總覽的失智盛行率採 GBD 2023「60 歲以上」全球一致口徑（可跨國比較）；下鑽的各國地圖則採各國自己的最佳估計與年齡分母。界線 © Natural Earth；PM2.5 © ACAG/WashU（CC BY 4.0）；失智盛行率 © GBD 2023 (IHME)；PAF © Livingston 2024；高齡人口 © World Bank／UN（台灣 內政部）— 皆為模型估計／最新可得估計。',
-    'The global overview’s dementia prevalence uses GBD 2023 “60+” on one comparable scale for all countries; the per-country drill-down maps use each country’s own best estimate and denominator. Boundaries © Natural Earth; PM2.5 © ACAG/WashU (CC BY 4.0); dementia prevalence © GBD 2023 (IHME); PAF © Livingston 2024; 65+ © World Bank/UN (Taiwan: MOI) — modelled / latest-available estimates.');
+  let extra = '';
+  if (mapMode === 'mci' && MCI_NAT) {
+    const rows = Object.keys(MCI_NAT).filter(cc => MCI_NAT[cc].kind === 'national').map(cc => {
+      const m = MCI_NAT[cc], opt = document.querySelector(`#map-country option[value="${cc}"]`);
+      const nm = opt ? L(opt.dataset.zh, opt.dataset.en) : cc.toUpperCase();
+      return `<tr><td>${nm}</td><td>${m.prev_pct}%</td><td>${m.age}</td><td><a href="${m.url}" target="_blank" rel="noopener">${m.src}</a>（${m.year}）</td></tr>`;
+    }).join('');
+    extra = `<p class="prev-method-p" style="margin:.4rem 0 .2rem">${L('採全國研究的國家（其餘用區域統合估計）：', 'Countries using a national study (others use the regional pooled estimate):')}</p>`
+      + `<table class="prev-method-table prev-method-paf"><thead><tr><th>${L('國家', 'Country')}</th><th>MCI</th><th>${L('年齡', 'Age')}</th><th>${L('來源（年）', 'Source (yr)')}</th></tr></thead><tbody>${rows}</tbody></table>`;
+  }
+  const src = L('全球總覽的失智盛行率採 GBD 2023「60 歲以上」全球一致口徑（可跨國比較）；下鑽的各國地圖則採各國自己的最佳估計與年齡分母。界線 © Natural Earth；PM2.5 © ACAG/WashU（CC BY 4.0）；失智盛行率 © GBD 2023 (IHME)；PAF © Livingston 2024；高齡人口 © World Bank／UN（台灣 內政部）；MCI 為各國國家別估計 — 皆為模型估計／最新可得估計。',
+    'The global overview’s dementia prevalence uses GBD 2023 “60+” on one comparable scale for all countries; the per-country drill-down maps use each country’s own best estimate and denominator. Boundaries © Natural Earth; PM2.5 © ACAG/WashU (CC BY 4.0); dementia prevalence © GBD 2023 (IHME); PAF © Livingston 2024; 65+ © World Bank/UN (Taiwan: MOI); MCI = per-country national estimates — modelled / latest-available estimates.');
   box.innerHTML = `<h3 class="prev-method-h">${L('全球總覽', 'Global overview')}</h3>`
-    + `<p class="prev-method-p">${body}</p><p class="prev-method-src">${src}</p>`;
+    + `<p class="prev-method-p">${body}</p>${extra}<p class="prev-method-src">${src}</p>`;
 }
 function renderExpoMethod() {
   const box = $('prev-method'); if (!box) return;
@@ -1738,12 +1754,19 @@ const AGE_BINS = [7, 14, 20];   // UN aging-society tiers: 7% aging · 14% aged 
 const AGE_RAMP = ['#edf8fb', '#b3cde3', '#8c96c6', '#88419d'];
 const AGE_TIERS = [['未達高齡化 <7%', 'Pre-aging <7%'], ['高齡化社會 7–14%', 'Aging 7–14%'],
   ['高齡社會 14–20%', 'Aged 14–20%'], ['超高齡社會 ≥20%', 'Super-aged ≥20%']];
+// MCI (mild cognitive impairment) — a FEW strong-data countries only, on its own scale. Heterogeneous
+// (age band / criteria / survey year differ) so a distinct teal ramp signals "not the risk layers,
+// not cross-country comparable"; the method box lists each country's source + criteria.
+const MCI_BINS = [5, 10, 14, 18, 22];
+const MCI_RAMP = ['#f0f9f7', '#cfe8e1', '#9fd2c6', '#66b3a3', '#2f8f7d', '#116b5c'];
 const WORLD_METRICS = {
   pm25: { prop: 'pm25', bins: PM_BINS, unit: 'µg/m³', zh: 'PM2.5 µg/m³', en: 'PM2.5 µg/m³', dec: 1 },
   composite: { prop: 'paf', bins: PAF_COMPOSITE.bins, unit: '%', zh: PAF_COMPOSITE.legendZh, en: PAF_COMPOSITE.legendEn, dec: 1 },
   aging: { prop: 'pop65', bins: AGE_BINS, ramp: AGE_RAMP, tiers: AGE_TIERS, unit: '%', zh: '高齡人口 65+ %', en: 'Population 65+ %', dec: 1 },
   // national dementia prevalence among 60+ (GBD 2023) — cross-country comparable, one shade per country
   prevalence: { prop: 'prev', bins: PREV_60.bins, unit: '%', zh: '失智盛行率 60+ %（GBD）', en: 'Dementia 60+ % (GBD)', dec: 1 },
+  // MCI national estimate — a few strong-data countries, own scale, NOT cross-comparable (see method box)
+  mci: { prop: 'mci', bins: MCI_BINS, ramp: MCI_RAMP, unit: '%', zh: 'MCI 盛行率 %（國家別估計）', en: 'MCI % (national estimate)', dec: 1 },
 };
 function gMetric() { return WORLD_METRICS[mapMode] || WORLD_METRICS.pm25; }
 function gTheme(dark, light) { return document.documentElement.getAttribute('data-theme') === 'dark' ? dark : light; }
@@ -1898,6 +1921,7 @@ async function initMap() {
       L('界線 © NLSC／taiwan-atlas · Natural Earth｜PM2.5 © ACAG｜失智盛行率為模型估計值',
         'Boundaries © NLSC/taiwan-atlas · Natural Earth · PM2.5 © ACAG · dementia = modelled estimate'));
     EXPOSOME = await fetch('/data/exposome/exposome.json').then(r => r.ok ? r.json() : null).then(d => d && d.countries).catch(() => null);
+    MCI_NAT = await fetch('/data/mci/mci-national.json').then(r => r.ok ? r.json() : null).then(d => d && d.countries).catch(() => null);
     // Default landing = the global globe overview (marquee view; the country switcher's
     // first option). Drilling into a country lazily builds its Leaflet admin-1 map.
     await enterWorld();

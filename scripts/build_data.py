@@ -1152,6 +1152,78 @@ def build_exposome():
     return True
 
 
+# MCI (mild cognitive impairment) prevalence. GBD does not produce MCI, so there is no single global
+# per-country dataset; instead Bai et al. 2022 (Age & Ageing, afac173) is a systematic review +
+# meta-analysis giving pooled MCI prevalence by WORLD BANK REGION (adults 50+, community-dwelling). We
+# use that as a harmonised regional baseline for every country, and override with a NATIONAL study where
+# a strong one exists. MCI criteria/age bands still vary → a modelled estimate, indicative only.
+BAI_MCI = {"EAS": 19.0, "ECS": 10.9, "LCN": 18.3, "MEA": 13.0, "NAC": 15.5, "SAS": 13.9, "SSF": 3.8}
+BAI_SRC = "Bai et al. 2022, Age & Ageing (WB-region meta-analysis, 50+)"
+BAI_URL = "https://doi.org/10.1093/ageing/afac173"
+WB_REGION = {   # iso2 -> World Bank region id (from the World Bank country metadata)
+    "AD":"ECS","AE":"MEA","AF":"MEA","AG":"LCN","AL":"ECS","AM":"ECS","AO":"SSF","AR":"LCN","AS":"EAS",
+    "AT":"ECS","AU":"EAS","AW":"LCN","AZ":"ECS","BA":"ECS","BB":"LCN","BD":"SAS","BE":"ECS","BF":"SSF",
+    "BG":"ECS","BH":"MEA","BI":"SSF","BJ":"SSF","BM":"NAC","BN":"EAS","BO":"LCN","BR":"LCN","BS":"LCN",
+    "BT":"SAS","BW":"SSF","BY":"ECS","BZ":"LCN","CA":"NAC","CD":"SSF","CF":"SSF","CG":"SSF","CH":"ECS",
+    "CI":"SSF","CL":"LCN","CM":"SSF","CN":"EAS","CO":"LCN","CR":"LCN","CU":"LCN","CV":"SSF","CW":"LCN",
+    "CY":"ECS","CZ":"ECS","DE":"ECS","DJ":"MEA","DK":"ECS","DM":"LCN","DO":"LCN","DZ":"MEA","EC":"LCN",
+    "EE":"ECS","EG":"MEA","ER":"SSF","ES":"ECS","ET":"SSF","FI":"ECS","FJ":"EAS","FM":"EAS","FO":"ECS",
+    "FR":"ECS","GA":"SSF","GB":"ECS","GD":"LCN","GE":"ECS","GH":"SSF","GI":"ECS","GL":"ECS","GM":"SSF",
+    "GN":"SSF","GQ":"SSF","GR":"ECS","GT":"LCN","GU":"EAS","GW":"SSF","GY":"LCN","HK":"EAS","HN":"LCN",
+    "HR":"ECS","HT":"LCN","HU":"ECS","ID":"EAS","IE":"ECS","IL":"MEA","IM":"ECS","IN":"SAS","IQ":"MEA",
+    "IR":"MEA","IS":"ECS","IT":"ECS","JG":"ECS","JM":"LCN","JO":"MEA","JP":"EAS","KE":"SSF","KG":"ECS",
+    "KH":"EAS","KI":"EAS","KM":"SSF","KN":"LCN","KP":"EAS","KR":"EAS","KW":"MEA","KY":"LCN","KZ":"ECS",
+    "LA":"EAS","LB":"MEA","LC":"LCN","LI":"ECS","LK":"SAS","LR":"SSF","LS":"SSF","LT":"ECS","LU":"ECS",
+    "LV":"ECS","LY":"MEA","MA":"MEA","MC":"ECS","MD":"ECS","ME":"ECS","MF":"LCN","MG":"SSF","MH":"EAS",
+    "MK":"ECS","ML":"SSF","MM":"EAS","MN":"EAS","MO":"EAS","MP":"EAS","MR":"SSF","MT":"MEA","MU":"SSF",
+    "MV":"SAS","MW":"SSF","MX":"LCN","MY":"EAS","MZ":"SSF","NA":"SSF","NC":"EAS","NE":"SSF","NG":"SSF",
+    "NI":"LCN","NL":"ECS","NO":"ECS","NP":"SAS","NR":"EAS","NZ":"EAS","OM":"MEA","PA":"LCN","PE":"LCN",
+    "PF":"EAS","PG":"EAS","PH":"EAS","PK":"MEA","PL":"ECS","PR":"LCN","PS":"MEA","PT":"ECS","PW":"EAS",
+    "PY":"LCN","QA":"MEA","RO":"ECS","RS":"ECS","RU":"ECS","RW":"SSF","SA":"MEA","SB":"EAS","SC":"SSF",
+    "SD":"SSF","SE":"ECS","SG":"EAS","SI":"ECS","SK":"ECS","SL":"SSF","SM":"ECS","SN":"SSF","SO":"SSF",
+    "SR":"LCN","SS":"SSF","ST":"SSF","SV":"LCN","SX":"LCN","SY":"MEA","SZ":"SSF","TC":"LCN","TD":"SSF",
+    "TG":"SSF","TH":"EAS","TJ":"ECS","TL":"EAS","TM":"ECS","TN":"MEA","TO":"EAS","TR":"ECS","TT":"LCN",
+    "TV":"EAS","TZ":"SSF","UA":"ECS","UG":"SSF","US":"NAC","UY":"LCN","UZ":"ECS","VC":"LCN","VE":"LCN",
+    "VG":"LCN","VI":"LCN","VN":"EAS","VU":"EAS","WS":"EAS","XK":"ECS","YE":"MEA","ZA":"SSF","ZM":"SSF",
+    "ZW":"SSF", "TW":"EAS",
+}
+# National-study overrides (higher confidence than the regional baseline; methods differ per country).
+MCI_NATIONAL = {
+    "tw": {"prev_pct": 18.7, "year": 2013, "age": "65+", "crit": "門到門全國調查 / door-to-door",
+           "src": "Sun et al. 2014 / 2017 全國調查", "url": "https://doi.org/10.1371/journal.pone.0175475"},
+    "jp": {"prev_pct": 15.5, "year": 2022, "age": "65+", "crit": "厚労省推計 / MHLW estimate",
+           "src": "MHLW 2024（二宮研究班）", "url": "https://www.mhlw.go.jp/content/001279920.pdf"},
+    "kr": {"prev_pct": 22.7, "year": 2020, "age": "65+", "crit": "全國調查 NaSDEK / KDO",
+           "src": "Korea Dementia Observatory 2020", "url": "https://www.nid.or.kr"},
+    "in": {"prev_pct": 17.6, "year": 2024, "age": "60+", "crit": "DSM-5 mild NCD",
+           "src": "LASI-DAD (Lee et al.)", "url": "https://doi.org/10.1002/alz.12928"},
+    "cn": {"prev_pct": 15.4, "year": 2021, "age": "55+", "crit": "全國統合分析 / national meta",
+           "src": "Xue et al. 2021, Neuroepidemiology (China meta)", "url": "https://doi.org/10.1159/000512597"},
+}
+
+
+def build_mci_national():
+    """public/data/mci/mci-national.json — MCI prevalence per country: Bai 2022 WB-region baseline
+       (modelled, kind=regional) + national-study overrides (kind=national). Criteria vary → modelled."""
+    out = {}
+    for i2, region in WB_REGION.items():
+        if region in BAI_MCI:
+            out[i2.lower()] = {"prev_pct": BAI_MCI[region], "year": 2022, "age": "50+",
+                               "crit": f"WB {region} 區域統合 / regional pool", "src": BAI_SRC,
+                               "url": BAI_URL, "kind": "regional"}
+    for cc, m in MCI_NATIONAL.items():
+        out[cc] = {**m, "kind": "national"}
+    nnat = sum(1 for v in out.values() if v["kind"] == "national")
+    meta = {"metric": "MCI prevalence — regional meta-analysis baseline + national overrides",
+            "note": ("Regional baseline: Bai et al. 2022 (Age & Ageing) pooled MCI by World Bank region "
+                     "(adults 50+, community-dwelling). A few countries use a national study instead "
+                     "(kind=national). MCI criteria/age bands vary → modelled estimate, indicative only."),
+            "regionalSrc": BAI_SRC, "regionalUrl": BAI_URL, "built": BUILD_DATE}
+    write_json("mci/mci-national.json", {"meta": meta, "countries": out})
+    log(f"  mci: {len(out)} countries ({nnat} national overrides, rest Bai-2022 regional)")
+    return True
+
+
 # ---------- World globe asset: admin-0 boundaries + national PM2.5 + composite PAF ----------
 # For the 3D/2.5D globe prototypes. Natural Earth admin-0 (110m) polygons, with two national
 # metrics baked per country: PM2.5 (world-country-pm25.json, 246 countries, latest year) and
@@ -1225,6 +1297,8 @@ def build_world_globe_geojson():
     log("World globe geojson (admin-0 + national PM2.5 + PAF + 65+) …")
     world_pm = json.load(open(os.path.join(OUT, "pm25/world-country-pm25.json"), encoding="utf-8"))["countries"]
     expo = json.load(open(os.path.join(OUT, "exposome/exposome.json"), encoding="utf-8"))["countries"]
+    _mci_path = os.path.join(OUT, "mci/mci-national.json")   # a few strong-data countries; existence-guarded
+    mci = json.load(open(_mci_path, encoding="utf-8"))["countries"] if os.path.exists(_mci_path) else {}
     pop65 = _load_pop65()
     pm_norm = {_norm_country(k): v["values"][-1] for k, v in world_pm.items()}
     prev_norm = {_norm_country(k): v for k, v in load_gbd_prev60().items()}   # GBD dementia % among 60+ (national + subnat)
@@ -1249,6 +1323,7 @@ def build_world_globe_geojson():
         iso2c = "" if iso2 == "-99" else iso2
         paf = expo.get(iso2c.lower(), {}).get("composite_paf_pct") if iso2c else None   # composite PAF, matched by iso2
         pop = pop65.get(iso2c)
+        mci_v = mci.get(iso2c.lower(), {}).get("prev_pct") if iso2c else None            # national MCI (few strong-data countries)
         prev = None   # national dementia prevalence among 60+ (%) from GBD, matched by country name
         for fld in ("NAME", "NAME_LONG", "ADMIN", "GEOUNIT", "BRK_NAME", "NAME_EN", "FORMAL_EN"):
             nm = p.get(fld)
@@ -1260,7 +1335,7 @@ def build_world_globe_geojson():
         gm = {"type": gm["type"], "coordinates": _round_coords(gm["coordinates"], 2)}
         feats.append({"type": "Feature",
                       "properties": {"name": name, "iso_a2": iso2c,
-                                     "pm25": pm, "paf": paf, "pop65": pop, "prev": prev},
+                                     "pm25": pm, "paf": paf, "pop65": pop, "prev": prev, "mci": mci_v},
                       "geometry": gm})
     write_json("geo/world-globe.geojson", {
         "type": "FeatureCollection",
@@ -1268,6 +1343,7 @@ def build_world_globe_geojson():
                  "paf": "composite modifiable-risk PAF, ~200 countries (NCD-RisC + WHO GHO × Livingston 2024 RRs) — modelled",
                  "pop65": "population aged 65+ (% of total) — World Bank 2025 (SP.POP.65UP.TO.ZS), 217 economies + Taiwan 內政部戶政司 2025; modelled estimate",
                  "prev": "GBD 2023 dementia prevalence among 60+ (%), national — modelled (IHME non-commercial)",
+                 "mci": "national MCI prevalence, few strong-data countries — heterogeneous, NOT cross-comparable (own-scale national estimate)",
                  "boundaries": "Natural Earth admin-0 110m (public domain)", "built": BUILD_DATE},
         "features": feats})
     npaf = sum(1 for x in feats if x["properties"]["paf"] is not None)
@@ -1393,6 +1469,9 @@ def main():
     build_exposome()
     assets["exposome/exposome.json"] = ("national modifiable risk factors + composite PAF (~200 countries): "
                                         "NCD-RisC (BP/diabetes/BMI) + WHO GHO (smoking/inactivity) + Taiwan NHIS × Livingston 2024 RRs")
+    build_mci_national()
+    assets["mci/mci-national.json"] = ("MCI prevalence — Bai 2022 (Age & Ageing) WB-region meta-analysis "
+                                       "baseline + national overrides (TW/JP/KR/IN/CN); modelled estimate")
     build_world_globe_geojson()
     assets["geo/world-globe.geojson"] = ("Natural Earth admin-0 (public domain) + national PM2.5 "
                                          "(ACAG V6.GL.03, CC BY 4.0) + composite PAF (Livingston 2024) "
