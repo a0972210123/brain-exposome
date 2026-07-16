@@ -1217,6 +1217,16 @@ def _short_cite(c):
     return (m.group(1) if m else c.split(".")[0])[:70]
 
 
+def _mci_dx(crit):
+    """clinical (formal diagnosis) vs screening (MoCA/MMSE cut-off — NOT a diagnosis) — for the UI marker."""
+    c = (crit or "").lower()
+    if any(k in c for k in ("petersen", "dsm", "iwg", "winblad", "clinical", "neuropsych", "consensus", "diagnos")):
+        return "clinical"
+    if any(k in c for k in ("moca", "mmse", "screen", "hds", "mini-cog", "hasegawa", "cut-off", "cutoff")):
+        return "screening"
+    return "unknown"
+
+
 def build_mci_national():
     """public/data/mci/mci-national.json — Bai 2022 WB-region baseline (kind=regional) overlaid with
        NATIONAL values from scripts/mci-scd-sources.json where the estimate is a plausible MCI figure
@@ -1228,7 +1238,7 @@ def build_mci_national():
         if region in BAI_MCI:
             out[i2.lower()] = {"prev_pct": BAI_MCI[region], "year": "2022", "age": "50+",
                                "crit": f"WB {region} 區域統合 / regional pool", "src": BAI_SRC,
-                               "url": BAI_URL, "conf": "regional", "kind": "regional"}
+                               "url": BAI_URL, "conf": "regional", "dx": "regional", "kind": "regional"}
     lo, hi = MCI_PLAUSIBLE
     for cc, v in src.items():
         m = v.get("mci")
@@ -1238,9 +1248,9 @@ def build_mci_national():
             out[cc.lower()] = {"prev_pct": round(float(m["prev_pct"]), 1), "year": str(m.get("year", ""))[:9],
                                "age": m.get("age") or "", "crit": (m.get("criteria") or "")[:70],
                                "src": _short_cite(m.get("citation")), "url": m.get("doi_url"),
-                               "conf": m.get("confidence") or "", "kind": "national"}
+                               "conf": m.get("confidence") or "", "dx": _mci_dx(m.get("criteria")), "kind": "national"}
     for cc, m in MCI_NATIONAL.items():        # curated 5 (TW/JP/KR/IN/CN) — hand-verified, always win
-        out[cc] = {**m, "conf": "high", "kind": "national"}
+        out[cc] = {**m, "conf": "high", "dx": _mci_dx(m.get("crit")), "kind": "national"}
     nnat = sum(1 for v in out.values() if v["kind"] == "national")
     excl = sorted(cc for cc, v in src.items() if isinstance(v.get("mci"), dict)
                   and isinstance(v["mci"].get("prev_pct"), (int, float)) and not (lo <= v["mci"]["prev_pct"] <= hi))
