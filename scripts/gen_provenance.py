@@ -203,7 +203,8 @@ for ISO, aspects in cog.items():
 # (runs after the cognitive audit so it wins for the countries whose MCI is now on the globe)
 _mci = json.load(open(os.path.join(ROOT, "public/data/mci/mci-national.json"), encoding="utf-8"))["countries"]
 for _cc, _m in _mci.items():
-    OV.setdefault(_cc.upper(), {})["mci"] = {"natSrc": _m["src"], "natUrl": _m["url"], "natYear": str(_m["year"]), "status": "live"}
+    _st = "live" if _m.get("kind") == "national" else "seed"   # national study = live; Bai-2022 regional baseline = seed
+    OV.setdefault(_cc.upper(), {})["mci"] = {"natSrc": _m["src"], "natUrl": _m["url"], "natYear": str(_m["year"]), "status": _st}
 
 # ---- final clean: unescape any stray HTML entities in every override string ----
 SRC_CANON = {   # same underlying source must read identically map-vs-nonmap countries
