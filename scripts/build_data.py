@@ -1167,14 +1167,16 @@ def _round_coords(obj, nd=2):
 
 
 # Population aged 65+ (% of total), by ISO alpha-2. SEED = rounded latest-available World Bank
-# (SP.POP.65UP.TO.ZS) / UN WPP estimates (Taiwan: 內政部) for the map's countries + majors — a
+# (SP.POP.65UP.TO.ZS) / UN WPP estimates (Taiwan: 內政部戶政司) for the map's countries + majors — a
 # partial seed so the "aging society" layer ships visibly. The full ~200-country pull is a one-call
 # global sweep for a local session (World Bank API is blocked in the build sandbox); drop its output
 # as scripts/_data_in/world-65plus.csv (iso2,pct) and it overrides/extends this seed. Modelled estimate.
+# NB: for every World-Bank country the csv (currently WB 2025) wins, so only Taiwan — which the World
+# Bank excludes — actually reads from this seed. TW = 內政部戶政司 2025 年底 20.06%（正式邁入超高齡社會）.
 SEED_POP65 = {
     "JP": 29.9, "IT": 24.1, "PT": 24.0, "FI": 23.3, "GR": 22.7, "DE": 22.4, "FR": 21.7,
     "NL": 20.5, "SE": 20.3, "DK": 20.3, "ES": 20.3, "AT": 19.6, "PL": 19.4, "BE": 19.4,
-    "GB": 19.2, "CA": 19.0, "TW": 18.0, "KR": 17.5, "UA": 17.4, "AU": 17.2, "US": 17.1,
+    "GB": 19.2, "CA": 19.0, "TW": 20.1, "KR": 20.3, "UA": 17.4, "AU": 17.2, "US": 17.1,
     "NZ": 16.6, "RU": 15.6, "TH": 15.2, "CN": 13.7, "CL": 12.8, "AR": 12.4, "BR": 10.5,
     "CO": 9.6, "TR": 9.5, "VN": 9.0, "MX": 8.3, "MY": 7.4, "IR": 7.0, "ID": 6.9, "IN": 6.9,
     "MM": 6.9, "ZA": 6.0, "BD": 6.0, "PH": 5.7, "EG": 4.5, "PK": 4.4, "ET": 3.5, "NG": 3.0,
@@ -1249,7 +1251,7 @@ def build_world_globe_geojson():
         "type": "FeatureCollection",
         "meta": {"pm25": "ACAG SatPM2.5 V6.GL.03 national latest-year (CC BY 4.0)",
                  "paf": "composite modifiable-risk PAF, 27 countries (Livingston 2024 RRs) — modelled",
-                 "pop65": "population aged 65+ (% of total), World Bank/UN latest — partial seed, modelled estimate",
+                 "pop65": "population aged 65+ (% of total) — World Bank 2025 (SP.POP.65UP.TO.ZS), 217 economies + Taiwan 內政部戶政司 2025; modelled estimate",
                  "prev": "GBD 2023 dementia prevalence among 60+ (%), national — modelled (IHME non-commercial)",
                  "boundaries": "Natural Earth admin-0 110m (public domain)", "built": BUILD_DATE},
         "features": feats})
