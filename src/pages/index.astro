@@ -1466,21 +1466,41 @@ function expoNat() {   // national exposome value for the current mode+country
 function curBins() {
   return mapMode === 'composite' ? PAF_COMPOSITE.bins
     : EXPO_FACTORS.includes(mapMode) ? PAF_FACTOR.bins
+      : mapMode === 'mci' ? MCI_BINS : mapMode === 'scd' ? SCD_BINS
       : mapMode === 'prevalence' ? curPrev().bins : PM_BINS;
 }
 
 function codeOf(f) { return f.properties[MAP_CFG[mapCountry].codeProp]; }
-function valueFor(code) { return isExpo(mapMode) ? expoNat() : mapMode === 'prevalence' ? VAL.prev[code] : VAL.pm[code]; }
+function valueFor(code) {
+  if (mapMode === 'mci') return MCI_NAT && MCI_NAT[mapCountry] ? MCI_NAT[mapCountry].prev_pct : null;   // uniform national
+  if (mapMode === 'scd') return SCD_NAT && SCD_NAT[mapCountry] ? SCD_NAT[mapCountry].prev_pct : null;
+  return isExpo(mapMode) ? expoNat() : mapMode === 'prevalence' ? VAL.prev[code] : VAL.pm[code];
+}
 function colorFor(v) {
   if (v == null) return document.documentElement.getAttribute('data-theme') === 'dark' ? '#2b3050' : '#e6e6e6';
-  const bins = curBins();
+  const bins = curBins(), ramp = mapMode === 'mci' ? MCI_RAMP : mapMode === 'scd' ? SCD_RAMP : RAMP;
   let i = 0; while (i < bins.length && v > bins[i]) i++;
-  return RAMP[i];
+  return ramp[i];
 }
 function styleFn(f) { return { fillColor: colorFor(valueFor(codeOf(f))), weight: 0.4, color: '#fff', fillOpacity: 0.82 }; }
 function unitName(f) { const n = NAMES[codeOf(f)]; return n ? L(n.zh, n.en) : (f.properties.name || codeOf(f)); }
+function cogMark(r) {   // MCI diagnosis type / SCD instrument marker
+  if (!r) return '';
+  if (r.instrument) return r.instrument === 'self-report' ? L('單題自述', 'single-item self-report') : L('結構化問卷', 'structured');
+  if (r.dx === 'screening') return L('≈ 篩檢工具（非正式診斷）', '≈ screening tool (not a formal diagnosis)');
+  if (r.dx === 'regional') return L('區域統合估計', 'regional pooled estimate');
+  return L('臨床診斷', 'clinical diagnosis');
+}
+function cogTip(cc, mode, name) {   // MCI/SCD tooltip: value + age band + diagnosis/instrument marker
+  const D = mode === 'mci' ? MCI_NAT : SCD_NAT, r = D && D[cc];
+  const lab = mode === 'mci' ? 'MCI' : 'SCD', age = r ? (r.age || '').split('(')[0].trim() : '';
+  const val = r ? `${r.dx === 'screening' ? '≈ ' : ''}${r.prev_pct}%` : '—';
+  const meta = r ? [age, cogMark(r)].filter(Boolean).join(' · ') : L('無資料', 'no data');
+  return `<b>${name}</b><br>${lab}: ${val}<br><span style="opacity:.7;font-size:.9em">${meta}</span>`;
+}
 function tooltipFor(f) {
   const code = codeOf(f), name = unitName(f);
+  if (mapMode === 'mci' || mapMode === 'scd') return cogTip(mapCountry, mapMode, name);   // national value, uniform
   if (isExpo(mapMode)) {
     const e = EXPOSOME && EXPOSOME[mapCountry], sub = 'style="opacity:.7;font-size:.9em"';
     if (mapMode === 'composite') {
@@ -1519,6 +1539,8 @@ function buildLegend() {
   legendCtl.addTo(map);
 }
 function modeAvailable(m, layers) {
+  if (m === 'mci') return !!(MCI_NAT && MCI_NAT[mapCountry]);   // national value applied uniformly (no admin-1 data)
+  if (m === 'scd') return !!(SCD_NAT && SCD_NAT[mapCountry]);
   return isExpo(m) ? !!(EXPOSOME && EXPOSOME[mapCountry]) : layers.includes(m);
 }
 function syncModeButtons() {
@@ -1646,8 +1668,24 @@ function renderPrevTable(cc, meta) {
 // Method box dispatcher: prevalence/PM2.5 → the prevalence method table; exposome modes → PAF method.
 function renderMethodBox() {
   if (inWorld()) { renderWorldMethod(); return; }
+  if (mapMode === 'mci' || mapMode === 'scd') { renderCogMethod(); return; }
   if (isExpo(mapMode)) renderExpoMethod();
   else renderPrevTable(mapCountry, PREV_META);
+}
+function renderCogMethod() {   // drill-down MCI/SCD: national value applied uniformly (no admin-1 data)
+  const box = $('prev-method'); if (!box) return;
+  const D = mapMode === 'mci' ? MCI_NAT : SCD_NAT, r = D && D[mapCountry];
+  if (!r) { box.style.display = 'none'; box.innerHTML = ''; return; }
+  box.style.display = '';
+  const opt = document.querySelector(`#map-country option[value="${mapCountry}"]`);
+  const country = opt ? L(opt.dataset.zh, opt.dataset.en) : mapCountry.toUpperCase();
+  const lab = mapMode === 'mci' ? L('MCI（輕度認知障礙）', 'MCI (mild cognitive impairment)') : L('SCD（主觀認知衰退）', 'SCD (subjective cognitive decline)');
+  const note = L('此為<strong>全國估計值</strong>，目前沒有縣市（admin-1）層級的 MCI／SCD 資料，因此整個國家以同一色呈現。',
+    'This is a <strong>national estimate</strong> — no admin-1 (county/province) level MCI/SCD data exists, so the whole country is shown in one shade.');
+  const screen = r.dx === 'screening' ? L('　此國採<strong>篩檢工具（MoCA/MMSE）</strong>，非正式臨床診斷（數值偏高）。', ' This country used a <strong>screening tool (MoCA/MMSE)</strong>, not a formal clinical diagnosis (tends to over-estimate).') : '';
+  box.innerHTML = `<h3 class="prev-method-h">${country}：${lab}</h3>`
+    + `<p class="prev-method-p">${note}${screen}</p>`
+    + `<p class="prev-method-src">${r.prev_pct}%（${L('年齡', 'age')} ${r.age || '—'}；${r.year || ''}）· ${cogMark(r)} · <a href="${r.url}" target="_blank" rel="noopener">${r.src}</a>｜${L('模型估計、不可跨國比較', 'modelled estimate — not comparable across countries')}</p>`;
 }
 function renderWorldMethod() {
   const box = $('prev-method'); if (!box) return;
@@ -1858,8 +1896,10 @@ function gPointerMove(e) {
   const tip = $('globe-tip'), rect = gcanvas.getBoundingClientRect();
   if (found) {
     const m = gMetric(), v = found.properties[m.prop], drill = ccOfFeature(found);
-    tip.innerHTML = `<b>${found.properties.name}</b><br>${L(m.zh, m.en)}: `
-      + (v == null ? L('無資料', 'no data') : `${(+v).toFixed(m.dec)} ${m.unit}`)
+    const cc2 = (found.properties.iso_a2 || '').toLowerCase();
+    tip.innerHTML = ((mapMode === 'mci' || mapMode === 'scd')
+        ? cogTip(cc2, mapMode, found.properties.name)   // value + age band + diagnosis/instrument marker
+        : `<b>${found.properties.name}</b><br>${L(m.zh, m.en)}: ` + (v == null ? L('無資料', 'no data') : `${(+v).toFixed(m.dec)} ${m.unit}`))
       + (drill ? `<br><span style="opacity:.7">${L('點擊看行政區細節', 'click for admin-1 detail')}</span>` : '');
     tip.hidden = false;
     tip.style.left = Math.min(gW - 160, e.clientX - rect.left + 12) + 'px';
