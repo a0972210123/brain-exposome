@@ -133,36 +133,20 @@ raw 輸入放 gitignored `scripts/_data_in/`；`manifest.json` 由 build 產生�
 
 ---
 
-## 5. 自動化：建議的 GitHub Action 設計
+## 5. 自動化：GitHub Action（已實作）
 
-### 5.1 新增一支 `scripts/verify_sources.py`（自動化前置）
-- 讀一份 `scripts/source-manifest.json`（記錄每源目前版次/檔名/URL/最後檢查日）。
-- 對每源跑 verify-latest（§3）：**Tier A** 比對 API `lastupdated`/最新年；**Tier B** 比對下載頁檔名字串；
-  **Tier C** 略過（僅列人工待辦）。
-- 輸出：`updated=[...]`（有新版的源）。
+### 5.1 `scripts/data-versions.json` + `scripts/check_data_freshness.py`（已實作）
+- **`data-versions.json`** — 每源的 baseline：目前版次/年、`mode`（`api`｜`manual`）、檢查 URL。「登錄新資料」＝在導入新資料的同一個 PR 裡，把對應的 `current_year`/`current_version` 往上調。
+- **`check_data_freshness.py`** — 純 stdlib（urllib/json，CI 不需 pip）：
+  - `api` 源（World Bank `?mrv=1`、WHO GHO OData `TimeDim`）抓最新年並與 baseline 比對；WHO 會濾掉超過今年的「投影值」。
+  - `manual` 源（NCD-RisC×3、GBD、ACAG、Lancet、Bai）僅列出＋連結供人工瞄一眼（發佈少，無版本 API）。
+  - 輸出 Markdown 報告 + `has_updates`/`n_updates`（寫入 `GITHUB_OUTPUT`）。網路失敗不 crash，該源標「could not check」。
 
-### 5.2 `.github/workflows/data-refresh.yml`（草案）
-```yaml
-on:
-  schedule: [{ cron: "0 3 1 */3 *" }]   # 每季 1 號
-  workflow_dispatch: {}
-jobs:
-  refresh:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
-      - run: pip install -r scripts/requirements.txt
-      - run: python scripts/verify_sources.py --emit changed.json
-      # Tier A：有變更 → 重抓+rebuild+開 PR
-      - run: python scripts/build_data.py --only worldbank,who_gho   # 需支援 --only
-        if: contains(changed, 'A')
-      - name: Open PR (Tier A)
-        uses: peter-evans/create-pull-request@v6   # 產生 PR，不 auto-merge
-      # Tier B/C：只開 issue 提醒
-      - name: Notify (Tier B/C new-version)
-        uses: actions/github-script@v7
-```
+### 5.2 `.github/workflows/data-refresh.yml`（已實作）
+- **每月 1 號 06:00 UTC**（＋可手動 `workflow_dispatch`）跑 freshness check → 用 `gh` 開一張 **issue**：
+  標題視有無更新（`🔔 N update(s)` ／ `✅ no API changes`），內文含報告並 `@a0972210123` → owner 收到通知。
+- **目前為 v1，涵蓋：偵測（api）＋通知（issue @mention）＋review 提醒（issue 內建 checklist）＋登錄框架（`data-versions.json`）。**
+- **下一步（萃取＋自動開 PR）**：API 層（World Bank / WHO GHO）可在 CI 直接重抓重算並開 PR，但需先把 `build_data.py` 拆出一個 **CI-safe 子集**（現況是單體、且部分步驟依賴 gitignored 的 `_data_in/`）；manual 層本質上仍需人工下載。維持 **絕不 auto-merge**。
 - **關鍵限制與風險**：
   - **絕不 auto-merge**（沿用 owner-review 規則）。
   - **runner IP**：GitHub runners 一般不像某些 VPN 被政府入口封鎖，但 **每個 Tier-A/B 源都要先在 runner 上實測可達**
@@ -176,6 +160,14 @@ jobs:
 - **可全自動並自動開 PR**：World Bank 65+、WHO GHO 吸菸/活動不足（→ 綜合 PAF 亦隨之重算）。
 - **可自動偵測、需人工抓取/確認**：NCD-RisC 3 檔、ACAG PM2.5、GBD 新 round。
 - **維持人工**：GBD 匯出、WorldPop rasters、台灣 NHIS PDF、任何被封鎖入口。
+
+### 5.4 文獻雷達 `scripts/literature_watch.py`（已實作，v1 免金鑰）
+- 版本檢查（§5.1）只看「我們已知的資料源有沒有出新版」；文獻雷達則反過來問「**有沒有新論文可能更新我們在乎的數值**」。
+- `scripts/literature-watch.json` 定義 8 個監看主題（全球失智盛行/Lancet 委員會/MCI/SCD/PM2.5×失智/人口高齡化/危險因子盛行 + **台灣**），每個是一條 TITLE 限定的 Europe PMC 查詢（免金鑰、含 PubMed+PMC+preprint）。
+- 每月抓「近 `days_window` 天」新論文（滾動窗，不需 state 檔），每主題 top N，接到同一張 issue 的「📚 New literature」段。**只列候選，永不自動導入。**
+- **台灣特例**：因地緣政治，台灣常被 GBD/WHO/World Bank 排除 → `taiwan_cognitive` 主題 + `data-versions.json` 的兩個台灣政府源（內政部戶政司、國健署 NHIS）是補台灣缺口的方式。
+- 已找到的候選論文存 [`literature-candidates.md`](./literature-candidates.md)（人工 backlog）。
+- **雜訊**：TITLE 限定後每主題每月個位數～十幾筆（危險因子那條最吵）。想再砍雜訊 → **v2：LLM 相關性篩選**（見該 PR 的可行性評估；本 repo 為獨立 repo，可加 Groq/NVIDIA NIM/Cloudflare Workers AI/GitHub Models/OpenAI 等 secret）。
 
 ---
 

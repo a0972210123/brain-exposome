@@ -30,3 +30,7 @@ pnpm-debug.log*
 
 # raw data inputs (large, non-redistributable) — commit only derived assets
 scripts/_data_in/
+
+# python bytecode cache
+__pycache__/
+*.pyc
