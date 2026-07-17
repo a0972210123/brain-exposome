@@ -1248,7 +1248,7 @@ def build_mci_national():
             out[cc.lower()] = {"prev_pct": round(float(m["prev_pct"]), 1), "year": str(m.get("year", ""))[:9],
                                "age": m.get("age") or "", "crit": (m.get("criteria") or "")[:70],
                                "src": _short_cite(m.get("citation")), "url": m.get("doi_url"),
-                               "conf": m.get("confidence") or "", "dx": _mci_dx(m.get("criteria")), "kind": "national"}
+                               "conf": m.get("confidence") or "", "dx": _mci_dx(m.get("criteria")), "ci": m.get("ci"), "kind": "national"}
     for cc, m in MCI_NATIONAL.items():        # curated 5 (TW/JP/KR/IN/CN) — hand-verified, always win
         out[cc] = {**m, "conf": "high", "dx": _mci_dx(m.get("crit")), "kind": "national"}
     nnat = sum(1 for v in out.values() if v["kind"] == "national")
@@ -1280,7 +1280,7 @@ def build_scd_national():
         out[cc.lower()] = {"prev_pct": round(float(s["prev_pct"]), 1), "year": str(s.get("year", ""))[:9],
                            "age": s.get("age") or "", "crit": crit[:70], "src": _short_cite(s.get("citation")),
                            "url": s.get("doi_url"), "conf": s.get("confidence") or "",
-                           "instrument": "self-report" if "self-report" in crit.lower() else "structured"}
+                           "ci": s.get("ci"), "instrument": "self-report" if "self-report" in crit.lower() else "structured"}
     meta = {"metric": "SCD prevalence — national values (self-report; no global baseline)",
             "note": ("Subjective cognitive decline. There is NO harmonised global SCD dataset, and estimates "
                      "are dominated by single-item self-report (memory complaints) that inflates to 40–76% and "
