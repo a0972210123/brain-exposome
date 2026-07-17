@@ -1563,7 +1563,7 @@ function modeAvailable(m, layers) {
 }
 function syncModeButtons() {
   const world = inWorld();
-  const worldModes = ['prevalence', 'pm25', 'composite', 'aging', 'mci', 'scd'];
+  const worldModes = ['prevalence', 'pm25', 'composite', 'aging', 'mci', 'scd', ...EXPO_FACTORS];
   const layers = world ? worldModes : MAP_CFG[mapCountry].layers;
   document.querySelectorAll('.map-btn').forEach(b => {
     // Global globe carries the cross-country-comparable / national metrics (PM2.5, composite PAF,
@@ -1574,11 +1574,11 @@ function syncModeButtons() {
     b.classList.toggle('is-disabled', !on);
     b.classList.toggle('is-active', on && b.dataset.mode === mapMode);
   });
-  const fsel = $('map-factor');   // single-factor picker: enabled when exposome data present (never in world view)
+  const fsel = $('map-factor');   // single-factor PAF picker: on the globe (baked per-country) or a country with exposome data
   if (fsel) {
-    fsel.disabled = world || !(EXPOSOME && EXPOSOME[mapCountry]);
-    fsel.value = (!world && EXPO_FACTORS.includes(mapMode)) ? mapMode : '';
-    fsel.classList.toggle('is-active', !world && EXPO_FACTORS.includes(mapMode));
+    fsel.disabled = world ? false : !(EXPOSOME && EXPOSOME[mapCountry]);
+    fsel.value = EXPO_FACTORS.includes(mapMode) ? mapMode : '';
+    fsel.classList.toggle('is-active', EXPO_FACTORS.includes(mapMode));
   }
   const note = $('map-prev-note');
   if (note) note.style.display = world ? 'none' : (layers.includes('prevalence') ? 'none' : '');
@@ -1724,6 +1724,10 @@ function renderWorldMethod() {
   } else if (mapMode === 'scd') {
     body = L('SCD（主觀認知衰退＝自覺記憶變差）目前僅少數國家有資料，且多為<strong>單題自述</strong>，會因問法不同膨脹到 40–76%，<strong>完全不可跨國比較</strong>；也沒有全球統合來源可當底色。此層以各國自身估計、獨立色階呈現，僅供概覽。',
       'SCD (subjective cognitive decline — self-perceived memory worsening) exists for only a few countries and is mostly <strong>single-item self-report</strong>, which inflates to 40–76% with question wording — <strong>not comparable across countries at all</strong>, and there is no global meta to use as a baseline. Shown on its own scale, indicative only.');
+  } else if (EXPO_FACTORS.includes(mapMode)) {
+    const lab = FACTOR_LABEL[mapMode];
+    body = L(`每個國家以「${lab[0]}」單一因子的可歸因比例（PAF %）著色：PAF = P(RR−1)/[1+P(RR−1)]，P 為該國成人盛行率，RR 取自 Livingston 2024。約 170 國有資料，其餘為灰色，此為跨國可比的下限估計。把游標移到國家看該國「盛行率」與「PAF」；點國家看完整 5 因子拆解。`,
+      `Each country is shaded by the single-factor attributable fraction (PAF %) for ${lab[1].toLowerCase()}: PAF = P(RR−1)/[1+P(RR−1)], P = national adult prevalence, RR from Livingston 2024. ~170 countries have data; the rest are grey — a cross-country-comparable floor. Hover a country for its prevalence and PAF; click for the full 5-factor breakdown.`);
   } else {
     body = L('每個國家以近年全國人口加權 PM2.5（ACAG 衛星，µg/m³）著色，色階與各國地圖同一套 WHO 基準（≤5）。點任一國可下鑽到其行政區細節。',
       'Each country is shaded by recent national population-weighted PM2.5 (ACAG satellite, µg/m³) on the same WHO-anchored scale (≤5) as the per-country maps. Click a country to drill into its admin-1 detail.');
@@ -1835,6 +1839,16 @@ const WORLD_METRICS = {
   // SCD national self-report — own scale, NOT comparable (see method box)
   scd: { prop: 'scd', bins: SCD_BINS, ramp: SCD_RAMP, unit: '%', zh: 'SCD 盛行率 %（自述、部分國）', en: 'SCD % (self-report, few)', dec: 1 },
 };
+// Single-factor PAF on the globe: read the per-country baked values — props.fac[k].f (PAF, colour)
+// and .p (national prevalence, tooltip). Uses the same PAF_FACTOR bins/ramp as the flat maps.
+for (const _k of EXPO_FACTORS) {
+  WORLD_METRICS[_k] = {
+    factor: _k, bins: PAF_FACTOR.bins, unit: '%', dec: 1,
+    zh: FACTOR_LABEL[_k][0] + ' PAF %', en: FACTOR_LABEL[_k][1] + ' PAF %',
+    get: p => (p.fac && p.fac[_k]) ? p.fac[_k].f : null,
+    prevGet: p => (p.fac && p.fac[_k]) ? p.fac[_k].p : null,
+  };
+}
 function gMetric() { return WORLD_METRICS[mapMode] || WORLD_METRICS.pm25; }
 function gTheme(dark, light) { return document.documentElement.getAttribute('data-theme') === 'dark' ? dark : light; }
 function gColor(v, bins, ramp) {
@@ -1868,7 +1882,8 @@ function gDraw() {
   const m = gMetric();
   for (const f of worldGeo) {
     gctx.beginPath(); gpath(f);
-    gctx.fillStyle = gColor(f.properties[m.prop], m.bins, m.ramp); gctx.fill();
+    const gv = m.get ? m.get(f.properties) : f.properties[m.prop];
+    gctx.fillStyle = gColor(gv, m.bins, m.ramp); gctx.fill();
     gctx.lineWidth = f === ghover ? 1.3 : 0.4;
     gctx.strokeStyle = f === ghover ? gTheme('#fff', '#111') : gTheme('#2a2f4a', '#fff');
     gctx.stroke();
@@ -1915,12 +1930,20 @@ function gPointerMove(e) {
   if (found !== ghover) { ghover = found; gDraw(); }
   const tip = $('globe-tip'), rect = gcanvas.getBoundingClientRect();
   if (found) {
-    const m = gMetric(), v = found.properties[m.prop], drill = ccOfFeature(found);
+    const m = gMetric(), v = m.get ? m.get(found.properties) : found.properties[m.prop], drill = ccOfFeature(found);
     const cc2 = (found.properties.iso_a2 || '').toLowerCase();
-    tip.innerHTML = ((mapMode === 'mci' || mapMode === 'scd')
-        ? cogTip(cc2, mapMode, found.properties.name)   // value + age band + diagnosis/instrument marker
-        : `<b>${found.properties.name}</b><br>${L(m.zh, m.en)}: ` + (v == null ? L('無資料', 'no data') : `${(+v).toFixed(m.dec)} ${m.unit}`))
-      + (drill ? `<br><span style="opacity:.7">${L('點擊看行政區細節', 'click for admin-1 detail')}</span>` : '');
+    let core;
+    if (mapMode === 'mci' || mapMode === 'scd') {
+      core = cogTip(cc2, mapMode, found.properties.name);   // value + age band + diagnosis/instrument marker
+    } else if (m.factor) {                                  // single risk factor: show prevalence + PAF
+      const pv = m.prevGet ? m.prevGet(found.properties) : null;
+      core = `<b>${found.properties.name}</b><br>${L(m.zh, m.en)}: `
+        + (v == null ? L('無資料', 'no data')
+                     : `${(+v).toFixed(m.dec)}%<br><span style="opacity:.7">${L('盛行率', 'prevalence')} ${pv != null ? pv + '%' : '—'}</span>`);
+    } else {
+      core = `<b>${found.properties.name}</b><br>${L(m.zh, m.en)}: ` + (v == null ? L('無資料', 'no data') : `${(+v).toFixed(m.dec)} ${m.unit}`);
+    }
+    tip.innerHTML = core + (drill ? `<br><span style="opacity:.7">${L('點擊看行政區細節', 'click for admin-1 detail')}</span>` : '');
     tip.hidden = false;
     tip.style.left = Math.min(gW - 160, e.clientX - rect.left + 12) + 'px';
     tip.style.top = (e.clientY - rect.top + 12) + 'px';
@@ -2001,8 +2024,13 @@ async function initMap() {
       if (inWorld()) { gLegendBuild(); gDraw(); syncModeButtons(); renderMethodBox(); }
       else applyMode();
     }));
-    const fsel = $('map-factor');   // single-factor PAF picker (country view only)
-    if (fsel) fsel.addEventListener('change', () => { if (fsel.value && !inWorld()) { mapMode = fsel.value; applyMode(); } });
+    const fsel = $('map-factor');   // single-factor PAF picker: works on the globe and in a country's admin-1 map
+    if (fsel) fsel.addEventListener('change', () => {
+      if (!fsel.value) return;
+      mapMode = fsel.value;
+      if (inWorld()) { gLegendBuild(); gDraw(); syncModeButtons(); renderMethodBox(); }
+      else applyMode();
+    });
     const cs = $('map-country');
     if (cs) cs.addEventListener('change', () => selectView(cs.value));
     const zoom = $('map-zoom');   // universal zoom: drives the globe's scale or Leaflet's zoom

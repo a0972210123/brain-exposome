@@ -1391,7 +1391,10 @@ def build_world_globe_geojson():
         if pm is None and _norm_country(name) != "antarctica":
             unmatched.append(name)
         iso2c = "" if iso2 == "-99" else iso2
-        paf = expo.get(iso2c.lower(), {}).get("composite_paf_pct") if iso2c else None   # composite PAF, matched by iso2
+        _ex = expo.get(iso2c.lower(), {}) if iso2c else {}
+        paf = _ex.get("composite_paf_pct")   # composite PAF, matched by iso2
+        # per-factor {prev, paf} so the globe can shade by a single risk factor (compact keys p/f)
+        fac = {k: {"p": v["prev_pct"], "f": v["paf_pct"]} for k, v in _ex.get("factors", {}).items()} or None
         pop = pop65.get(iso2c)
         mci_v = mci.get(iso2c.lower(), {}).get("prev_pct") if iso2c else None            # MCI (Bai regional + national)
         scd_v = scd.get(iso2c.lower(), {}).get("prev_pct") if iso2c else None            # SCD (national self-report, ~38 countries)
@@ -1406,12 +1409,13 @@ def build_world_globe_geojson():
         gm = {"type": gm["type"], "coordinates": _round_coords(gm["coordinates"], 2)}
         feats.append({"type": "Feature",
                       "properties": {"name": name, "iso_a2": iso2c,
-                                     "pm25": pm, "paf": paf, "pop65": pop, "prev": prev, "mci": mci_v, "scd": scd_v},
+                                     "pm25": pm, "paf": paf, "fac": fac, "pop65": pop, "prev": prev, "mci": mci_v, "scd": scd_v},
                       "geometry": gm})
     write_json("geo/world-globe.geojson", {
         "type": "FeatureCollection",
         "meta": {"pm25": "ACAG SatPM2.5 V6.GL.03 national latest-year (CC BY 4.0)",
                  "paf": "composite modifiable-risk PAF, ~200 countries (NCD-RisC + WHO GHO × Livingston 2024 RRs) — modelled",
+                 "fac": "per-factor {p: national prevalence %, f: PAF %} for the 5 chronic-disease factors (hypertension/diabetes/obesity/smoking/physical_inactivity) — lets the globe shade a single factor; modelled",
                  "pop65": "population aged 65+ (% of total) — World Bank 2025 (SP.POP.65UP.TO.ZS), 217 economies + Taiwan 內政部戶政司 2025; modelled estimate",
                  "prev": "GBD 2023 dementia prevalence among 60+ (%), national — modelled (IHME non-commercial)",
                  "mci": "MCI prevalence — Bai 2022 WB-region baseline + national values (mci-scd-sources.json); modelled, NOT cross-comparable",
