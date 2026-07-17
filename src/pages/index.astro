@@ -1491,10 +1491,14 @@ function cogMark(r) {   // MCI diagnosis type / SCD instrument marker
   if (r.dx === 'regional') return L('區域統合估計', 'regional pooled estimate');
   return L('臨床診斷', 'clinical diagnosis');
 }
-function cogTip(cc, mode, name) {   // MCI/SCD tooltip: value + age band + diagnosis/instrument marker
+function ciRange(r) {   // clean numeric 95% CI range from the (often messy) ci field, else ''
+  const cm = r && r.ci ? String(r.ci).match(/\d+(?:\.\d+)?\s*[-–—]\s*\d+(?:\.\d+)?/) : null;
+  return cm ? ` (95% CI ${cm[0].replace(/\s/g, '')})` : '';
+}
+function cogTip(cc, mode, name) {   // MCI/SCD tooltip: value + CI + age band + diagnosis/instrument marker
   const D = mode === 'mci' ? MCI_NAT : SCD_NAT, r = D && D[cc];
   const lab = mode === 'mci' ? 'MCI' : 'SCD', age = r ? (r.age || '').split('(')[0].trim() : '';
-  const val = r ? `${r.dx === 'screening' ? '≈ ' : ''}${r.prev_pct}%` : '—';
+  const val = r ? `${r.dx === 'screening' ? '≈ ' : ''}${r.prev_pct}%${ciRange(r)}` : '—';
   const meta = r ? [age, cogMark(r)].filter(Boolean).join(' · ') : L('無資料', 'no data');
   return `<b>${name}</b><br>${lab}: ${val}<br><span style="opacity:.7;font-size:.9em">${meta}</span>`;
 }
@@ -1685,7 +1689,7 @@ function renderCogMethod() {   // drill-down MCI/SCD: national value applied uni
   const screen = r.dx === 'screening' ? L('　此國採<strong>篩檢工具（MoCA/MMSE）</strong>，非正式臨床診斷（數值偏高）。', ' This country used a <strong>screening tool (MoCA/MMSE)</strong>, not a formal clinical diagnosis (tends to over-estimate).') : '';
   box.innerHTML = `<h3 class="prev-method-h">${country}：${lab}</h3>`
     + `<p class="prev-method-p">${note}${screen}</p>`
-    + `<p class="prev-method-src">${r.prev_pct}%（${L('年齡', 'age')} ${r.age || '—'}；${r.year || ''}）· ${cogMark(r)} · <a href="${r.url}" target="_blank" rel="noopener">${r.src}</a>｜${L('模型估計、不可跨國比較', 'modelled estimate — not comparable across countries')}</p>`;
+    + `<p class="prev-method-src">${r.prev_pct}%${ciRange(r)}（${L('年齡', 'age')} ${r.age || '—'}；${r.year || ''}）· ${cogMark(r)} · <a href="${r.url}" target="_blank" rel="noopener">${r.src}</a>｜${L('模型估計、不可跨國比較', 'modelled estimate — not comparable across countries')}</p>`;
 }
 function renderWorldMethod() {
   const box = $('prev-method'); if (!box) return;
