@@ -32,6 +32,9 @@ import T from '../components/T.astro';
       </ul>
     </section>
 
+    <!-- Personal entry: the 14 modifiable risk factors -->
+    <p class="section-heading"><T zh="個人 14 項可調整失智症風險因子填寫" en="Enter your 14 modifiable dementia risk factors" /></p>
+
     <!-- Wizard -->
     <div class="wizard">
       <ol class="wizard-steps" id="wizard-steps">
@@ -302,7 +305,7 @@ import T from '../components/T.astro';
 
     <!-- How it's calculated (brain-age model) — after the personal result, before the map -->
     <section class="calc-section calc-method">
-      <p class="section-heading"><T zh="計算方式" en="How this is calculated" /></p>
+      <p class="section-heading"><T zh="相對風險與腦齡計算方式" en="How relative risk & brain age are calculated" /></p>
       <p class="calc-section-desc">
         <T
           zh="每個「有」的因子會帶入已發表的相對風險（RR，主要來自 2024 年 Lancet 委員會與其引用的統合分析）。因為這些因子彼此相關、會重複計算，我們在合併時乘上一個縮減係數 λ = 0.6（近似委員會的 communality 調整），並設上限，避免高估。合併後的有效 RR 再換算成「腦齡加速」年數：Δ年 ≈ log₂(RR) × 5.5（失智風險大約每 5–6 年翻倍）。空氣污染以連續劑量處理（每 +5 µg/m³ 約 HR 1.08），因此不再重複計入委員會的類別式空污因子。"
