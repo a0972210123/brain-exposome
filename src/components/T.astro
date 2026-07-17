@@ -1,0 +1,7 @@
+---
+// Bilingual text helper: renders both languages; CSS (data-lang on <html>) shows one.
+// Usage: <T zh="首頁" en="Home" />
+interface Props { zh: string; en: string; }
+const { zh, en } = Astro.props;
+---
+<span class="lang-zh">{zh}</span><span class="lang-en">{en}</span>

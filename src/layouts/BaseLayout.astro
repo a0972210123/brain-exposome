@@ -1,0 +1,123 @@
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  lang?: string;
+  ogType?: 'website' | 'article';
+  image?: string;
+}
+
+const {
+  title,
+  description = '葉淨維 Ching-Wei (Matt) Ye 的個人網站',
+  lang = 'zh-TW',
+  ogType = 'website',
+  image = '/OG.png',
+} = Astro.props;
+
+const siteURL = Astro.site ?? 'https://brain-exposome.mattye.dev';
+const canonicalURL = new URL(Astro.url.pathname, siteURL);
+const imageURL = new URL(image, siteURL);
+const siteName = 'Matt Ye';
+const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
+
+const personLd = {
+  '@type': 'Person',
+  '@id': 'https://mattye.dev/#person',
+  name: 'Ching-Wei (Matt) Ye',
+  alternateName: '葉淨維',
+  url: 'https://mattye.dev',
+  jobTitle: 'PhD Candidate · Presentation Coach',
+  alumniOf: { '@type': 'CollegeOrUniversity', name: 'National Taiwan University' },
+  sameAs: ['https://www.linkedin.com/in/ching-wei-ye'],
+};
+const websiteLd = {
+  '@type': 'WebSite',
+  '@id': 'https://brain-exposome.mattye.dev/#website',
+  name: siteName,
+  url: 'https://brain-exposome.mattye.dev',
+  inLanguage: 'zh-TW',
+  datePublished: '2026-05-31',
+  copyrightYear: 2026,
+  publisher: { '@id': 'https://mattye.dev/#person' },
+};
+const jsonLd = { '@context': 'https://schema.org', '@graph': [personLd, websiteLd] };
+---
+<!doctype html>
+<html lang={lang}>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="generator" content={Astro.generator} />
+
+    <!-- Prevent flash of wrong theme (runs before render) -->
+    <script is:inline>
+      (function () {
+        const saved = localStorage.getItem('theme');
+        const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
+        const theme = saved ?? (prefersDark ? 'dark' : 'light');
+        document.documentElement.setAttribute('data-theme', theme);
+      })();
+    </script>
+
+    <!-- Language preference (runs before render; default zh) -->
+    <script is:inline>
+      (function () {
+        const lang = localStorage.getItem('lang') === 'en' ? 'en' : 'zh';
+        document.documentElement.setAttribute('data-lang', lang);
+        document.documentElement.lang = lang === 'en' ? 'en' : 'zh-TW';
+      })();
+    </script>
+
+    <title>{fullTitle}</title>
+    <meta name="description" content={description} />
+
+    <link rel="canonical" href={canonicalURL} />
+
+    <meta name="author" content="Ching-Wei (Matt) Ye" />
+
+    <meta property="og:type" content={ogType} />
+    <meta property="og:title" content={fullTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonicalURL} />
+    <meta property="og:site_name" content={siteName} />
+    <meta property="og:image" content={imageURL} />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content={fullTitle} />
+
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={fullTitle} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={imageURL} />
+    <meta name="twitter:creator" content="@mattye_dev" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
+
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <slot name="head" />
+
+    <!-- Google Analytics 4 -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-1RKL72DPPW"></script>
+    <script is:inline>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-1RKL72DPPW');
+    </script>
+  </head>
+  <body>
+    <Header />
+    <main>
+      <slot name="full-width" />
+      <div class="container">
+        <slot />
+      </div>
+    </main>
+    <Footer />
+  </body>
+</html>

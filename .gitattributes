@@ -1,0 +1,9 @@
+# Normalize line endings — repo is built on Linux (Cloudflare Pages)
+* text=auto eol=lf
+
+# Binary assets
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.webp binary
+*.ico binary

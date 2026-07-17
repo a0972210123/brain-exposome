@@ -1,0 +1,100 @@
+# MCI/SCD 待下載清單（88 篇，VPN + 瀏覽器批量下載）
+
+curl/自動化被出版社 bot 防護擋下；請用**瀏覽器批量工具**下載（你已在 VPN + 登入）：
+- **Zotero**（推薦）：Connector 匯入下面的 DOI → 右鍵『Find Available PDF』批量抓取（用機構權限）。
+- 或瀏覽器『下載全部連結 PDF』擴充套件貼上下面 URL。
+- 下載到 Downloads 後，移到 `scripts/_data_in/mci-scd-pdfs/`（gitignored）。
+
+**優先：有省/縣/市（admin-1）資料者先下**。
+
+## ① 優先——含次國家（admin-1）資料 (29)
+- **Albania MCI** — https://doi.org/10.3390/brainsci14100955  ·  DOI: `10.3390/brainsci14100955`
+- **Argentina MCI** — https://pmc.ncbi.nlm.nih.gov/articles/PMC5619181/
+- **Armenia MCI** — https://pmc.ncbi.nlm.nih.gov/articles/PMC12724876/
+- **Bolivia MCI** — https://doi.org/10.1002/alz.12626  ·  DOI: `10.1002/alz.12626`
+- **Brazil SCD** — https://pmc.ncbi.nlm.nih.gov/articles/PMC9663677/
+- **Brunei MCI** — https://www.mdpi.com/2499-6564/74/2/8
+- **Bulgaria MCI** — https://pmc.ncbi.nlm.nih.gov/articles/PMC10697338/
+- **Chile SCD** — https://doi.org/10.3233/JAD-230541  ·  DOI: `10.3233/JAD-230541`
+- **China MCI** — https://doi.org/10.1016/S2468-2667(20)30185-7  ·  DOI: `10.1016/S2468-2667(20)30185-7`
+- **Georgia MCI** — https://pmc.ncbi.nlm.nih.gov/articles/PMC5946339/
+- **Malaysia MCI** — https://pmc.ncbi.nlm.nih.gov/articles/PMC6663036/
+- **Mongolia MCI** — https://neuroscirn.org/2021v4i3supplno99/
+- **New Zealand MCI** — https://pmc.ncbi.nlm.nih.gov/articles/PMC6804777/
+- **Nigeria MCI** — https://pmc.ncbi.nlm.nih.gov/articles/PMC10682501/
+- **Pakistan MCI** — https://www.researchgate.net/publication/380138265
+- **Portugal MCI** — https://pmc.ncbi.nlm.nih.gov/articles/PMC10852416/
+- **Saudi Arabia MCI** — https://doi.org/10.1159/000487231  ·  DOI: `10.1159/000487231`
+- **Spain SCD** — https://doi.org/10.3390/jfmk9030150  ·  DOI: `10.3390/jfmk9030150`
+- **Sweden MCI** — https://doi.org/10.1002/trc2.12260  ·  DOI: `10.1002/trc2.12260`
+- **United Kingdom SCD** — https://pmc.ncbi.nlm.nih.gov/articles/PMC10582873/
+- **Vietnam MCI** — https://doi.org/10.1177/00469580261444222  ·  DOI: `10.1177/00469580261444222`
+- **Vietnam SCD** — https://pmc.ncbi.nlm.nih.gov/articles/PMC5986585/
+- **Canada MCI** — https://www.thelancet.com/journals/lancet/article/PIIS0140673697010076/abstract
+- **Egypt MCI** — https://doi.org/10.3233/JAD-142655  ·  DOI: `10.3233/JAD-142655`
+- **Greece MCI** — https://doi.org/10.1097/WAD.0000000000000361  ·  DOI: `10.1097/WAD.0000000000000361`
+- **Japan SCD** — https://www.cambridge.org/core/journals/international-psychogeriatrics/article/abs/association-between-childhood-socioeconomic-status-and-subjective-memory-complaints-among-older-adults-results-from-the-japan-gerontological-evaluation-study-2010/30CA74870E3D4F3F4DD11ED6AD803294
+- **Kazakhstan MCI** — https://journals.lww.com/alzheimerjournal/abstract/2019/04000/prevalence_of_mild_cognitive_impairment_among.8.aspx
+- **Philippines MCI** — https://doi.org/10.3233/JAD-180095  ·  DOI: `10.3233/JAD-180095`
+- **Spain MCI** — https://pubmed.ncbi.nlm.nih.gov/26923809/
+
+## ② 其餘（備用） (59)
+- **Botswana SCD** — https://pmc.ncbi.nlm.nih.gov/articles/PMC12395718/
+- **Canada SCD** — https://www.ncbi.nlm.nih.gov/pmc/articles/PMC8681321/
+- **Chile MCI** — https://www.sciencedirect.com/science/article/pii/S2667032122000531
+- **Czechia MCI** — https://doi.org/10.3233/JAD-190688  ·  DOI: `10.3233/JAD-190688`
+- **Denmark SCD** — https://pmc.ncbi.nlm.nih.gov/articles/PMC3587297/
+- **Ecuador MCI** — https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6221535/
+- **France SCD** — https://pubmed.ncbi.nlm.nih.gov/22672286/
+- **Germany SCD** — https://pmc.ncbi.nlm.nih.gov/articles/PMC4713115/
+- **Ghana MCI** — https://pmc.ncbi.nlm.nih.gov/articles/PMC11665373/
+- **Guatemala MCI** — https://revistasociedadcunzac.com/index.php/revista/article/download/85/99
+- **Iceland MCI** — https://pmc.ncbi.nlm.nih.gov/articles/PMC5386007/
+- **India SCD** — https://doi.org/10.1002/alz.14505  ·  DOI: `10.1002/alz.14505`
+- **Indonesia MCI** — https://ppjp.ulm.ac.id/journal/index.php/berkala-kesehatan/article/view/9786
+- **Iran MCI** — https://doi.org/10.1002/hsr2.1827  ·  DOI: `10.1002/hsr2.1827`
+- **Israel MCI** — https://pmc.ncbi.nlm.nih.gov/articles/PMC10738720/
+- **Jordan MCI** — https://pmc.ncbi.nlm.nih.gov/articles/PMC10849287/
+- **Kuwait MCI** — https://pmc.ncbi.nlm.nih.gov/articles/PMC11995643/
+- **Lebanon SCD** — https://pmc.ncbi.nlm.nih.gov/articles/PMC11716388/
+- **Malawi SCD** — https://pmc.ncbi.nlm.nih.gov/articles/PMC4325343/
+- **Morocco MCI** — https://www.ncbi.nlm.nih.gov/pmc/articles/PMC12726269/
+- **Morocco SCD** — https://www.ncbi.nlm.nih.gov/pmc/articles/PMC10229085/
+- **Norway MCI** — https://doi.org/10.3233/JAD-201275  ·  DOI: `10.3233/JAD-201275`
+- **Norway SCD** — https://doi.org/10.1136/bmjopen-2021-058810  ·  DOI: `10.1136/bmjopen-2021-058810`
+- **Palestine MCI** — https://www.tandfonline.com/doi/full/10.1080/23311908.2025.2478715  ·  DOI: `10.1080/23311908.2025.2478715`
+- **South Africa MCI** — https://www.ncbi.nlm.nih.gov/pmc/articles/PMC6521106/
+- **Sudan MCI** — https://www.tandfonline.com/doi/full/10.2147/IJGM.S573913  ·  DOI: `10.2147/IJGM.S573913`
+- **Sweden SCD** — https://pmc.ncbi.nlm.nih.gov/articles/PMC4063353/
+- **Turkey SCD** — https://doi.org/10.55730/1300-0144.6104  ·  DOI: `10.55730/1300-0144.6104`
+- **United States MCI** — https://doi.org/10.1001/jamaneurol.2022.3543  ·  DOI: `10.1001/jamaneurol.2022.3543`
+- **Zambia MCI** — https://pmc.ncbi.nlm.nih.gov/articles/PMC11713415/
+- **Argentina SCD** — https://doi.org/10.1177/13872877251400666  ·  DOI: `10.1177/13872877251400666`
+- **Australia MCI** — https://www.sciencedirect.com/science/article/abs/pii/S155252601200026X
+- **Austria MCI** — https://doi.org/10.1002/gps.1311  ·  DOI: `10.1002/gps.1311`
+- **Bangladesh MCI** — https://doi.org/10.1007/s10389-021-01569-z  ·  DOI: `10.1007/s10389-021-01569-z`
+- **Benin MCI** — https://pubmed.ncbi.nlm.nih.gov/19136831/
+- **Brazil MCI** — https://pubmed.ncbi.nlm.nih.gov/26629676/
+- **Burkina Faso MCI** — https://pubmed.ncbi.nlm.nih.gov/23827740/
+- **Central African Rep. MCI** — https://pubmed.ncbi.nlm.nih.gov/26099336/
+- **Colombia SCD** — https://doi.org/10.1177/13872877251400666  ·  DOI: `10.1177/13872877251400666`
+- **Congo MCI** — https://pubmed.ncbi.nlm.nih.gov/26099336/
+- **El Salvador MCI** — https://doi.org/10.1016/j.jalz.2017.06.1183  ·  DOI: `10.1016/j.jalz.2017.06.1183`
+- **Finland MCI** — https://pubmed.ncbi.nlm.nih.gov/12174174/
+- **Finland SCD** — https://doi.org/10.1212/WNL.45.4.741  ·  DOI: `10.1212/WNL.45.4.741`
+- **France MCI** — https://www.neurology.org/doi/10.1212/01.WNL.0000034176.07159.F8  ·  DOI: `10.1212/01.WNL.0000034176.07159.F8`
+- **Germany MCI** — https://karger.com/dem/article/24/4/307/98546/Mild-Cognitive-Impairment-in-General-Practice-Age
+- **Greece SCD** — https://pubmed.ncbi.nlm.nih.gov/30714214/
+- **Ireland MCI** — https://pubmed.ncbi.nlm.nih.gov/26707711/
+- **Italy MCI** — https://doi.org/10.1212/01.wnl.0000263132.99055.0d  ·  DOI: `10.1212/01.wnl.0000263132.99055.0d`
+- **Italy SCD** — https://doi.org/10.1007/BF03337739  ·  DOI: `10.1007/BF03337739`
+- **Lebanon MCI** — https://www.sciencedirect.com/science/article/abs/pii/S1876201821002847
+- **Mexico MCI** — https://academic.oup.com/psychsocgerontology/article-abstract/81/3/gbaf268/8383893
+- **Mexico SCD** — https://doi.org/10.1177/13872877251400666  ·  DOI: `10.1177/13872877251400666`
+- **Netherlands MCI** — https://doi.org/10.3233/JAD-132558  ·  DOI: `10.3233/JAD-132558`
+- **Netherlands SCD** — https://doi.org/10.1212/WNL.57.12.2217  ·  DOI: `10.1212/WNL.57.12.2217`
+- **Peru SCD** — https://doi.org/10.1177/13872877251400666  ·  DOI: `10.1177/13872877251400666`
+- **Russia MCI** — https://pubmed.ncbi.nlm.nih.gov/38696145/
+- **South Korea MCI** — https://doi.org/10.3233/JAD-201588  ·  DOI: `10.3233/JAD-201588`
+- **Tanzania MCI** — https://pubmed.ncbi.nlm.nih.gov/25579049/
+- **Turkey MCI** — https://doi.org/10.1007/s00391-023-02181-4  ·  DOI: `10.1007/s00391-023-02181-4`
