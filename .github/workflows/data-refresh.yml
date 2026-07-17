@@ -1,0 +1,43 @@
+name: Monthly data-freshness check
+
+# Detects new upstream data, notifies the owner, and leaves a review reminder.
+# - API sources (World Bank, WHO GHO) are checked live against scripts/data-versions.json
+# - Manual sources (NCD-RisC / GBD / ACAG / papers) are listed for a human glance
+# The result is filed as a GitHub Issue that @mentions the owner (→ email/notification).
+# "Extract + register" then happens in a follow-up PR (see the issue body + the doc).
+
+on:
+  schedule:
+    - cron: '0 6 1 * *'      # 06:00 UTC on the 1st of every month
+  workflow_dispatch: {}       # allow a manual run any time
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Check upstream data freshness
+        id: check
+        run: python scripts/check_data_freshness.py --out report.md
+
+      - name: File / notify via a GitHub issue
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create data-refresh --color 1d76db --description "Monthly upstream data check" 2>/dev/null || true
+          month="$(date -u +%Y-%m)"
+          if [ "${{ steps.check.outputs.has_updates }}" = "true" ]; then
+            title="🔔 Data refresh — ${{ steps.check.outputs.n_updates }} update(s) — ${month}"
+          else
+            title="✅ Data refresh — ${month} (no API changes; skim manual sources)"
+          fi
+          gh issue create --title "$title" --label data-refresh --body-file report.md

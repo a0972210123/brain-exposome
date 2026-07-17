@@ -1,0 +1,59 @@
+{
+  "_note": "Baseline versions of every upstream data source. The monthly data-refresh GitHub Action (.github/workflows/data-refresh.yml) compares the live API sources against these and flags the manual sources for a human check. To 'register' an update, bump the value here in the same PR that ingests the new data.",
+  "updated": "2026-07-18",
+  "sources": {
+    "worldbank_pop65": {
+      "label": "World Bank — population ages 65+ (% of total) → aging layer",
+      "mode": "api", "api": "worldbank", "indicator": "SP.POP.65UP.TO.ZS",
+      "current_year": 2025,
+      "url": "https://data.worldbank.org/indicator/SP.POP.65UP.TO.ZS"
+    },
+    "who_gho_smoking": {
+      "label": "WHO GHO — estimate of current tobacco use → smoking PAF",
+      "mode": "api", "api": "gho", "indicator": "M_Est_tob_curr",
+      "current_year": 2025,
+      "url": "https://www.who.int/data/gho"
+    },
+    "who_gho_inactivity": {
+      "label": "WHO GHO — insufficient physical activity → inactivity PAF",
+      "mode": "api", "api": "gho", "indicator": "NCD_PAC",
+      "current_year": 2022,
+      "url": "https://www.who.int/data/gho"
+    },
+    "ncdrisc_bp": {
+      "label": "NCD-RisC — raised blood pressure → hypertension PAF",
+      "mode": "manual", "current_year": 2015,
+      "url": "https://ncdrisc.org/data-downloads-blood-pressure.html"
+    },
+    "ncdrisc_diabetes": {
+      "label": "NCD-RisC — diabetes → diabetes PAF",
+      "mode": "manual", "current_year": 2022,
+      "url": "https://ncdrisc.org/data-downloads-diabetes.html"
+    },
+    "ncdrisc_adiposity": {
+      "label": "NCD-RisC — adiposity (BMI≥30) → obesity PAF",
+      "mode": "manual", "current_year": 2024,
+      "url": "https://ncdrisc.org/data-downloads-adiposity.html"
+    },
+    "gbd_dementia_prev": {
+      "label": "GBD (IHME) — dementia prevalence → prevalence layer",
+      "mode": "manual", "current_version": "GBD 2023",
+      "url": "https://ghdx.healthdata.org/"
+    },
+    "acag_pm25": {
+      "label": "ACAG / WashU — satellite surface PM2.5 → PM2.5 layers",
+      "mode": "manual", "current_version": "V6.GL.03",
+      "url": "https://sites.wustl.edu/acag/datasets/surface-pm2-5/"
+    },
+    "lancet_commission": {
+      "label": "Lancet Commission on dementia — relative risks (RRs)",
+      "mode": "manual", "current_version": "2024",
+      "url": "https://doi.org/10.1016/S0140-6736(24)01296-0"
+    },
+    "bai_mci": {
+      "label": "Bai 2022 — global MCI meta-analysis → MCI regional baseline",
+      "mode": "manual", "current_version": "2022",
+      "url": "https://doi.org/10.1093/ageing/afac173"
+    }
+  }
+}
