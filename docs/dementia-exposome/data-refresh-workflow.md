@@ -167,7 +167,14 @@ raw 輸入放 gitignored `scripts/_data_in/`；`manifest.json` 由 build 產生�
 - 每月抓「近 `days_window` 天」新論文（滾動窗，不需 state 檔），每主題 top N，接到同一張 issue 的「📚 New literature」段。**只列候選，永不自動導入。**
 - **台灣特例**：因地緣政治，台灣常被 GBD/WHO/World Bank 排除 → `taiwan_cognitive` 主題 + `data-versions.json` 的兩個台灣政府源（內政部戶政司、國健署 NHIS）是補台灣缺口的方式。
 - 已找到的候選論文存 [`literature-candidates.md`](./literature-candidates.md)（人工 backlog）。
-- **雜訊**：TITLE 限定後每主題每月個位數～十幾筆（危險因子那條最吵）。想再砍雜訊 → **v2：LLM 相關性篩選**（見該 PR 的可行性評估；本 repo 為獨立 repo，可加 Groq/NVIDIA NIM/Cloudflare Workers AI/GitHub Models/OpenAI 等 secret）。
+- **雜訊**：TITLE 限定後每主題每月個位數～十幾筆（危險因子那條最吵）。
+
+### 5.5 v2 LLM 相關性篩選 `scripts/llm_triage.py`（已實作，可選、需 secret）
+- **仿照 owner 的 dreamcatcher `ai-worker`**：同一條備援鏈 **NVIDIA NIM → Groq → Cloudflare**、同樣的環境變數名、同樣的 robust JSON 解析；差別只是這裡問「這篇是否可能更新我們用的某個數值？」回 `{"verdict":"keep|drop","reason":...}`。
+- **Fail-open**：沒設任何 key，或每一層都失敗 → `triage()` 回 `None`、候選一律保留（＝退回 v1 免金鑰行為）。所以管線永遠有輸出，LLM 只做「排序/過濾」。
+- 純 stdlib（urllib），CI 免 pip。`literature_watch.py --triage` 時，keep 正常列、drop 收進 `<details>`。
+- **啟用方式**：把 dreamcatcher `.env` 的 `NVIDIA_API_KEY`／`GROQ_API_KEY`（＋可選 `CF_ACCOUNT_ID`+`CF_API_TOKEN` 走 Cloudflare REST）設為 repo secrets（`Settings → Secrets → Actions`）。範本見 `scripts/.env.example`。Cloudflare 這層在 Worker 裡是 `AI` binding、在 Action 裡改用 REST API。
+- ⚠️ 供應商現況（2026-07 研究）：**GitHub Models 已退役**、**ChatGPT/Codex 訂閱不能從 CI 呼叫**；Groq／NVIDIA／Cloudflare 三者皆 $0 免卡。
 
 ---
 

@@ -30,7 +30,15 @@ jobs:
         run: python scripts/check_data_freshness.py --out report.md
 
       - name: Scan the literature for new candidates
-        run: python scripts/literature_watch.py --out report.md --append
+        # Provider keys are optional — if unset, --triage is a no-op and every
+        # candidate is kept (keyless). Add them as repo secrets to enable the
+        # NIM → Groq → Cloudflare relevance filter (see scripts/.env.example).
+        env:
+          NVIDIA_API_KEY: ${{ secrets.NVIDIA_API_KEY }}
+          GROQ_API_KEY: ${{ secrets.GROQ_API_KEY }}
+          CF_ACCOUNT_ID: ${{ secrets.CF_ACCOUNT_ID }}
+          CF_API_TOKEN: ${{ secrets.CF_API_TOKEN }}
+        run: python scripts/literature_watch.py --out report.md --append --triage
 
       - name: File / notify via a GitHub issue
         env:
