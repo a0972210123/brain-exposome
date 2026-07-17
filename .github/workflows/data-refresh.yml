@@ -29,6 +29,9 @@ jobs:
         id: check
         run: python scripts/check_data_freshness.py --out report.md
 
+      - name: Scan the literature for new candidates
+        run: python scripts/literature_watch.py --out report.md --append
+
       - name: File / notify via a GitHub issue
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}

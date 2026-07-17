@@ -1,0 +1,53 @@
+{
+  "_note": "Literature radar for the monthly data-refresh Action. Each topic is a tuned Europe PMC query (keyless, covers PubMed + PMC + Agricola + preprints) for a figure the map cares about. The Action reports papers published in the last `days_window` days per topic — candidates for a human (or the optional v2 LLM triage) to judge; it NEVER auto-ingests. Broad queries are noisy, so queries are TITLE-scoped; widen/narrow here as needed.",
+  "days_window": 45,
+  "max_per_topic": 6,
+  "topics": [
+    {
+      "id": "dementia_prevalence_global",
+      "label": "Global dementia prevalence / burden",
+      "query": "TITLE:dementia AND TITLE:(prevalence OR burden OR incidence) AND TITLE:(global OR worldwide OR regional OR national)"
+    },
+    {
+      "id": "lancet_commission",
+      "label": "Lancet Commission on dementia (risk factors / RRs)",
+      "query": "TITLE:\"Lancet Commission\" AND TITLE:dementia"
+    },
+    {
+      "id": "mci_prevalence",
+      "label": "MCI prevalence (meta-analysis / pooled)",
+      "query": "TITLE:\"mild cognitive impairment\" AND TITLE:(prevalence OR incidence) AND (meta-analysis OR pooled OR systematic)"
+    },
+    {
+      "id": "scd_prevalence",
+      "label": "Subjective cognitive decline prevalence",
+      "query": "TITLE:\"subjective cognitive decline\" AND TITLE:(prevalence OR incidence OR estimate)"
+    },
+    {
+      "id": "air_pollution_dementia",
+      "label": "Air pollution / PM2.5 and dementia risk",
+      "query": "TITLE:(\"air pollution\" OR \"PM2.5\" OR \"particulate matter\") AND TITLE:(dementia OR \"cognitive decline\" OR \"cognitive impairment\")"
+    },
+    {
+      "id": "population_ageing",
+      "label": "Population ageing / 65+ projections",
+      "query": "TITLE:(\"population ageing\" OR \"population aging\" OR \"demographic ageing\") AND TITLE:(global OR projection OR projections OR forecast OR trends OR prospects)"
+    },
+    {
+      "id": "risk_factor_prevalence",
+      "label": "Global risk-factor prevalence (HTN / diabetes / obesity / smoking / inactivity)",
+      "query": "TITLE:(hypertension OR diabetes OR obesity OR smoking OR \"physical inactivity\") AND TITLE:(global OR worldwide OR \"national trends\") AND TITLE:(prevalence OR trends)"
+    },
+    {
+      "id": "taiwan_cognitive",
+      "label": "🇹🇼 Taiwan dementia / cognitive impairment (often excluded from global DBs)",
+      "query": "TITLE:Taiwan AND TITLE:(dementia OR \"cognitive impairment\" OR \"cognitive decline\" OR \"mild cognitive\")",
+      "manual_also": [
+        "內政部戶政司 — 65+/超高齡人口 (Taiwan is absent from World Bank): https://www.ris.gov.tw/app/portal/346",
+        "衛福部國健署 NHIS — 吸菸/身體活動不足等危險因子: https://www.hpa.gov.tw/",
+        "台灣失智症協會 / NHRI — 全國失智盛行率調查: http://www.tada2002.org.tw/About/IsntDementia"
+      ],
+      "note": "Because of Taiwan's geopolitical status it is routinely excluded from GBD / WHO GHO / World Bank, so global sources will NOT surface Taiwan updates — this topic + the manual gov sources above are how we catch them."
+    }
+  ]
+}

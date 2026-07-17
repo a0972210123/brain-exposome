@@ -161,6 +161,14 @@ raw 輸入放 gitignored `scripts/_data_in/`；`manifest.json` 由 build 產生�
 - **可自動偵測、需人工抓取/確認**：NCD-RisC 3 檔、ACAG PM2.5、GBD 新 round。
 - **維持人工**：GBD 匯出、WorldPop rasters、台灣 NHIS PDF、任何被封鎖入口。
 
+### 5.4 文獻雷達 `scripts/literature_watch.py`（已實作，v1 免金鑰）
+- 版本檢查（§5.1）只看「我們已知的資料源有沒有出新版」；文獻雷達則反過來問「**有沒有新論文可能更新我們在乎的數值**」。
+- `scripts/literature-watch.json` 定義 8 個監看主題（全球失智盛行/Lancet 委員會/MCI/SCD/PM2.5×失智/人口高齡化/危險因子盛行 + **台灣**），每個是一條 TITLE 限定的 Europe PMC 查詢（免金鑰、含 PubMed+PMC+preprint）。
+- 每月抓「近 `days_window` 天」新論文（滾動窗，不需 state 檔），每主題 top N，接到同一張 issue 的「📚 New literature」段。**只列候選，永不自動導入。**
+- **台灣特例**：因地緣政治，台灣常被 GBD/WHO/World Bank 排除 → `taiwan_cognitive` 主題 + `data-versions.json` 的兩個台灣政府源（內政部戶政司、國健署 NHIS）是補台灣缺口的方式。
+- 已找到的候選論文存 [`literature-candidates.md`](./literature-candidates.md)（人工 backlog）。
+- **雜訊**：TITLE 限定後每主題每月個位數～十幾筆（危險因子那條最吵）。想再砍雜訊 → **v2：LLM 相關性篩選**（見該 PR 的可行性評估；本 repo 為獨立 repo，可加 Groq/NVIDIA NIM/Cloudflare Workers AI/GitHub Models/OpenAI 等 secret）。
+
 ---
 
 ## 6. 手動 refresh runbook（自動化前的暫用流程）

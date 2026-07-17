@@ -54,6 +54,16 @@
       "label": "Bai 2022 — global MCI meta-analysis → MCI regional baseline",
       "mode": "manual", "current_version": "2022",
       "url": "https://doi.org/10.1093/ageing/afac173"
+    },
+    "taiwan_moi_65plus": {
+      "label": "🇹🇼 內政部戶政司 — Taiwan 65+ / super-aged (excluded from World Bank; overrides the aging layer)",
+      "mode": "manual", "current_year": 2025,
+      "url": "https://www.ris.gov.tw/app/portal/346"
+    },
+    "taiwan_nhis_riskfactors": {
+      "label": "🇹🇼 衛福部國健署 NHIS — Taiwan smoking / inactivity (WHO GHO has no Taiwan row)",
+      "mode": "manual", "current_version": "2021 NHIS",
+      "url": "https://www.hpa.gov.tw/"
     }
   }
 }
