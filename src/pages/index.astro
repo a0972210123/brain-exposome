@@ -11,12 +11,20 @@ import T from '../components/T.astro';
     <!-- Hero -->
     <section class="calc-hero">
       <h1><T zh="腦健康 Exposome" en="Brain-Health Exposome" /> <span class="accent-text"><T zh="檢測" en="Check-in" /></span></h1>
-      <p class="calc-subtitle">
-        <T
-          zh="根據 2024 年《Lancet》失智症委員會的 14 項可調整風險因子，以及你一生中居住地的空氣污染（PM2.5）累積暴露，用淺白的方式看看這些「exposome（環境暴露總和）」與腦健康的關係，並給你可行動的方向。"
-          en="Using the 14 modifiable risk factors from the 2024 Lancet Commission on dementia, plus the cumulative air-pollution (PM2.5) exposure across the places you've lived, see in plain terms how your lifelong 'exposome' relates to brain health — and what you can act on."
-        />
-      </p>
+      <div class="calc-lede">
+        <p><T
+          zh="這個工具的起點，是 2026 年阿茲海默症協會國際年會（AAIC）上的一場演講：為什麼每個人大腦老化的速度不一樣？失智症的大腦病變往往在發病前 15–20 年就悄悄開始。講者分享的案例讓全場震撼——一群不到 50 歲、高學歷、沒有慢性病、生活健康的人卻確診阿茲海默症，共同點是長期住在空污嚴重的地區，腦影像顯示他們的大腦比實際年齡老了 15–25 歲。"
+          en="This tool began with a talk at the 2026 Alzheimer's Association International Conference (AAIC): why do our brains age at different speeds? Dementia's brain changes often begin quietly 15–20 years before symptoms. The cases the speaker shared stunned the room — people under 50, highly educated, with no chronic disease and healthy lifestyles, yet diagnosed with Alzheimer's; the common thread was long-term life in heavily polluted areas, with scans showing brains 15–25 years older than their actual age."
+        /></p>
+        <p><T
+          zh="既然關鍵是「及早覺察危險因子」，我把可用的證據彙整成一個可計算的模型：以《Lancet》失智症委員會的可調整危險因子、公開的 PM2.5 衛星資料，以及「風險大約每 5–6 年翻倍」等文獻為基礎，再逐步接上 GBD、NCD-RisC、WHO、World Bank 等公開資料庫，讓不同國家也能互相比較。"
+          en="Since the key is noticing risk factors early, I gathered the available evidence into a computable model — built on the Lancet Commission's modifiable risk factors, open satellite PM2.5 data, and findings such as risk roughly doubling every 5–6 years — then progressively wired in public databases (GBD, NCD-RisC, WHO, World Bank) so different countries can be compared."
+        /></p>
+        <p><T
+          zh="你可以輸入歷年居住地與基本資料，看看自己累積的「exposome（環境暴露總和）」對應到多少『相對腦齡加速』年數；也能在全球地圖上瀏覽各國的失智盛行、空污、高齡化與可調控風險概況。它不是診斷、不是醫療器材，也不預測任何個人是否會失智——只希望讓我們對「可以及早行動」的危險因子更有覺知。"
+          en="You can enter your residence history and basic profile to see how your accumulated 'exposome' maps to a 'relative brain-aging' figure in years — and browse each country's dementia prevalence, air pollution, aging and modifiable-risk picture on the global map. It is not a diagnosis, not a medical device, and predicts nothing about any individual — it exists only to raise awareness of the risk factors we can act on early."
+        /></p>
+      </div>
       <p class="calc-privacy">🔒 <T zh="所有計算都在你的瀏覽器內完成，資料不會上傳或儲存到任何伺服器。" en="All calculations run entirely in your browser — nothing is uploaded or stored on any server." /></p>
     </section>
 
@@ -491,6 +499,9 @@ import T from '../components/T.astro';
   .calc-hero { margin-bottom: var(--spacing-md); }
   .calc-hero h1 { font-size: clamp(1.8rem, 4.5vw, 2.6rem); margin-bottom: 0.6rem; }
   .calc-subtitle { color: var(--color-text-muted); font-size: 1rem; line-height: 1.7; max-width: 720px; }
+  .calc-lede { max-width: 760px; margin: 0.9rem 0 0; padding-left: 1rem; border-left: 3px solid var(--color-accent); }
+  .calc-lede p { color: var(--color-text-muted); font-size: 1rem; line-height: 1.75; }
+  .calc-lede p + p { margin-top: 0.7rem; }
   .calc-privacy { font-size: 0.85rem; color: var(--color-accent); margin-top: 0.6rem; }
 
   .calc-disclaimer {
