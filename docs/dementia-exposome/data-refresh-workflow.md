@@ -191,6 +191,25 @@ raw 輸入放 gitignored `scripts/_data_in/`；`manifest.json` 由 build 產生�
 
 ---
 
+## 6.5 新研究怎麼判斷要不要納入（screen → decide → incorporate）
+
+文獻雷達（§5.4/5.5）每月把候選論文丟進 issue。**地圖是「數值地圖」不是論文清單** → 一篇論文只有在能
+**更新某一層的數值**時才進站。每月 issue 內建這份 checklist；逐篇勾選：
+
+- **(A) 骨幹更新** — 地圖已用的來源出新版（World Bank / WHO GHO / NCD-RisC / GBD / ACAG / Lancet
+  Commission RR / Bai MCI）→ 更新該層、全國適用。
+- **(B) 單一國家 / 次國家盛行率** — 某國**失智 · AD · MCI · SCD** 的較新權威盛行率（國家登錄、監測、
+  或紮實世代）→ **值得加成該國 override**（同台灣 / 日本 / 韓國的分層作法）。⚠️ **先經 owner 核准再納入。**
+- **(C) 不可納入** — 窄世代、機轉、文獻計量、或沒有可用的新數值 → 記一筆、跳過。
+
+**納入（A 一律；B 經核准後）**：extract → `python scripts/build_data.py` → 補方法框 + §⑤ 參考（DOI）
+→ bump `scripts/data-versions.json` → PR（不自 merge）→ merge → Cloudflare Pages 重建上線。操作細節見 §6 runbook。
+
+> 判準要點：**單一國家 / 次國家盛行率不因「範圍小」被排除** —— AD/MCI/SCD 的國家別新估計本來就是各國
+> override 的主要來源；門檻是「權威、可對應到某層、經 owner 核准」，不是「必須全球」。
+
+---
+
 ## 7. 工程雷點（延續，務必內建進 Action）
 - **cp950/UTF-8**：所有 `open()` 加 `encoding="utf-8"`；本機跑 `PYTHONUTF8=1`。
 - **CSV 表頭**：`DictReader` 需表頭（`iso2,pct,...`）；缺表頭會靜默 fallback。

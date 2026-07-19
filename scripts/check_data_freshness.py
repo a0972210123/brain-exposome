@@ -120,17 +120,29 @@ def main():
         L.append(f"- {label} — currently `{cur}` · [check for updates]({url})")
     L.append("")
 
-    L.append("### ▶️ If something is new — the flow\n")
-    L.append("1. **Extract & consolidate** — download / fetch the new source into "
-             "`scripts/_data_in/` (local, gitignored for the manual ones), then run "
-             "`python scripts/build_data.py` to regenerate `public/data/`.")
-    L.append("2. **Review** — open a PR with the regenerated derived assets; check the "
-             "method boxes / references still read correctly.")
-    L.append("3. **Register** — bump the matching `current_year` / `current_version` in "
-             "`scripts/data-versions.json` **in that same PR** so this check goes quiet again.")
-    L.append("\n> API layers (World Bank aging, WHO GHO smoking/inactivity) fetch directly and "
-             "can be regenerated in CI; the manual layers (NCD-RisC, GBD, ACAG, papers) still "
-             "need a human download step — see `docs/dementia-exposome/data-refresh-workflow.md`.")
+    L.append("### ▶️ If something is new — screen → decide → incorporate\n")
+    L.append("**1. Screen (here, in this issue).** For each flagged source or candidate paper, tick what it is:\n")
+    L.append("- [ ] **(A) Backbone update** — a newer release of a source the map already uses "
+             "(World Bank · WHO GHO · NCD-RisC · GBD · ACAG PM2.5 · Lancet Commission RRs · Bai MCI). "
+             "→ updates that layer for every country.")
+    L.append("- [ ] **(B) Single-country / sub-national prevalence** — a newer authoritative national "
+             "(or admin-1) estimate of **dementia · AD · MCI · SCD** prevalence for one country "
+             "(national registry, surveillance, or a solid cohort). → **worth adding as that country's "
+             "override** — same tiered pattern as Taiwan / Japan / Korea. ✋ **Needs owner approval first "
+             "(@a0972210123) before ingesting.**")
+    L.append("- [ ] **(C) Not ingestable** — narrow cohort, mechanistic, bibliometric, or no new number "
+             "the map can use. → note & skip (no site change).\n")
+    L.append("**2. Incorporate** (A always; B only after ✋ approval):\n")
+    L.append("- [ ] **Extract** — fetch/download the source into `scripts/_data_in/` (local, gitignored "
+             "for manual sources). API layers (World Bank, WHO GHO) need no download.")
+    L.append("- [ ] **Build** — `python scripts/build_data.py` → regenerates `public/data/`.")
+    L.append("- [ ] **Cite** — add/refresh the on-page method box + §⑤ reference (DOI) for the new source.")
+    L.append("- [ ] **Register** — bump the matching `current_year` / `current_version` in "
+             "`scripts/data-versions.json` **in the same PR** (silences this check).")
+    L.append("- [ ] **Review PR → merge** → Cloudflare Pages rebuilds → the new number is live.\n")
+    L.append("> API layers (World Bank aging, WHO GHO smoking/inactivity) fetch directly and regenerate "
+             "in CI; manual layers (NCD-RisC, GBD, ACAG, national prevalence papers) need a human "
+             "download step — full detail in `docs/dementia-exposome/data-refresh-workflow.md`.")
     L.append("\ncc @a0972210123")
 
     report = "\n".join(L)
