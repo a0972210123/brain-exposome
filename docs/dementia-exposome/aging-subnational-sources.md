@@ -39,10 +39,16 @@ where names differ; name-match elsewhere; multi→one units averaged, e.g. PL91+
   "Eurostat … (official)". Admin-1 colour scale widened to `[6,10,14,18,22,26]` so both the developing (~1–20%)
   and high-income (~12–32%) ranges show a gradient.
 
-### Remaining (need a key, or per-source work)
-- **Key required (owner):** 🇺🇸 US Census (`S0101_C02_030E`; keyless quota exhausted from CI IP), 🇯🇵 JP e-Stat (free appId).
-- **Clean API, next wave (no key):** 🇨🇦 CA StatCan, 🇦🇺 AU ABS, 🇧🇷 BR IBGE, 🇳🇿 NZ (XLSX).
-- **Portal / manual:** 🇰🇷 KR KOSIS, 🇹🇷 TR TÜİK, 🇨🇳 CN NBS, 🇮🇳 IN Census, 🇮🇷 IR SCI, 🇲🇽 MX INEGI.
+### Non-EU official — shipped (keyless APIs)
+- 🇧🇷 **br** IBGE Censo 2022 (SIDRA 9514) — 5.1–14.1% (`build_aging_tier2.mjs`)
+- 🇨🇦 **ca** StatCan 17-10-0005 (2025) — 5.2–25.2% (`build_aging_ca.py`)
+- 🇦🇺 **au** ABS ERP_ASGS2021 (2024) — 9.6–21.8% (`build_aging_tier2.mjs`)
+
+### Remaining
+- **No key but harder — next:** 🇬🇧 gb (ONS/Nomis `pestsyoala`; 232 LADs, needs GSS→ISO name-match).
+- **Free key from owner:** 🇺🇸 us (Census; keyless quota exhausted from CI IP), 🇯🇵 jp (e-Stat appId), 🇳🇿 nz (StatsNZ ADE key, or manual XLSX).
+- **Portal / manual download:** 🇰🇷 kr KOSIS, 🇹🇷 tr TÜİK, 🇨🇳 cn NBS, 🇮🇳 in Census, 🇲🇽 mx INEGI, 🇮🇷 ir SCI.
+- **Local file needed:** 🇹🇼 tw — town-level upgrade needs the MOI #77132 single-age file (off-disk; download or provide).
 
 ## Coverage table
 
