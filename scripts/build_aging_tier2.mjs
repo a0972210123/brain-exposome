@@ -40,7 +40,27 @@ async function br() {
   write('br', byUnit, { metric: 'share of population aged 65+ (%)', age_group: '65+', year: 2022, source: 'IBGE Censo 2022 (SIDRA 9514)', resolution: 'admin-1', method: 'sum of 65+ 5-year-group shares by UF' });
 }
 
-const IMPL = { br };
+// ── AU — ABS ERP_ASGS2021 (SDMX), state ERP by age; 65+ = A65+A70+A75+A80+8599 / TOT ──
+const AU_ISO = { 1: 'AU-NSW', 2: 'AU-VIC', 3: 'AU-QLD', 4: 'AU-SA', 5: 'AU-WA', 6: 'AU-TAS', 7: 'AU-NT', 8: 'AU-ACT' };
+async function au() {
+  const url = 'https://data.api.abs.gov.au/rest/data/ABS,ERP_ASGS2021,1.0.0/ERP.3.TOT+A65+A70+A75+A80+8599.STE..A?startPeriod=2024&endPeriod=2024';
+  const csv = await tget(url, { Accept: 'text/csv' });
+  const lines = csv.trim().split(/\r?\n/), h = lines[0].split(',');
+  const iAge = h.indexOf('AGE'), iReg = h.indexOf('ASGS_2021'), iVal = h.indexOf('OBS_VALUE');
+  const OLD = new Set(['A65', 'A70', 'A75', 'A80', '8599']);
+  const st = {};
+  for (let i = 1; i < lines.length; i++) {
+    const c = lines[i].split(','), reg = c[iReg], age = c[iAge], v = parseFloat(c[iVal]);
+    if (isNaN(v)) continue;
+    const d = st[reg] = st[reg] || { tot: 0, old: 0 };
+    if (age === 'TOT') d.tot = v; else if (OLD.has(age)) d.old += v;
+  }
+  const byUnit = {};
+  for (const [reg, d] of Object.entries(st)) { const iso = AU_ISO[reg]; if (iso && d.tot) byUnit[iso] = +(100 * d.old / d.tot).toFixed(1); }
+  write('au', byUnit, { metric: 'share of population aged 65+ (%)', age_group: '65+', year: 2024, source: 'ABS ERP by age, state (ERP_ASGS2021)', resolution: 'admin-1', method: '65+ / all-ages ERP per state' });
+}
+
+const IMPL = { br, au };
 const ccs = process.argv.slice(2).length ? process.argv.slice(2) : Object.keys(IMPL);
 for (const cc of ccs) {
   if (!IMPL[cc]) { console.log(`${cc}: not implemented`); continue; }
