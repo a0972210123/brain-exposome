@@ -1541,7 +1541,7 @@ function tooltipFor(f) {
     const sub = VAL.aging && VAL.aging[code] != null;
     const v = sub ? VAL.aging[code] : (AGING_NAT ? AGING_NAT[mapCountry] : null);
     const tier = v == null ? '' : v >= 20 ? L('超高齡社會', 'super-aged') : v >= 14 ? L('高齡社會', 'aged') : v >= 7 ? L('高齡化社會', 'aging') : L('未達高齡化', 'pre-aging');
-    const scope = sub ? L('WorldPop 2020 各區', 'WorldPop 2020, sub-national') : L('全國估計', 'national');
+    const scope = sub ? L('各區估計', 'sub-national') : L('全國估計', 'national');
     return `<b>${name}</b><br>${L('65 歲以上人口', 'Aged 65+')}: ${v != null ? v.toFixed(1) : '—'}%<br><span style="opacity:.7;font-size:.9em">${tier} · ${scope}</span>`;
   }
   if (isExpo(mapMode)) {
@@ -1632,16 +1632,16 @@ async function loadCountryData(cc) {
     if (d.districts) for (const [k, v] of Object.entries(d.districts)) pm[k] = v.pm25;
     else if (d.units) Object.assign(pm, d.units);
   }
-  // Tier-1 aging: per-admin-1 65+ % if generated (WorldPop); else the national value is used (Tier 0).
-  let agingNat = null;
-  try { const a = await fetch(`/data/aging/${cc}-admin1.json`).then(r => r.ok ? r.json() : null); if (a && a.byUnit) { aging = a.byUnit; agingNat = a.meta && a.meta.national_pct; } } catch (_) { /* national fallback */ }
+  // Tier-1/2 aging: per-admin-1 65+ % if generated (WorldPop or official statistics); else national (Tier 0).
+  let agingNat = null, agingSrc = null;
+  try { const a = await fetch(`/data/aging/${cc}-admin1.json`).then(r => r.ok ? r.json() : null); if (a && a.byUnit) { aging = a.byUnit; agingNat = a.meta && a.meta.national_pct; agingSrc = a.meta && a.meta.source; } } catch (_) { /* national fallback */ }
   geo.features.forEach(f => {
     const p = f.properties, code = p[cfg.codeProp];
     names[code] = cc === 'tw'
       ? { zh: (p.COUNTYNAME || '') + p.TOWNNAME, en: (p.TOWNENG || p.TOWNNAME) + (p.COUNTYENG ? ', ' + p.COUNTYENG : '') }
       : { zh: p.nameLocal || p.name || code, en: p.name || code };
   });
-  return { geo, prev, pm, aging, agingNat, names, cfg, prevMeta };
+  return { geo, prev, pm, aging, agingNat, agingSrc, names, cfg, prevMeta };
 }
 // When Taiwan is selected, show a method table below the map: national age-band rates + the
 // weighted 65+ overall, so readers see exactly how each area's prevalence is computed.
@@ -1733,12 +1733,17 @@ function renderAgingMethod() {   // drill-down aging: Tier-1 WorldPop admin-1 gr
   const opt = document.querySelector(`#map-country option[value="${mapCountry}"]`);
   const country = opt ? L(opt.dataset.zh, opt.dataset.en) : mapCountry.toUpperCase();
   let note, src;
-  if (sub.length) {   // Tier 1 — real within-country gradient
+  if (sub.length) {   // Tier 1/2 — real within-country gradient (WorldPop modelled, or official statistics)
     const lo = Math.min(...sub), hi = Math.max(...sub);
-    note = L('各行政區「65 歲以上人口占比」——以 WorldPop 2020 1km 年齡／性別網格對各區界線加總估計（模型估計，非普查實測）。',
-      'Share of residents aged 65+ per admin-1 unit — WorldPop 2020 1km age/sex grids summed over each boundary (modelled, not a census).');
+    const srcStr = (VAL && VAL.agingSrc) || '';
+    const isWP = /worldpop/i.test(srcStr);
+    note = isWP
+      ? L('各行政區「65 歲以上人口占比」——以 WorldPop 2020 1km 年齡／性別網格對各區界線加總估計（模型估計，非普查實測）。',
+          'Share of residents aged 65+ per admin-1 unit — WorldPop 2020 1km age/sex grids summed over each boundary (modelled, not a census).')
+      : L('各行政區「65 歲以上人口占比」，採官方統計局公布的區域別數值。',
+          'Share of residents aged 65+ per admin-1 unit, from the national / EU statistics office.');
     const wpNat = VAL && VAL.agingNat != null ? +VAL.agingNat : null;
-    src = `${lo.toFixed(1)}–${hi.toFixed(1)}%${wpNat != null ? '｜' + L('全國', 'national') + ' ' + wpNat.toFixed(1) + '%' : ''}｜${L('來源：WorldPop 2020（CC BY 4.0）', 'Source: WorldPop 2020 (CC BY 4.0)')}｜${L('模型估計', 'modelled')}`;
+    src = `${lo.toFixed(1)}–${hi.toFixed(1)}%${wpNat != null ? '｜' + L('全國', 'national') + ' ' + wpNat.toFixed(1) + '%' : ''}｜${L('來源：', 'Source: ')}${srcStr}｜${isWP ? L('模型估計', 'modelled') : L('官方統計', 'official')}`;
   } else {   // Tier 0 — national value applied uniformly
     const tier = nat >= 20 ? L('超高齡社會', 'super-aged society') : nat >= 14 ? L('高齡社會', 'aged society') : nat >= 7 ? L('高齡化社會', 'aging society') : L('未達高齡化', 'pre-aging');
     note = L('此為<strong>全國估計值</strong>，此國尚無縣市（admin-1）層級的高齡化資料，因此整個國家以同一色呈現；縣市層級資料補齊中。',
@@ -1842,7 +1847,7 @@ function renderExpoMethod() {
 }
 async function drawCountry(cc) {
   const d = await loadCountryData(cc);
-  mapCountry = cc; GEO = d.geo; VAL = { prev: d.prev, pm: d.pm, aging: d.aging, agingNat: d.agingNat }; NAMES = d.names; PREV_META = d.prevMeta;
+  mapCountry = cc; GEO = d.geo; VAL = { prev: d.prev, pm: d.pm, aging: d.aging, agingNat: d.agingNat, agingSrc: d.agingSrc }; NAMES = d.names; PREV_META = d.prevMeta;
   if (!modeAvailable(mapMode, d.cfg.layers)) mapMode = d.cfg.layers[0];   // expo modes work for every country
   renderMethodBox();
   if (geoLayer) { map.removeLayer(geoLayer); geoLayer = null; }
@@ -1876,9 +1881,10 @@ function updateSpinBtn() {
 // read as "risk" like the YlOrRd layers.
 const AGE_BINS = [7, 14, 20];   // UN aging-society tiers: 7% aging · 14% aged · 20% super-aged (WPA)
 const AGE_RAMP = ['#edf8fb', '#b3cde3', '#8c96c6', '#88419d'];
-// Finer scale for the admin-1 aging choropleth (Tier-1 WorldPop gradient); the globe keeps AGE_BINS' UN tiers.
-const AGE_BINS_ADMIN = [8, 11, 14, 17, 20];
-const AGE_RAMP_ADMIN = ['#edf8fb', '#bfd3e6', '#9ebcda', '#8c96c6', '#8856a7', '#810f7c'];
+// Finer scale for the admin-1 aging choropleth; spans developing (~1-20%) and high-income (~12-32%)
+// ranges so both show a gradient. The globe keeps AGE_BINS' UN aging-society tiers.
+const AGE_BINS_ADMIN = [6, 10, 14, 18, 22, 26];
+const AGE_RAMP_ADMIN = ['#f7fcfd', '#e0ecf4', '#bfd3e6', '#9ebcda', '#8c96c6', '#8856a7', '#810f7c'];
 const AGE_TIERS = [['未達高齡化 <7%', 'Pre-aging <7%'], ['高齡化社會 7–14%', 'Aging 7–14%'],
   ['高齡社會 14–20%', 'Aged 14–20%'], ['超高齡社會 ≥20%', 'Super-aged ≥20%']];
 // MCI (mild cognitive impairment) — a FEW strong-data countries only, on its own scale. Heterogeneous

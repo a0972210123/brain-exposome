@@ -25,6 +25,25 @@ nationally uniformly, so the sub-national values are flat.**
 So the division of labour is now empirical: **WorldPop (Tier 1) for developing countries; official APIs (Tier 2)
 for high-income countries.**
 
+## Tier 2 outcome — EU shipped (Eurostat)
+
+`scripts/build_aging_eurostat.mjs` pulls Eurostat `demo_r_pjanind3` `PC_Y65_MAX` (65+ share, published directly)
+in one keyless call and maps each NUTS region to the map's ISO-3166-2 geojson code (NUTS→ISO codemap for pl/es
+where names differ; name-match elsewhere; multi→one units averaged, e.g. PL91+PL92→PL-MZ).
+
+- **Shipped (real gradient)** → `public/data/aging/{cc}-admin1.json`: **de** (NUTS-1, 18.1–27.8%, 16/16),
+  **pl** (NUTS-2, 18.3–22.5%, 16/16), **fr** (NUTS-3, 13.1–31.8%, 94/96), **it** (NUTS-3, 19–29.9%, 99/110),
+  **es** (NUTS-3, 11.7–31.9%, ~48/48). Unmatched units (fr 2, it ~11 Sardinia old-NUTS, es Canaries) fall back
+  to the Tier-0 national shade — a handful of units, not broken.
+- Method box is **source-aware**: WorldPop countries read "WorldPop 2020 (modelled)", Eurostat countries read
+  "Eurostat … (official)". Admin-1 colour scale widened to `[6,10,14,18,22,26]` so both the developing (~1–20%)
+  and high-income (~12–32%) ranges show a gradient.
+
+### Remaining (need a key, or per-source work)
+- **Key required (owner):** 🇺🇸 US Census (`S0101_C02_030E`; keyless quota exhausted from CI IP), 🇯🇵 JP e-Stat (free appId).
+- **Clean API, next wave (no key):** 🇨🇦 CA StatCan, 🇦🇺 AU ABS, 🇧🇷 BR IBGE, 🇳🇿 NZ (XLSX).
+- **Portal / manual:** 🇰🇷 KR KOSIS, 🇹🇷 TR TÜİK, 🇨🇳 CN NBS, 🇮🇳 IN Census, 🇮🇷 IR SCI, 🇲🇽 MX INEGI.
+
 ## Coverage table
 
 | ISO2 | Admin-1 | Latest | Publisher / source | Machine-fetch | Key | Gradient |
