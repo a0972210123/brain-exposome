@@ -10,6 +10,21 @@ within-country gradient. Verified 2026-07-20 (WebSearch + WebFetch against offic
 table. Everyone else = download counts by 5-year age band × region and compute `Σ(65–69…85+) ÷ total`. Taiwan is
 already done (MOI #77132, town-level). All countries below have a **genuine** gradient unless noted.
 
+## Tier 1 outcome (WorldPop 2020, shipped)
+
+Ran `scripts/build_aging.py` (WorldPop 1km age/sex → admin-1 65+ %). **Decisive result: WorldPop gives a real
+within-country gradient only for developing countries; for high-income countries its age structure is applied
+nationally uniformly, so the sub-national values are flat.**
+
+- **Shipped (real gradient)** → `public/data/aging/{cc}-admin1.json`: **th** (8.5–19.6%), **ph** (1.9–10.9%),
+  **id** (1.2–9.5%), **vn** (3.8–11.9%), **my** (4.1–11.6%), **mm** (4.3–7.9%), **bd** (4.7–6.3%, modest). *(pk pending.)*
+- **Dropped (WorldPop flat → Tier 0 national is identical)**: **de/fr/gb/pl** (spread ≈0), and by the same token
+  **it/es/ca/au/nz/tr** are expected flat. These fall back to the Tier-0 national shade and **must get their real
+  gradient from Tier 2** (Eurostat / ONS / StatCan / ABS / Stats NZ / TÜİK — all in the table below).
+
+So the division of labour is now empirical: **WorldPop (Tier 1) for developing countries; official APIs (Tier 2)
+for high-income countries.**
+
 ## Coverage table
 
 | ISO2 | Admin-1 | Latest | Publisher / source | Machine-fetch | Key | Gradient |
