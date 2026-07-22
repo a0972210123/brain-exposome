@@ -43,12 +43,14 @@ where names differ; name-match elsewhere; multi→one units averaged, e.g. PL91+
 - 🇧🇷 **br** IBGE Censo 2022 (SIDRA 9514) — 5.1–14.1% (`build_aging_tier2.mjs`)
 - 🇨🇦 **ca** StatCan 17-10-0005 (2025) — 5.2–25.2% (`build_aging_ca.py`)
 - 🇦🇺 **au** ABS ERP_ASGS2021 (2024) — 9.6–21.8% (`build_aging_tier2.mjs`)
+- 🇬🇧 **gb** ONS/Nomis NM_2002_1 (2024) — 5.9–30.5%, **170/232** matched (`build_aging_gb.mjs`; GSS→ISO
+  crosswalk saved to `scripts/_ref/gb-lad-to-iso.json`). Gaps = NI pre-2015 districts + English 2-tier shire
+  counties (vintage/boundary mismatch) → Tier-0 national fallback.
 
-### Remaining
-- **No key but harder — next:** 🇬🇧 gb (ONS/Nomis `pestsyoala`; 232 LADs, needs GSS→ISO name-match).
-- **Free key from owner:** 🇺🇸 us (Census; keyless quota exhausted from CI IP), 🇯🇵 jp (e-Stat appId), 🇳🇿 nz (StatsNZ ADE key, or manual XLSX).
+### Remaining — see `aging-fetch-guide.md` for step-by-step
+- **Free key from owner:** 🇺🇸 us (Census), 🇯🇵 jp (e-Stat appId), 🇳🇿 nz (StatsNZ key, or manual XLSX).
 - **Portal / manual download:** 🇰🇷 kr KOSIS, 🇹🇷 tr TÜİK, 🇨🇳 cn NBS, 🇮🇳 in Census, 🇲🇽 mx INEGI, 🇮🇷 ir SCI.
-- **Local file needed:** 🇹🇼 tw — town-level upgrade needs the MOI #77132 single-age file (off-disk; download or provide).
+- **Local file needed:** 🇹🇼 tw — town-level upgrade needs the MOI #77132 single-age file.
 
 ## Coverage table
 
