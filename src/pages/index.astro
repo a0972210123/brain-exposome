@@ -17,10 +17,13 @@ import T from '../components/T.astro';
       /></p>
 
       <!-- Intro: three collapsible cards (story / privacy / disclaimer) — native <details>, no JS needed -->
-      <div class="intro-cards">
-        <details class="intro-card">
-          <summary><span class="ic-icon">📖</span><span class="ic-title"><T zh="這個工具的由來" en="Why this tool exists" /></span><span class="ic-chev" aria-hidden="true">▾</span></summary>
-          <div class="ic-body">
+      <div class="intro-tabs" id="intro-tabs" role="tablist" aria-label="about">
+        <button type="button" class="it-btn" role="tab" aria-selected="false" data-intro="story"><span class="ic-icon">📖</span><T zh="這個工具的由來" en="Why this tool exists" /></button>
+        <button type="button" class="it-btn" role="tab" aria-selected="false" data-intro="privacy"><span class="ic-icon">🔒</span><T zh="資料安全" en="Your data" /></button>
+        <button type="button" class="it-btn" role="tab" aria-selected="false" data-intro="warn"><span class="ic-icon">⚠️</span><T zh="重要提醒" en="Important" /></button>
+      </div>
+      <div class="intro-body-wrap" id="intro-body-wrap" hidden>
+        <div class="intro-body" data-intro-panel="story">
             <p><T
               zh="這個工具的起點，是我參與 2026 年阿茲海默症協會國際年會（AAIC）聽的其中一場演講主題：「為什麼每個人大腦老化的速度不一樣？」失智症的大腦病變往往在發病前 15–20 年就悄悄開始，而有些推動病變的因子就在生活中。講者分享的案例讓全場震撼，好幾位不到 60 歲、高學歷、沒有慢性病、生活型態健康的人卻確診阿茲海默症，而他們的共同點是長期住在空污嚴重的地區，腦影像顯示他們的大腦比實際年齡老了 15–25 歲。學者提出的論點是，這些環境中的危險因子推動著他們的大腦老化與病變。"
               en="This tool began with one of the talks I attended at the 2026 Alzheimer's Association International Conference (AAIC): “Why do our brains age at different speeds?” Dementia's brain changes often begin quietly 15–20 years before symptoms — and some of the factors driving them are woven into everyday life. The cases the speaker shared stunned the room: several people under 60, highly educated, with no chronic disease and healthy lifestyles, yet diagnosed with Alzheimer's — their common thread was living long-term in heavily polluted areas, with brain scans showing brains 15–25 years older than their actual age. The researchers' argument was that these environmental risk factors were driving their brain aging and pathology."
@@ -33,29 +36,20 @@ import T from '../components/T.astro';
               zh="使用者可以輸入歷年居住地與基本資料，看看自己累積的「exposome（環境暴露總和）」對應到多少『相對腦齡加速』年數；也能在全球地圖上瀏覽各國的失智盛行、空污、高齡化與可調控風險概況。它不是診斷、不是醫療器材，也不預測任何個人是否會失智——只希望讓我們對身邊這些「可以及早行動」的危險因子更有覺知。"
               en="You can enter your residence history and basic profile to see how your accumulated 'exposome' maps to a 'relative brain-aging' figure in years — and browse each country's dementia prevalence, air pollution, aging and modifiable-risk picture on the global map. It is not a diagnosis, not a medical device, and predicts nothing about any individual — it exists only to raise awareness of the risk factors around us that we can act on early."
             /></p>
-          </div>
-        </details>
-
-        <details class="intro-card">
-          <summary><span class="ic-icon">🔒</span><span class="ic-title"><T zh="資料安全" en="Your data" /></span><span class="ic-chev" aria-hidden="true">▾</span></summary>
-          <div class="ic-body">
+        </div>
+        <div class="intro-body" data-intro-panel="privacy" hidden>
             <p><T zh="所有計算都在你的瀏覽器內完成，資料不會上傳或儲存到任何伺服器。" en="All calculations run entirely in your browser — nothing is uploaded or stored on any server." /></p>
             <p><T zh="為了少填一步，第一段居住地的「國家」會依你目前的網路所在地或瀏覽器語系自動預設（不經第三方、不會索取定位權限），你可以隨時自行更改。" en="To save a step, the first residence's country is pre-filled from your current network location or browser locale (no third party, no location-permission prompt); you can change it anytime." /></p>
-          </div>
-        </details>
-
-        <details class="intro-card">
-          <summary><span class="ic-icon">⚠️</span><span class="ic-title"><T zh="重要提醒" en="Important" /></span><span class="ic-chev" aria-hidden="true">▾</span></summary>
-          <div class="ic-body">
+        </div>
+        <div class="intro-body" data-intro-panel="warn" hidden>
             <p><T zh="本工具僅供一般健康教育與自我覺察之用，並非醫療器材、不是診斷或篩檢工具，無法預測任何人是否會罹患失智症。" en="This tool is for general health education and self-awareness only. It is not a medical device, not a diagnostic or screening test, and cannot predict whether anyone will develop dementia." /></p>
             <ul>
               <li><T zh="結果描述的是「族群層級」的關聯（來自已發表研究），而不是對「你個人」的預測；同樣的因子，每個人的結果差異其實很大。" en="Results describe population-level associations (from published research), not a prediction about you personally — individual outcomes vary a great deal." /></li>
               <li><T zh="這裡的「腦齡加速」是一個教育性的比喻數字，不是用腦部影像（MRI／EEG）量出來的真實腦齡。" en="The 'brain-age acceleration' here is an educational illustration, not a real brain age measured from imaging (MRI/EEG)." /></li>
               <li><T zh="本工具不能取代醫療專業判斷。如有任何健康疑慮，請諮詢合格的醫療人員。" en="This does not replace professional medical advice. Consult a qualified healthcare provider for any health concern." /></li>
               <li><T zh="PM2.5 採用 ACAG 衛星推估的逐年（1998–2024）縣市資料（1998 年以前的居住年份沿用 1998 值）。地圖上的失智盛行率為縣市層級的模型估計值，非實測。" en="PM2.5 uses ACAG satellite-derived annual (1998–2024) county data (residence years before 1998 reuse the 1998 value). The dementia prevalence on the map is a county-level modelled estimate, not measured." /></li>
-            </ul>
-          </div>
-        </details>
+          </ul>
+        </div>
       </div>
     </section>
 
@@ -96,6 +90,15 @@ import T from '../components/T.astro';
                 <option value="female" data-zh="女性" data-en="Female">女性</option>
                 <option value="male" data-zh="男性" data-en="Male">男性</option>
               </select>
+            </label>
+            <label class="form-field">
+              <span><T zh="身高" en="Height" /> <em>(cm)</em></span>
+              <input type="number" id="in-height" placeholder="165" min="120" max="220" step="0.5" />
+            </label>
+            <label class="form-field">
+              <span><T zh="體重" en="Weight" /> <em>(kg)</em></span>
+              <input type="number" id="in-weight" placeholder="60" min="25" max="250" step="0.5" />
+              <small class="field-hint" id="bmi-hint"><T zh="填了身高體重就會自動算 BMI，並帶入後面的體位選項（可自行修改）" en="Enter height & weight and we'll compute your BMI and pre-fill the body-weight question (you can override it)" /></small>
             </label>
             <label class="form-field">
               <span><T zh="教育程度" en="Education" /> <em><T zh="（認知存量）" en="(cognitive reserve)" /></em></span>
@@ -345,7 +348,7 @@ import T from '../components/T.astro';
         <div class="result-brainage">
           <div class="ba-label"><T zh="教育性「腦齡加速」估計" en="Educational 'brain-age acceleration' estimate" /></div>
           <div class="ba-gauge" id="out-gauge"></div>
-          <div class="ba-num" id="out-brainage">—</div>
+          <div class="ba-num sr-num" id="out-brainage">—</div>
           <div class="ba-caption" id="out-brainage-caption"></div>
           <div id="out-brainage-detail"></div>
         </div>
@@ -584,33 +587,28 @@ import T from '../components/T.astro';
   .calc-subtitle { color: var(--color-text-muted); font-size: 1rem; line-height: 1.7; max-width: 720px; }
   .calc-tagline { color: var(--color-text-muted); font-size: 1rem; line-height: 1.7; max-width: 760px; margin: 0.5rem 0 1.1rem; }
 
-  /* Intro: three collapsible cards (story / privacy / disclaimer) */
-  .intro-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin-bottom: var(--spacing-lg); }
-  .intro-card {
-    background: var(--card-bg); border: 1px solid var(--card-border);
-    border-radius: var(--radius-md); box-shadow: var(--card-shadow); overflow: hidden;
+  /* Intro: three tabs + one panel — the tab row never reflows, so nothing jumps on click */
+  .intro-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 0.6rem; }
+  .it-btn {
+    display: inline-flex; align-items: center; gap: 0.45rem; white-space: nowrap;
+    background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 999px;
+    color: var(--color-text); cursor: pointer; font-family: var(--font-sans);
+    font-size: 0.88rem; font-weight: 600; padding: 0.5rem 0.95rem;
+    transition: border-color 0.15s, color 0.15s, background-color 0.15s;
   }
-  .intro-card summary {
-    display: flex; align-items: center; gap: 0.5rem; cursor: pointer; list-style: none;
-    padding: 0.85rem 1rem; font-weight: 600; font-size: 0.92rem; color: var(--color-text);
-    transition: background-color 0.15s, border-color 0.15s;
+  .it-btn:hover { border-color: var(--color-accent); }
+  .it-btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+  .it-btn.is-active { border-color: var(--color-accent); color: var(--color-accent); background: var(--color-surface); }
+  .ic-icon { font-size: 1.05rem; line-height: 1; flex: none; }
+  .intro-body-wrap {
+    background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius-md);
+    padding: 1rem 1.15rem; margin-bottom: var(--spacing-lg); box-shadow: var(--card-shadow);
   }
-  .intro-card summary::-webkit-details-marker { display: none; }
-  .intro-card summary:hover { background: var(--color-surface); }
-  .intro-card summary:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
-  .ic-icon { font-size: 1.15rem; line-height: 1; flex: none; }
-  .ic-title { flex: 1; min-width: 0; }
-  .ic-chev { flex: none; color: var(--color-text-muted); font-size: 0.8rem; transition: transform 0.2s; }
-  .intro-card[open] .ic-chev { transform: rotate(180deg); }
-  .intro-card[open] summary { border-bottom: 1px solid var(--color-border); }
-  /* An opened card takes the full row — three narrow columns of prose is unreadable. */
-  .intro-card[open] { grid-column: 1 / -1; }
-  .intro-card[open] .ic-body { max-width: 78ch; }
-  .ic-body { padding: 0.9rem 1rem 1.1rem; font-size: 0.88rem; line-height: 1.7; color: var(--color-text-muted); }
-  .ic-body p + p { margin-top: 0.7rem; }
-  .ic-body ul { margin: 0.5rem 0 0; padding-left: 1.2rem; }
-  .ic-body li { margin-bottom: 0.35rem; }
-  @media (max-width: 700px) { .intro-cards { grid-template-columns: 1fr; } }
+  .intro-body { font-size: 0.88rem; line-height: 1.75; color: var(--color-text-muted); max-width: 78ch; }
+  .intro-body p + p { margin-top: 0.7rem; }
+  .intro-body ul { margin: 0.5rem 0 0; padding-left: 1.2rem; }
+  .intro-body li { margin-bottom: 0.35rem; }
+  @media (max-width: 560px) { .it-btn { font-size: 0.82rem; padding: 0.45rem 0.75rem; } }
 
   /* Main tabs — one section on screen at a time (keeps the page short) */
   .main-tabs {
@@ -667,26 +665,21 @@ import T from '../components/T.astro';
   .wizard { margin-bottom: var(--spacing-xl); }
   /* The stepper stays put while steps swap, so the page doesn't jump between steps.
      top offset clears the sticky site header. */
+  /* Six steps on two rows of three — nothing gets cut off, no horizontal scrolling. */
   .wizard-steps {
-    display: flex; list-style: none; padding: 0.4rem 0; margin: 0 0 var(--spacing-lg);
-    gap: 0.4rem; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none;
+    display: grid; grid-template-columns: repeat(3, minmax(0, 1fr));
+    list-style: none; padding: 0.4rem 0; margin: 0 0 var(--spacing-lg); gap: 0.4rem;
     position: sticky; top: 3.4rem; z-index: 20; background: var(--color-bg);
   }
-  .wizard-steps::-webkit-scrollbar { display: none; }
   .wizard-steps li {
-    display: flex; align-items: center; gap: 0.4rem; flex: none; white-space: nowrap;
+    display: flex; align-items: center; gap: 0.4rem; min-width: 0;
     font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted);
     padding: 0.35rem 0.7rem 0.35rem 0.4rem; border-radius: 999px;
     border: 1px solid var(--color-border); background: var(--color-surface);
     cursor: pointer; transition: border-color 0.15s, color 0.15s;
   }
-  /* On phones the six labels won't fit — show numbers only, the active step keeps its label. */
-  @media (max-width: 560px) {
-    .wizard-steps li .wz-lbl { display: none; }
-    .wizard-steps li.is-active .wz-lbl { display: inline; }
-    .wizard-steps li { padding-right: 0.5rem; }
-    .wizard-steps li.is-active { padding-right: 0.7rem; }
-  }
+  .wz-lbl { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  @media (max-width: 460px) { .wizard-steps li { font-size: 0.72rem; padding: 0.3rem 0.45rem 0.3rem 0.3rem; } }
   .wizard-steps li:hover { border-color: var(--color-accent); color: var(--color-text); }
   .wizard-steps li:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
   .wizard-steps li.is-active { color: var(--color-text); border-color: var(--color-accent); }
@@ -762,6 +755,7 @@ import T from '../components/T.astro';
   .res-table :global(tr.drop-above) { box-shadow: inset 0 2px 0 0 var(--color-accent); }
   .res-table :global(tr.drop-below) { box-shadow: inset 0 -2px 0 0 var(--color-accent); }
   .res-hint { font-size: 0.78rem; color: var(--color-text-muted); margin: 0.5rem 0 0; }
+  .bmi-out { color: var(--color-accent); font-weight: 600; }
   .res-controls { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 0.8rem; flex-wrap: wrap; }
   .res-add-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }
   .res-summary { font-size: 0.85rem; color: var(--color-accent); font-weight: 600; margin: 0; }
@@ -786,12 +780,22 @@ import T from '../components/T.astro';
   .ba-label { font-size: 0.8rem; text-transform: uppercase; letter-spacing: 0.06em; color: var(--color-text-muted); }
   /* brain-age gauge (semicircular meter) — SVG is built at runtime via innerHTML,
      so its inner marks carry no Astro scope attribute → target them with :global. */
-  .ba-gauge { max-width: 240px; margin: 0.5rem auto 0.8rem; }
+  .ba-gauge { max-width: 340px; margin: 0.6rem auto 0.5rem; }
   .ba-gauge :global(svg) { width: 100%; height: auto; display: block; overflow: visible; }
   .ba-gauge :global(.gauge-track) { fill: none; stroke: var(--color-border); stroke-width: 13; stroke-linecap: round; }
   .ba-gauge :global(.gauge-val) { fill: none; stroke-width: 13; stroke-linecap: round; }
-  .ba-gauge :global(.gauge-tick) { fill: var(--color-text-muted); font-size: 11px; font-family: var(--font-sans); }
-  .ba-num { font-size: clamp(2.2rem, 8vw, 3.4rem); font-weight: 800; letter-spacing: -0.03em; margin: 0.3rem 0; }
+  .ba-gauge :global(.gauge-tick) { fill: var(--color-text-muted); font-size: 10px; font-family: var(--font-sans); }
+  /* headline number sits inside the dial */
+  .ba-gauge :global(.gauge-num) {
+    fill: var(--color-text); font-family: var(--font-sans); font-size: 38px;
+    font-weight: 800; letter-spacing: -0.03em;
+  }
+  .ba-gauge :global(.gauge-unit) { fill: var(--color-text-muted); font-family: var(--font-sans); font-size: 14px; font-weight: 600; }
+  /* the old standalone number is now drawn in the SVG; keep the node for screen readers only */
+  .ba-num.sr-num {
+    position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
+    overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0;
+  }
   .ba-caption { font-size: 0.82rem; color: var(--color-text-muted); line-height: 1.6; max-width: 460px; margin: 0 auto; text-align: left; padding: 0 0.3rem; }
   /* the derivation detail is injected via innerHTML, so it carries no scope attr →
      target it with :global under the static card, otherwise it inherits the card's
@@ -1521,11 +1525,15 @@ function renderGauge(r) {
     const [x0, y0] = P(a0), [x1, y1] = P(a1);
     return `M ${x0.toFixed(1)} ${y0.toFixed(1)} A ${rad} ${rad} 0 ${Math.abs(a1 - a0) > 180 ? 1 : 0} 1 ${x1.toFixed(1)} ${y1.toFixed(1)}`;
   };
+  // The headline number lives INSIDE the arc (baseline just above the dial's flat edge).
+  const num = `≈ +${r.dMid.toFixed(1)}`;
   el.innerHTML = `<svg viewBox="0 0 200 134" role="img" aria-label="${L('腦齡加速儀表', 'brain-age gauge')}">
     <path class="gauge-track" d="${arc(180, 360)}"/>
     <path class="gauge-val" d="${arc(180, 180 + 180 * t)}" style="stroke:${color}"/>
-    <text class="gauge-tick" x="14" y="128" text-anchor="middle">0</text>
-    <text class="gauge-tick" x="186" y="128" text-anchor="middle">${GMAX}+</text>
+    <text class="gauge-num" x="100" y="96" text-anchor="middle">${num}</text>
+    <text class="gauge-unit" x="100" y="118" text-anchor="middle">${L('年', 'years')}</text>
+    <text class="gauge-tick" x="14" y="130" text-anchor="middle">0</text>
+    <text class="gauge-tick" x="186" y="130" text-anchor="middle">${GMAX}+</text>
   </svg>`;
 }
 
@@ -1672,6 +1680,47 @@ function showStep(n) {
   if (pill && pill.scrollIntoView) pill.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   const wiz = document.querySelector('.wizard');
   if (wiz) window.scrollTo({ top: wiz.getBoundingClientRect().top + window.scrollY - headerOffset(), behavior: 'smooth' });
+}
+
+/* ── BMI from height+weight (Step 1) → auto-selects the body-weight option (Step 3).
+     Taiwan cutoffs, matching that question's hint: 過重 24–27, 肥胖 ≥ 27. ── */
+function bmiCategory(bmi) {
+  if (bmi >= 27) return 'obese';
+  if (bmi >= 24) return 'overweight';
+  return 'normal';
+}
+function updateBmi() {
+  const h = parseFloat(val('in-height')), w = parseFloat(val('in-weight'));
+  const hint = $('bmi-hint'), sel = $('in-bmi');
+  const okIn = Number.isFinite(h) && Number.isFinite(w) && h > 50 && w > 10;
+  if (!okIn) {
+    if (hint) hint.textContent = L('填了身高體重就會自動算 BMI，並帶入後面的體位選項（可自行修改）',
+      "Enter height & weight and we'll compute your BMI and pre-fill the body-weight question (you can override it)");
+    return;
+  }
+  const bmi = w / Math.pow(h / 100, 2);
+  const cat = bmiCategory(bmi);
+  const catTxt = { normal: L('正常或過輕', 'normal or under'), overweight: L('過重', 'overweight'), obese: L('肥胖', 'obese') }[cat];
+  if (sel) sel.value = cat;                       // drive the Step-3 question; user can still override
+  if (hint) hint.innerHTML = L(
+    `BMI ≈ <span class="bmi-out">${bmi.toFixed(1)}</span>（${catTxt}）— 已自動帶入後面的體位選項，可自行修改`,
+    `BMI ≈ <span class="bmi-out">${bmi.toFixed(1)}</span> (${catTxt}) — pre-filled the body-weight question below; you can override it`);
+}
+
+/* ── Intro tabs (story / privacy / disclaimer) — click to open, click the active one to close.
+     The tab row never moves, so opening a panel can't reflow the buttons. ── */
+let introOpen = null;
+function showIntro(name) {
+  const wrap = document.getElementById('intro-body-wrap');
+  if (!wrap) return;
+  introOpen = (introOpen === name) ? null : name;
+  wrap.hidden = introOpen === null;
+  wrap.querySelectorAll('.intro-body').forEach(p => { p.hidden = p.dataset.introPanel !== introOpen; });
+  document.querySelectorAll('.it-btn').forEach(b => {
+    const on = b.dataset.intro === introOpen;
+    b.classList.toggle('is-active', on);
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
 }
 
 /* ── Main tabs (check-in / map / references) ── */
@@ -2517,9 +2566,18 @@ async function init() {
     const b = e.target.closest('[data-tab]'); if (!b) return;
     showTab(b.dataset.tab);
   });
+  const itabs = $('intro-tabs');
+  if (itabs) itabs.addEventListener('click', e => {
+    const b = e.target.closest('[data-intro]'); if (!b) return;
+    showIntro(b.dataset.intro);
+  });
   // Re-derive the residence year range whenever the age changes (Step 1 feeds Step 2's timeline).
   const ageIn = $('in-age');
   if (ageIn) ageIn.addEventListener('change', renderResidences);
+  ['in-height', 'in-weight'].forEach(id => {
+    const el = $(id);
+    if (el) { el.addEventListener('input', updateBmi); el.addEventListener('change', updateBmi); }
+  });
   // load real PM2.5 — Taiwan county series + world country series (ACAG) — plus geo-detect, in parallel
   let detectedIso = null;
   try {
