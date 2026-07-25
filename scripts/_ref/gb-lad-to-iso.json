@@ -1,0 +1,860 @@
+{
+ "_note": "ONS/Nomis LAD (GSS code + name) -> ISO-3166-2:GB geojson code. Built by build_aging_gb.mjs; reuse for any UK admin-1 dataset. Unmatched = boundary-changed units (NI pre-2015, merged English unitaries).",
+ "crosswalk": [
+  {
+   "iso": "GB-ABD",
+   "gss": "S12000034",
+   "nomis_name": "Aberdeenshire"
+  },
+  {
+   "iso": "GB-AGB",
+   "gss": "S12000035",
+   "nomis_name": "Argyll and Bute"
+  },
+  {
+   "iso": "GB-ANS",
+   "gss": "S12000041",
+   "nomis_name": "Angus"
+  },
+  {
+   "iso": "GB-BAS",
+   "gss": "E06000022",
+   "nomis_name": "Bath and North East Somerset"
+  },
+  {
+   "iso": "GB-BBD",
+   "gss": "E06000008",
+   "nomis_name": "Blackburn with Darwen"
+  },
+  {
+   "iso": "GB-BDF",
+   "gss": "E06000055",
+   "nomis_name": "Bedford"
+  },
+  {
+   "iso": "GB-BDG",
+   "gss": "E09000002",
+   "nomis_name": "Barking and Dagenham"
+  },
+  {
+   "iso": "GB-BEN",
+   "gss": "E09000005",
+   "nomis_name": "Brent"
+  },
+  {
+   "iso": "GB-BEX",
+   "gss": "E09000004",
+   "nomis_name": "Bexley"
+  },
+  {
+   "iso": "GB-BFS",
+   "gss": "N09000003",
+   "nomis_name": "Belfast"
+  },
+  {
+   "iso": "GB-BGE",
+   "gss": "W06000013",
+   "nomis_name": "Bridgend"
+  },
+  {
+   "iso": "GB-BGW",
+   "gss": "W06000019",
+   "nomis_name": "Blaenau Gwent"
+  },
+  {
+   "iso": "GB-BIR",
+   "gss": "E08000025",
+   "nomis_name": "Birmingham"
+  },
+  {
+   "iso": "GB-BKM",
+   "gss": "E06000060",
+   "nomis_name": "Buckinghamshire"
+  },
+  {
+   "iso": "GB-BNE",
+   "gss": "E09000003",
+   "nomis_name": "Barnet"
+  },
+  {
+   "iso": "GB-BNH",
+   "gss": "E06000043",
+   "nomis_name": "Brighton and Hove"
+  },
+  {
+   "iso": "GB-BNS",
+   "gss": "E08000016",
+   "nomis_name": "Barnsley"
+  },
+  {
+   "iso": "GB-BOL",
+   "gss": "E08000001",
+   "nomis_name": "Bolton"
+  },
+  {
+   "iso": "GB-BPL",
+   "gss": "E06000009",
+   "nomis_name": "Blackpool"
+  },
+  {
+   "iso": "GB-BRC",
+   "gss": "E06000036",
+   "nomis_name": "Bracknell Forest"
+  },
+  {
+   "iso": "GB-BRD",
+   "gss": "E08000032",
+   "nomis_name": "Bradford"
+  },
+  {
+   "iso": "GB-BRY",
+   "gss": "E09000006",
+   "nomis_name": "Bromley"
+  },
+  {
+   "iso": "GB-BST",
+   "gss": "E06000023",
+   "nomis_name": "Bristol, City of"
+  },
+  {
+   "iso": "GB-BUR",
+   "gss": "E08000002",
+   "nomis_name": "Bury"
+  },
+  {
+   "iso": "GB-CAY",
+   "gss": "W06000018",
+   "nomis_name": "Caerphilly"
+  },
+  {
+   "iso": "GB-CBF",
+   "gss": "E06000056",
+   "nomis_name": "Central Bedfordshire"
+  },
+  {
+   "iso": "GB-CGN",
+   "gss": "W06000008",
+   "nomis_name": "Ceredigion"
+  },
+  {
+   "iso": "GB-CHE",
+   "gss": "E06000049",
+   "nomis_name": "Cheshire East"
+  },
+  {
+   "iso": "GB-CHW",
+   "gss": "E06000050",
+   "nomis_name": "Cheshire West and Chester"
+  },
+  {
+   "iso": "GB-CKT",
+   "gss": "N09000009",
+   "nomis_name": "Mid Ulster"
+  },
+  {
+   "iso": "GB-CLD",
+   "gss": "E08000033",
+   "nomis_name": "Calderdale"
+  },
+  {
+   "iso": "GB-CLK",
+   "gss": "S12000005",
+   "nomis_name": "Clackmannanshire"
+  },
+  {
+   "iso": "GB-CMD",
+   "gss": "E09000007",
+   "nomis_name": "Camden"
+  },
+  {
+   "iso": "GB-CMN",
+   "gss": "W06000010",
+   "nomis_name": "Carmarthenshire"
+  },
+  {
+   "iso": "GB-CON",
+   "gss": "E06000052",
+   "nomis_name": "Cornwall"
+  },
+  {
+   "iso": "GB-COV",
+   "gss": "E08000026",
+   "nomis_name": "Coventry"
+  },
+  {
+   "iso": "GB-CRF",
+   "gss": "W06000015",
+   "nomis_name": "Cardiff"
+  },
+  {
+   "iso": "GB-CRY",
+   "gss": "E09000008",
+   "nomis_name": "Croydon"
+  },
+  {
+   "iso": "GB-CWY",
+   "gss": "W06000003",
+   "nomis_name": "Conwy"
+  },
+  {
+   "iso": "GB-DAL",
+   "gss": "E06000005",
+   "nomis_name": "Darlington"
+  },
+  {
+   "iso": "GB-DEN",
+   "gss": "W06000004",
+   "nomis_name": "Denbighshire"
+  },
+  {
+   "iso": "GB-DER",
+   "gss": "E06000015",
+   "nomis_name": "Derby"
+  },
+  {
+   "iso": "GB-DGY",
+   "gss": "S12000006",
+   "nomis_name": "Dumfries and Galloway"
+  },
+  {
+   "iso": "GB-DNC",
+   "gss": "E08000017",
+   "nomis_name": "Doncaster"
+  },
+  {
+   "iso": "GB-DOR",
+   "gss": "E06000059",
+   "nomis_name": "Dorset"
+  },
+  {
+   "iso": "GB-DUD",
+   "gss": "E08000027",
+   "nomis_name": "Dudley"
+  },
+  {
+   "iso": "GB-EAL",
+   "gss": "E09000009",
+   "nomis_name": "Ealing"
+  },
+  {
+   "iso": "GB-EAY",
+   "gss": "S12000008",
+   "nomis_name": "East Ayrshire"
+  },
+  {
+   "iso": "GB-EDH",
+   "gss": "S12000036",
+   "nomis_name": "City of Edinburgh"
+  },
+  {
+   "iso": "GB-EDU",
+   "gss": "S12000045",
+   "nomis_name": "East Dunbartonshire"
+  },
+  {
+   "iso": "GB-ELN",
+   "gss": "S12000010",
+   "nomis_name": "East Lothian"
+  },
+  {
+   "iso": "GB-ENF",
+   "gss": "E09000010",
+   "nomis_name": "Enfield"
+  },
+  {
+   "iso": "GB-ERW",
+   "gss": "S12000011",
+   "nomis_name": "East Renfrewshire"
+  },
+  {
+   "iso": "GB-ERY",
+   "gss": "E06000011",
+   "nomis_name": "East Riding of Yorkshire"
+  },
+  {
+   "iso": "GB-FAL",
+   "gss": "S12000014",
+   "nomis_name": "Falkirk"
+  },
+  {
+   "iso": "GB-FIF",
+   "gss": "S12000047",
+   "nomis_name": "Fife"
+  },
+  {
+   "iso": "GB-FLN",
+   "gss": "W06000005",
+   "nomis_name": "Flintshire"
+  },
+  {
+   "iso": "GB-GAT",
+   "gss": "E08000037",
+   "nomis_name": "Gateshead"
+  },
+  {
+   "iso": "GB-GRE",
+   "gss": "E09000011",
+   "nomis_name": "Greenwich"
+  },
+  {
+   "iso": "GB-GWN",
+   "gss": "W06000002",
+   "nomis_name": "Gwynedd"
+  },
+  {
+   "iso": "GB-HAL",
+   "gss": "E06000006",
+   "nomis_name": "Halton"
+  },
+  {
+   "iso": "GB-HAV",
+   "gss": "E09000016",
+   "nomis_name": "Havering"
+  },
+  {
+   "iso": "GB-HCK",
+   "gss": "E09000012",
+   "nomis_name": "Hackney"
+  },
+  {
+   "iso": "GB-HEF",
+   "gss": "E06000019",
+   "nomis_name": "Herefordshire, County of"
+  },
+  {
+   "iso": "GB-HIL",
+   "gss": "E09000017",
+   "nomis_name": "Hillingdon"
+  },
+  {
+   "iso": "GB-HLD",
+   "gss": "S12000017",
+   "nomis_name": "Highland"
+  },
+  {
+   "iso": "GB-HMF",
+   "gss": "E09000013",
+   "nomis_name": "Hammersmith and Fulham"
+  },
+  {
+   "iso": "GB-HNS",
+   "gss": "E09000018",
+   "nomis_name": "Hounslow"
+  },
+  {
+   "iso": "GB-HPL",
+   "gss": "E06000001",
+   "nomis_name": "Hartlepool"
+  },
+  {
+   "iso": "GB-HRW",
+   "gss": "E09000015",
+   "nomis_name": "Harrow"
+  },
+  {
+   "iso": "GB-HRY",
+   "gss": "E09000014",
+   "nomis_name": "Haringey"
+  },
+  {
+   "iso": "GB-IOS",
+   "gss": "E06000053",
+   "nomis_name": "Isles of Scilly"
+  },
+  {
+   "iso": "GB-IOW",
+   "gss": "E06000046",
+   "nomis_name": "Isle of Wight"
+  },
+  {
+   "iso": "GB-ISL",
+   "gss": "E09000019",
+   "nomis_name": "Islington"
+  },
+  {
+   "iso": "GB-IVC",
+   "gss": "S12000018",
+   "nomis_name": "Inverclyde"
+  },
+  {
+   "iso": "GB-KEC",
+   "gss": "E09000020",
+   "nomis_name": "Kensington and Chelsea"
+  },
+  {
+   "iso": "GB-KHL",
+   "gss": "E06000010",
+   "nomis_name": "Kingston upon Hull, City of"
+  },
+  {
+   "iso": "GB-KIR",
+   "gss": "E08000034",
+   "nomis_name": "Kirklees"
+  },
+  {
+   "iso": "GB-KTT",
+   "gss": "E09000021",
+   "nomis_name": "Kingston upon Thames"
+  },
+  {
+   "iso": "GB-KWL",
+   "gss": "E08000011",
+   "nomis_name": "Knowsley"
+  },
+  {
+   "iso": "GB-LBH",
+   "gss": "E09000022",
+   "nomis_name": "Lambeth"
+  },
+  {
+   "iso": "GB-LCE",
+   "gss": "E06000016",
+   "nomis_name": "Leicester"
+  },
+  {
+   "iso": "GB-LDS",
+   "gss": "E08000035",
+   "nomis_name": "Leeds"
+  },
+  {
+   "iso": "GB-LEW",
+   "gss": "E09000023",
+   "nomis_name": "Lewisham"
+  },
+  {
+   "iso": "GB-LIV",
+   "gss": "E08000012",
+   "nomis_name": "Liverpool"
+  },
+  {
+   "iso": "GB-LUT",
+   "gss": "E06000032",
+   "nomis_name": "Luton"
+  },
+  {
+   "iso": "GB-MAN",
+   "gss": "E08000003",
+   "nomis_name": "Manchester"
+  },
+  {
+   "iso": "GB-MDB",
+   "gss": "E06000002",
+   "nomis_name": "Middlesbrough"
+  },
+  {
+   "iso": "GB-MDW",
+   "gss": "E06000035",
+   "nomis_name": "Medway"
+  },
+  {
+   "iso": "GB-MIK",
+   "gss": "E06000042",
+   "nomis_name": "Milton Keynes"
+  },
+  {
+   "iso": "GB-MLN",
+   "gss": "S12000019",
+   "nomis_name": "Midlothian"
+  },
+  {
+   "iso": "GB-MON",
+   "gss": "W06000021",
+   "nomis_name": "Monmouthshire"
+  },
+  {
+   "iso": "GB-MRT",
+   "gss": "E09000024",
+   "nomis_name": "Merton"
+  },
+  {
+   "iso": "GB-MRY",
+   "gss": "S12000020",
+   "nomis_name": "Moray"
+  },
+  {
+   "iso": "GB-MTY",
+   "gss": "W06000024",
+   "nomis_name": "Merthyr Tydfil"
+  },
+  {
+   "iso": "GB-NBL",
+   "gss": "E06000057",
+   "nomis_name": "Northumberland"
+  },
+  {
+   "iso": "GB-NEL",
+   "gss": "E06000012",
+   "nomis_name": "North East Lincolnshire"
+  },
+  {
+   "iso": "GB-NET",
+   "gss": "E08000021",
+   "nomis_name": "Newcastle upon Tyne"
+  },
+  {
+   "iso": "GB-NGM",
+   "gss": "E06000018",
+   "nomis_name": "Nottingham"
+  },
+  {
+   "iso": "GB-NLK",
+   "gss": "S12000050",
+   "nomis_name": "North Lanarkshire"
+  },
+  {
+   "iso": "GB-NLN",
+   "gss": "E06000013",
+   "nomis_name": "North Lincolnshire"
+  },
+  {
+   "iso": "GB-NSM",
+   "gss": "E06000024",
+   "nomis_name": "North Somerset"
+  },
+  {
+   "iso": "GB-NTH",
+   "gss": "E06000061",
+   "nomis_name": "North Northamptonshire"
+  },
+  {
+   "iso": "GB-NTH",
+   "gss": "E06000062",
+   "nomis_name": "West Northamptonshire"
+  },
+  {
+   "iso": "GB-NTL",
+   "gss": "W06000012",
+   "nomis_name": "Neath Port Talbot"
+  },
+  {
+   "iso": "GB-NTY",
+   "gss": "E08000022",
+   "nomis_name": "North Tyneside"
+  },
+  {
+   "iso": "GB-NWM",
+   "gss": "E09000025",
+   "nomis_name": "Newham"
+  },
+  {
+   "iso": "GB-NWP",
+   "gss": "W06000022",
+   "nomis_name": "Newport"
+  },
+  {
+   "iso": "GB-OLD",
+   "gss": "E08000004",
+   "nomis_name": "Oldham"
+  },
+  {
+   "iso": "GB-PEM",
+   "gss": "W06000009",
+   "nomis_name": "Pembrokeshire"
+  },
+  {
+   "iso": "GB-PLY",
+   "gss": "E06000026",
+   "nomis_name": "Plymouth"
+  },
+  {
+   "iso": "GB-POR",
+   "gss": "E06000044",
+   "nomis_name": "Portsmouth"
+  },
+  {
+   "iso": "GB-POW",
+   "gss": "W06000023",
+   "nomis_name": "Powys"
+  },
+  {
+   "iso": "GB-PTE",
+   "gss": "E06000031",
+   "nomis_name": "Peterborough"
+  },
+  {
+   "iso": "GB-RCC",
+   "gss": "E06000003",
+   "nomis_name": "Redcar and Cleveland"
+  },
+  {
+   "iso": "GB-RCH",
+   "gss": "E08000005",
+   "nomis_name": "Rochdale"
+  },
+  {
+   "iso": "GB-RCT",
+   "gss": "W06000016",
+   "nomis_name": "Rhondda Cynon Taff"
+  },
+  {
+   "iso": "GB-RDB",
+   "gss": "E09000026",
+   "nomis_name": "Redbridge"
+  },
+  {
+   "iso": "GB-RDG",
+   "gss": "E06000038",
+   "nomis_name": "Reading"
+  },
+  {
+   "iso": "GB-RFW",
+   "gss": "S12000038",
+   "nomis_name": "Renfrewshire"
+  },
+  {
+   "iso": "GB-RIC",
+   "gss": "E09000027",
+   "nomis_name": "Richmond upon Thames"
+  },
+  {
+   "iso": "GB-ROT",
+   "gss": "E08000018",
+   "nomis_name": "Rotherham"
+  },
+  {
+   "iso": "GB-RUT",
+   "gss": "E06000017",
+   "nomis_name": "Rutland"
+  },
+  {
+   "iso": "GB-SAW",
+   "gss": "E08000028",
+   "nomis_name": "Sandwell"
+  },
+  {
+   "iso": "GB-SAY",
+   "gss": "S12000028",
+   "nomis_name": "South Ayrshire"
+  },
+  {
+   "iso": "GB-SCB",
+   "gss": "S12000026",
+   "nomis_name": "Scottish Borders"
+  },
+  {
+   "iso": "GB-SFT",
+   "gss": "E08000014",
+   "nomis_name": "Sefton"
+  },
+  {
+   "iso": "GB-SGC",
+   "gss": "E06000025",
+   "nomis_name": "South Gloucestershire"
+  },
+  {
+   "iso": "GB-SHF",
+   "gss": "E08000019",
+   "nomis_name": "Sheffield"
+  },
+  {
+   "iso": "GB-SHR",
+   "gss": "E06000051",
+   "nomis_name": "Shropshire"
+  },
+  {
+   "iso": "GB-SKP",
+   "gss": "E08000007",
+   "nomis_name": "Stockport"
+  },
+  {
+   "iso": "GB-SLF",
+   "gss": "E08000006",
+   "nomis_name": "Salford"
+  },
+  {
+   "iso": "GB-SLG",
+   "gss": "E06000039",
+   "nomis_name": "Slough"
+  },
+  {
+   "iso": "GB-SLK",
+   "gss": "S12000029",
+   "nomis_name": "South Lanarkshire"
+  },
+  {
+   "iso": "GB-SND",
+   "gss": "E08000024",
+   "nomis_name": "Sunderland"
+  },
+  {
+   "iso": "GB-SOL",
+   "gss": "E08000029",
+   "nomis_name": "Solihull"
+  },
+  {
+   "iso": "GB-SOS",
+   "gss": "E06000033",
+   "nomis_name": "Southend-on-Sea"
+  },
+  {
+   "iso": "GB-STA",
+   "gss": "E07000240",
+   "nomis_name": "St Albans"
+  },
+  {
+   "iso": "GB-STE",
+   "gss": "E06000021",
+   "nomis_name": "Stoke-on-Trent"
+  },
+  {
+   "iso": "GB-STG",
+   "gss": "S12000030",
+   "nomis_name": "Stirling"
+  },
+  {
+   "iso": "GB-STH",
+   "gss": "E06000045",
+   "nomis_name": "Southampton"
+  },
+  {
+   "iso": "GB-STN",
+   "gss": "E09000029",
+   "nomis_name": "Sutton"
+  },
+  {
+   "iso": "GB-STT",
+   "gss": "E06000004",
+   "nomis_name": "Stockton-on-Tees"
+  },
+  {
+   "iso": "GB-STY",
+   "gss": "E08000023",
+   "nomis_name": "South Tyneside"
+  },
+  {
+   "iso": "GB-SWA",
+   "gss": "W06000011",
+   "nomis_name": "Swansea"
+  },
+  {
+   "iso": "GB-SWD",
+   "gss": "E06000030",
+   "nomis_name": "Swindon"
+  },
+  {
+   "iso": "GB-SWK",
+   "gss": "E09000028",
+   "nomis_name": "Southwark"
+  },
+  {
+   "iso": "GB-TAM",
+   "gss": "E08000008",
+   "nomis_name": "Tameside"
+  },
+  {
+   "iso": "GB-TFW",
+   "gss": "E06000020",
+   "nomis_name": "Telford and Wrekin"
+  },
+  {
+   "iso": "GB-THR",
+   "gss": "E06000034",
+   "nomis_name": "Thurrock"
+  },
+  {
+   "iso": "GB-TOB",
+   "gss": "E06000027",
+   "nomis_name": "Torbay"
+  },
+  {
+   "iso": "GB-TOF",
+   "gss": "W06000020",
+   "nomis_name": "Torfaen"
+  },
+  {
+   "iso": "GB-TRF",
+   "gss": "E08000009",
+   "nomis_name": "Trafford"
+  },
+  {
+   "iso": "GB-TWH",
+   "gss": "E09000030",
+   "nomis_name": "Tower Hamlets"
+  },
+  {
+   "iso": "GB-VGL",
+   "gss": "W06000014",
+   "nomis_name": "Vale of Glamorgan"
+  },
+  {
+   "iso": "GB-WBK",
+   "gss": "E06000037",
+   "nomis_name": "West Berkshire"
+  },
+  {
+   "iso": "GB-WDU",
+   "gss": "S12000039",
+   "nomis_name": "West Dunbartonshire"
+  },
+  {
+   "iso": "GB-WFT",
+   "gss": "E09000031",
+   "nomis_name": "Waltham Forest"
+  },
+  {
+   "iso": "GB-WGN",
+   "gss": "E08000010",
+   "nomis_name": "Wigan"
+  },
+  {
+   "iso": "GB-WIL",
+   "gss": "E06000054",
+   "nomis_name": "Wiltshire"
+  },
+  {
+   "iso": "GB-WKF",
+   "gss": "E08000036",
+   "nomis_name": "Wakefield"
+  },
+  {
+   "iso": "GB-WLL",
+   "gss": "E08000030",
+   "nomis_name": "Walsall"
+  },
+  {
+   "iso": "GB-WLN",
+   "gss": "S12000040",
+   "nomis_name": "West Lothian"
+  },
+  {
+   "iso": "GB-WLV",
+   "gss": "E08000031",
+   "nomis_name": "Wolverhampton"
+  },
+  {
+   "iso": "GB-WND",
+   "gss": "E09000032",
+   "nomis_name": "Wandsworth"
+  },
+  {
+   "iso": "GB-WOK",
+   "gss": "E06000041",
+   "nomis_name": "Wokingham"
+  },
+  {
+   "iso": "GB-WRT",
+   "gss": "E06000007",
+   "nomis_name": "Warrington"
+  },
+  {
+   "iso": "GB-WRX",
+   "gss": "W06000006",
+   "nomis_name": "Wrexham"
+  },
+  {
+   "iso": "GB-WSM",
+   "gss": "E09000033",
+   "nomis_name": "Westminster"
+  },
+  {
+   "iso": "GB-YOR",
+   "gss": "E06000014",
+   "nomis_name": "York"
+  },
+  {
+   "iso": "GB-ZET",
+   "gss": "S12000027",
+   "nomis_name": "Shetland Islands"
+  }
+ ]
+}

@@ -10,6 +10,48 @@ within-country gradient. Verified 2026-07-20 (WebSearch + WebFetch against offic
 table. Everyone else = download counts by 5-year age band × region and compute `Σ(65–69…85+) ÷ total`. Taiwan is
 already done (MOI #77132, town-level). All countries below have a **genuine** gradient unless noted.
 
+## Tier 1 outcome (WorldPop 2020, shipped)
+
+Ran `scripts/build_aging.py` (WorldPop 1km age/sex → admin-1 65+ %). **Decisive result: WorldPop gives a real
+within-country gradient only for developing countries; for high-income countries its age structure is applied
+nationally uniformly, so the sub-national values are flat.**
+
+- **Shipped (real gradient)** → `public/data/aging/{cc}-admin1.json`: **th** (8.5–19.6%), **ph** (1.9–10.9%),
+  **id** (1.2–9.5%), **vn** (3.8–11.9%), **my** (4.1–11.6%), **mm** (4.3–7.9%), **bd** (4.7–6.3%, modest). *(pk pending.)*
+- **Dropped (WorldPop flat → Tier 0 national is identical)**: **de/fr/gb/pl** (spread ≈0), and by the same token
+  **it/es/ca/au/nz/tr** are expected flat. These fall back to the Tier-0 national shade and **must get their real
+  gradient from Tier 2** (Eurostat / ONS / StatCan / ABS / Stats NZ / TÜİK — all in the table below).
+
+So the division of labour is now empirical: **WorldPop (Tier 1) for developing countries; official APIs (Tier 2)
+for high-income countries.**
+
+## Tier 2 outcome — EU shipped (Eurostat)
+
+`scripts/build_aging_eurostat.mjs` pulls Eurostat `demo_r_pjanind3` `PC_Y65_MAX` (65+ share, published directly)
+in one keyless call and maps each NUTS region to the map's ISO-3166-2 geojson code (NUTS→ISO codemap for pl/es
+where names differ; name-match elsewhere; multi→one units averaged, e.g. PL91+PL92→PL-MZ).
+
+- **Shipped (real gradient)** → `public/data/aging/{cc}-admin1.json`: **de** (NUTS-1, 18.1–27.8%, 16/16),
+  **pl** (NUTS-2, 18.3–22.5%, 16/16), **fr** (NUTS-3, 13.1–31.8%, 94/96), **it** (NUTS-3, 19–29.9%, 99/110),
+  **es** (NUTS-3, 11.7–31.9%, ~48/48). Unmatched units (fr 2, it ~11 Sardinia old-NUTS, es Canaries) fall back
+  to the Tier-0 national shade — a handful of units, not broken.
+- Method box is **source-aware**: WorldPop countries read "WorldPop 2020 (modelled)", Eurostat countries read
+  "Eurostat … (official)". Admin-1 colour scale widened to `[6,10,14,18,22,26]` so both the developing (~1–20%)
+  and high-income (~12–32%) ranges show a gradient.
+
+### Non-EU official — shipped (keyless APIs)
+- 🇧🇷 **br** IBGE Censo 2022 (SIDRA 9514) — 5.1–14.1% (`build_aging_tier2.mjs`)
+- 🇨🇦 **ca** StatCan 17-10-0005 (2025) — 5.2–25.2% (`build_aging_ca.py`)
+- 🇦🇺 **au** ABS ERP_ASGS2021 (2024) — 9.6–21.8% (`build_aging_tier2.mjs`)
+- 🇬🇧 **gb** ONS/Nomis NM_2002_1 (2024) — 5.9–30.5%, **170/232** matched (`build_aging_gb.mjs`; GSS→ISO
+  crosswalk saved to `scripts/_ref/gb-lad-to-iso.json`). Gaps = NI pre-2015 districts + English 2-tier shire
+  counties (vintage/boundary mismatch) → Tier-0 national fallback.
+
+### Remaining — see `aging-fetch-guide.md` for step-by-step
+- **Free key from owner:** 🇺🇸 us (Census), 🇯🇵 jp (e-Stat appId), 🇳🇿 nz (StatsNZ key, or manual XLSX).
+- **Portal / manual download:** 🇰🇷 kr KOSIS, 🇹🇷 tr TÜİK, 🇨🇳 cn NBS, 🇮🇳 in Census, 🇲🇽 mx INEGI, 🇮🇷 ir SCI.
+- **Local file needed:** 🇹🇼 tw — town-level upgrade needs the MOI #77132 single-age file.
+
 ## Coverage table
 
 | ISO2 | Admin-1 | Latest | Publisher / source | Machine-fetch | Key | Gradient |
