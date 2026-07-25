@@ -11,36 +11,63 @@ import T from '../components/T.astro';
     <!-- Hero -->
     <section class="calc-hero">
       <h1><T zh="腦健康 Exposome" en="Brain-Health Exposome" /> <span class="accent-text"><T zh="檢測" en="Check-in" /></span></h1>
-      <div class="calc-lede">
-        <p><T
-          zh="這個工具的起點，是我參與 2026 年阿茲海默症協會國際年會（AAIC）聽的其中一場演講主題：「為什麼每個人大腦老化的速度不一樣？」失智症的大腦病變往往在發病前 15–20 年就悄悄開始，而有些推動病變的因子就在生活中。講者分享的案例讓全場震撼，好幾位不到 60 歲、高學歷、沒有慢性病、生活型態健康的人卻確診阿茲海默症，而他們的共同點是長期住在空污嚴重的地區，腦影像顯示他們的大腦比實際年齡老了 15–25 歲。學者提出的論點是，這些環境中的危險因子推動著他們的大腦老化與病變。"
-          en="This tool began with one of the talks I attended at the 2026 Alzheimer's Association International Conference (AAIC): “Why do our brains age at different speeds?” Dementia's brain changes often begin quietly 15–20 years before symptoms — and some of the factors driving them are woven into everyday life. The cases the speaker shared stunned the room: several people under 60, highly educated, with no chronic disease and healthy lifestyles, yet diagnosed with Alzheimer's — their common thread was living long-term in heavily polluted areas, with brain scans showing brains 15–25 years older than their actual age. The researchers' argument was that these environmental risk factors were driving their brain aging and pathology."
-        /></p>
-        <p><T
-          zh="這場演講後，我認為「及早覺察危險因子」，是讓所有人能立刻採取行動預防失智症的基礎。所以，我把可用的證據彙整成一個可計算的模型：以《Lancet》失智症委員會的可調整危險因子、公開的 PM2.5 衛星資料，以及「風險大約每 5–6 年翻倍」等文獻為基礎，再逐步接上 GBD、NCD-RisC、WHO、World Bank 等公開資料庫，讓不同國家也能互相比較。"
-          en="After that talk, I came to see noticing risk factors early as the foundation that lets anyone act right away to help prevent dementia. So I gathered the available evidence into a computable model — built on the Lancet Commission's modifiable risk factors, open satellite PM2.5 data, and findings such as risk roughly doubling every 5–6 years — then progressively wired in public databases (GBD, NCD-RisC, WHO, World Bank) so different countries can be compared."
-        /></p>
-        <p><T
-          zh="使用者可以輸入歷年居住地與基本資料，看看自己累積的「exposome（環境暴露總和）」對應到多少『相對腦齡加速』年數；也能在全球地圖上瀏覽各國的失智盛行、空污、高齡化與可調控風險概況。它不是診斷、不是醫療器材，也不預測任何個人是否會失智——只希望讓我們對身邊這些「可以及早行動」的危險因子更有覺知。"
-          en="You can enter your residence history and basic profile to see how your accumulated 'exposome' maps to a 'relative brain-aging' figure in years — and browse each country's dementia prevalence, air pollution, aging and modifiable-risk picture on the global map. It is not a diagnosis, not a medical device, and predicts nothing about any individual — it exists only to raise awareness of the risk factors around us that we can act on early."
-        /></p>
+      <p class="calc-tagline"><T
+        zh="輸入你的居住史與基本資料，看看累積的環境暴露（exposome）對應到多少「相對腦齡加速」年數。純前端計算，資料不上傳。"
+        en="Enter your residence history and basic profile to see how your accumulated exposome maps to a 'relative brain-aging' figure. Runs entirely in your browser — nothing is uploaded."
+      /></p>
+
+      <!-- Intro: three collapsible cards (story / privacy / disclaimer) — native <details>, no JS needed -->
+      <div class="intro-cards">
+        <details class="intro-card">
+          <summary><span class="ic-icon">📖</span><span class="ic-title"><T zh="這個工具的由來" en="Why this tool exists" /></span><span class="ic-chev" aria-hidden="true">▾</span></summary>
+          <div class="ic-body">
+            <p><T
+              zh="這個工具的起點，是我參與 2026 年阿茲海默症協會國際年會（AAIC）聽的其中一場演講主題：「為什麼每個人大腦老化的速度不一樣？」失智症的大腦病變往往在發病前 15–20 年就悄悄開始，而有些推動病變的因子就在生活中。講者分享的案例讓全場震撼，好幾位不到 60 歲、高學歷、沒有慢性病、生活型態健康的人卻確診阿茲海默症，而他們的共同點是長期住在空污嚴重的地區，腦影像顯示他們的大腦比實際年齡老了 15–25 歲。學者提出的論點是，這些環境中的危險因子推動著他們的大腦老化與病變。"
+              en="This tool began with one of the talks I attended at the 2026 Alzheimer's Association International Conference (AAIC): “Why do our brains age at different speeds?” Dementia's brain changes often begin quietly 15–20 years before symptoms — and some of the factors driving them are woven into everyday life. The cases the speaker shared stunned the room: several people under 60, highly educated, with no chronic disease and healthy lifestyles, yet diagnosed with Alzheimer's — their common thread was living long-term in heavily polluted areas, with brain scans showing brains 15–25 years older than their actual age. The researchers' argument was that these environmental risk factors were driving their brain aging and pathology."
+            /></p>
+            <p><T
+              zh="這場演講後，我認為「及早覺察危險因子」，是讓所有人能立刻採取行動預防失智症的基礎。所以，我把可用的證據彙整成一個可計算的模型：以《Lancet》失智症委員會的可調整危險因子、公開的 PM2.5 衛星資料，以及「風險大約每 5–6 年翻倍」等文獻為基礎，再逐步接上 GBD、NCD-RisC、WHO、World Bank 等公開資料庫，讓不同國家也能互相比較。"
+              en="After that talk, I came to see noticing risk factors early as the foundation that lets anyone act right away to help prevent dementia. So I gathered the available evidence into a computable model — built on the Lancet Commission's modifiable risk factors, open satellite PM2.5 data, and findings such as risk roughly doubling every 5–6 years — then progressively wired in public databases (GBD, NCD-RisC, WHO, World Bank) so different countries can be compared."
+            /></p>
+            <p><T
+              zh="使用者可以輸入歷年居住地與基本資料，看看自己累積的「exposome（環境暴露總和）」對應到多少『相對腦齡加速』年數；也能在全球地圖上瀏覽各國的失智盛行、空污、高齡化與可調控風險概況。它不是診斷、不是醫療器材，也不預測任何個人是否會失智——只希望讓我們對身邊這些「可以及早行動」的危險因子更有覺知。"
+              en="You can enter your residence history and basic profile to see how your accumulated 'exposome' maps to a 'relative brain-aging' figure in years — and browse each country's dementia prevalence, air pollution, aging and modifiable-risk picture on the global map. It is not a diagnosis, not a medical device, and predicts nothing about any individual — it exists only to raise awareness of the risk factors around us that we can act on early."
+            /></p>
+          </div>
+        </details>
+
+        <details class="intro-card">
+          <summary><span class="ic-icon">🔒</span><span class="ic-title"><T zh="資料安全" en="Your data" /></span><span class="ic-chev" aria-hidden="true">▾</span></summary>
+          <div class="ic-body">
+            <p><T zh="所有計算都在你的瀏覽器內完成，資料不會上傳或儲存到任何伺服器。" en="All calculations run entirely in your browser — nothing is uploaded or stored on any server." /></p>
+            <p><T zh="為了少填一步，第一段居住地的「國家」會依你目前的網路所在地或瀏覽器語系自動預設（不經第三方、不會索取定位權限），你可以隨時自行更改。" en="To save a step, the first residence's country is pre-filled from your current network location or browser locale (no third party, no location-permission prompt); you can change it anytime." /></p>
+          </div>
+        </details>
+
+        <details class="intro-card">
+          <summary><span class="ic-icon">⚠️</span><span class="ic-title"><T zh="重要提醒" en="Important" /></span><span class="ic-chev" aria-hidden="true">▾</span></summary>
+          <div class="ic-body">
+            <p><T zh="本工具僅供一般健康教育與自我覺察之用，並非醫療器材、不是診斷或篩檢工具，無法預測任何人是否會罹患失智症。" en="This tool is for general health education and self-awareness only. It is not a medical device, not a diagnostic or screening test, and cannot predict whether anyone will develop dementia." /></p>
+            <ul>
+              <li><T zh="結果描述的是「族群層級」的關聯（來自已發表研究），而不是對「你個人」的預測；同樣的因子，每個人的結果差異其實很大。" en="Results describe population-level associations (from published research), not a prediction about you personally — individual outcomes vary a great deal." /></li>
+              <li><T zh="這裡的「腦齡加速」是一個教育性的比喻數字，不是用腦部影像（MRI／EEG）量出來的真實腦齡。" en="The 'brain-age acceleration' here is an educational illustration, not a real brain age measured from imaging (MRI/EEG)." /></li>
+              <li><T zh="本工具不能取代醫療專業判斷。如有任何健康疑慮，請諮詢合格的醫療人員。" en="This does not replace professional medical advice. Consult a qualified healthcare provider for any health concern." /></li>
+              <li><T zh="PM2.5 採用 ACAG 衛星推估的逐年（1998–2024）縣市資料（1998 年以前的居住年份沿用 1998 值）。地圖上的失智盛行率為縣市層級的模型估計值，非實測。" en="PM2.5 uses ACAG satellite-derived annual (1998–2024) county data (residence years before 1998 reuse the 1998 value). The dementia prevalence on the map is a county-level modelled estimate, not measured." /></li>
+            </ul>
+          </div>
+        </details>
       </div>
-      <p class="calc-privacy">🔒 <T zh="所有計算都在你的瀏覽器內完成，資料不會上傳或儲存到任何伺服器。" en="All calculations run entirely in your browser — nothing is uploaded or stored on any server." /></p>
     </section>
 
-    <!-- Disclaimer -->
-    <section class="calc-disclaimer">
-      <p><strong><T zh="⚠️ 重要提醒：" en="⚠️ Important: " /></strong><T zh="本工具僅供一般健康教育與自我覺察之用，並非醫療器材、不是診斷或篩檢工具，無法預測任何人是否會罹患失智症。" en="This tool is for general health education and self-awareness only. It is not a medical device, not a diagnostic or screening test, and cannot predict whether anyone will develop dementia." /></p>
-      <ul>
-        <li><T zh="結果描述的是「族群層級」的關聯（來自已發表研究），而不是對「你個人」的預測；同樣的因子，每個人的結果差異其實很大。" en="Results describe population-level associations (from published research), not a prediction about you personally — individual outcomes vary a great deal." /></li>
-        <li><T zh="這裡的「腦齡加速」是一個教育性的比喻數字，不是用腦部影像（MRI／EEG）量出來的真實腦齡。" en="The 'brain-age acceleration' here is an educational illustration, not a real brain age measured from imaging (MRI/EEG)." /></li>
-        <li><T zh="本工具不能取代醫療專業判斷。如有任何健康疑慮，請諮詢合格的醫療人員。" en="This does not replace professional medical advice. Consult a qualified healthcare provider for any health concern." /></li>
-        <li><T zh="PM2.5 採用 ACAG 衛星推估的逐年（1998–2024）縣市資料（1998 年以前的居住年份沿用 1998 值）。地圖上的失智盛行率為縣市層級的模型估計值，非實測。" en="PM2.5 uses ACAG satellite-derived annual (1998–2024) county data (residence years before 1998 reuse the 1998 value). The dementia prevalence on the map is a county-level modelled estimate, not measured." /></li>
-        <li><T zh="為了少填一步，第一段居住地的「國家」會依你目前的網路所在地或瀏覽器語系自動預設（不經第三方、不會索取定位權限），你可以隨時自行更改。所有計算都在你的瀏覽器完成，不會上傳。" en="To save a step, the first residence's country is pre-filled from your current network location or browser locale (no third party, no location-permission prompt); you can change it anytime. All calculations run in your browser and nothing is uploaded." /></li>
-      </ul>
-    </section>
+    <!-- Main tabs: keep the page short — one thing on screen at a time -->
+    <nav class="main-tabs" id="main-tabs" role="tablist" aria-label="sections">
+      <button type="button" class="mt-btn is-active" role="tab" aria-selected="true" data-tab="calc"><span class="mt-ico">📝</span><T zh="風險因子填寫" en="Your check-in" /></button>
+      <button type="button" class="mt-btn" role="tab" aria-selected="false" data-tab="map"><span class="mt-ico">🌍</span><T zh="全球地圖" en="Global map" /></button>
+      <button type="button" class="mt-btn" role="tab" aria-selected="false" data-tab="refs"><span class="mt-ico">📚</span><T zh="資料與文獻" en="Data & sources" /></button>
+    </nav>
 
-    <!-- Personal entry: the 14 modifiable risk factors -->
+    <!-- ── Tab 1: personal check-in (wizard + method) ── -->
+    <div class="tab-panel is-active" data-panel="calc">
     <p class="section-heading"><T zh="個人 14 項可調整失智症風險因子填寫" en="Enter your 14 modifiable dementia risk factors" /></p>
 
     <!-- Wizard -->
@@ -48,8 +75,10 @@ import T from '../components/T.astro';
       <ol class="wizard-steps" id="wizard-steps">
         <li data-step="1" class="is-active"><span class="wz-dot">1</span><span class="wz-lbl"><T zh="基本資料" en="About you" /></span></li>
         <li data-step="2"><span class="wz-dot">2</span><span class="wz-lbl"><T zh="居住史" en="Places" /></span></li>
-        <li data-step="3"><span class="wz-dot">3</span><span class="wz-lbl"><T zh="健康與生活" en="Health" /></span></li>
-        <li data-step="4"><span class="wz-dot">4</span><span class="wz-lbl"><T zh="結果" en="Results" /></span></li>
+        <li data-step="3"><span class="wz-dot">3</span><span class="wz-lbl"><T zh="心血管代謝" en="Cardiometabolic" /></span></li>
+        <li data-step="4"><span class="wz-dot">4</span><span class="wz-lbl"><T zh="感官・心理" en="Senses & mood" /></span></li>
+        <li data-step="5"><span class="wz-dot">5</span><span class="wz-lbl"><T zh="生活型態" en="Lifestyle" /></span></li>
+        <li data-step="6"><span class="wz-dot">6</span><span class="wz-lbl"><T zh="結果" en="Results" /></span></li>
       </ol>
 
       <!-- Step 1 — About you -->
@@ -94,6 +123,7 @@ import T from '../components/T.astro';
         <div class="supp-table-wrap">
           <table class="supp-table res-table">
             <colgroup>
+              <col class="col-drag" />
               <col class="col-country" />
               <col class="col-region" />
               <col class="col-year" />
@@ -103,6 +133,7 @@ import T from '../components/T.astro';
             </colgroup>
             <thead>
               <tr>
+                <th></th>
                 <th><T zh="國家" en="Country" /></th>
                 <th><T zh="地區" en="Region" /></th>
                 <th><T zh="從" en="From" /></th>
@@ -114,8 +145,12 @@ import T from '../components/T.astro';
             <tbody id="res-grid"></tbody>
           </table>
         </div>
+        <p class="res-hint"><T zh="⠿ 可上下拖曳調整居住順序（年份區間留在原位，只換地點）。" en="⠿ Drag rows to reorder where you lived (the time slots stay put — only the places move)." /></p>
         <div class="res-controls">
-          <button type="button" class="wz-btn wz-ghost" id="res-add">+ <T zh="新增一段居住" en="Add a place" /></button>
+          <div class="res-add-group">
+            <button type="button" class="wz-btn wz-ghost" id="res-add-first">↑ <T zh="更早的居住地" en="Earlier place" /></button>
+            <button type="button" class="wz-btn wz-ghost" id="res-add-last">↓ <T zh="更近期的居住地" en="Later place" /></button>
+          </div>
           <p class="res-summary" id="res-summary"></p>
         </div>
         <div class="wizard-nav">
@@ -124,36 +159,12 @@ import T from '../components/T.astro';
         </div>
       </section>
 
-      <!-- Step 3 — Health & lifestyle -->
+      <!-- Step 3 — Cardiometabolic -->
       <section class="wizard-step" data-step="3">
-        <p class="section-heading">3. <T zh="健康與生活型態" en="Health & lifestyle" /></p>
+        <p class="section-heading">3. <T zh="心血管與代謝" en="Heart & metabolic" /></p>
         <p class="calc-section-desc"><T zh="不確定就選「不確定」，不會被算成風險。這些對應到 Lancet 委員會可調整的失智風險因子。" en="Pick 'Not sure' if you don't know — it won't be counted as a risk. These map to the Lancet Commission's modifiable dementia risk factors." /></p>
 
         <div class="calc-form-card">
-          <p class="calc-subheading"><T zh="👂 感官" en="👂 Sensory" /></p>
-          <div class="form-grid">
-            <label class="form-field">
-              <span><T zh="聽力損失" en="Hearing loss" /></span>
-              <select id="in-hearing">
-                <option value="none" data-zh="沒有" data-en="No">沒有</option>
-                <option value="untreated" data-zh="有，未使用助聽器" data-en="Yes, untreated">有，未使用助聽器</option>
-                <option value="treated" data-zh="有，已矯治／戴助聽器" data-en="Yes, treated / aids">有，已矯治／戴助聽器</option>
-                <option value="unknown" data-zh="不確定" data-en="Not sure">不確定</option>
-              </select>
-              <small class="field-hint"><T zh="「未矯治」= 聽得吃力／需調大音量但沒戴助聽器。矯治後風險大幅下降" en="'Untreated' = struggle to hear but no hearing aid. Treating it lowers the risk a lot" /></small>
-            </label>
-            <label class="form-field">
-              <span><T zh="視力損失" en="Vision loss" /></span>
-              <select id="in-vision">
-                <option value="none" data-zh="沒有" data-en="No">沒有</option>
-                <option value="untreated" data-zh="有，未矯治" data-en="Yes, untreated">有，未矯治</option>
-                <option value="treated" data-zh="有，已矯治（眼鏡／手術）" data-en="Yes, corrected">有，已矯治（眼鏡／手術）</option>
-                <option value="unknown" data-zh="不確定" data-en="Not sure">不確定</option>
-              </select>
-              <small class="field-hint"><T zh="「未矯治」= 可治療的視力問題（如白內障）未處理。戴眼鏡／手術矯正即算已矯治" en="'Untreated' = treatable vision loss (e.g. cataract) left uncorrected. Glasses/surgery count as corrected" /></small>
-            </label>
-          </div>
-
           <p class="calc-subheading"><T zh="❤️ 心血管代謝" en="❤️ Cardiometabolic" /></p>
           <div class="form-grid">
             <label class="form-field">
@@ -212,6 +223,43 @@ import T from '../components/T.astro';
               <small class="field-hint"><T zh="「規律」≈ 每週 ≥ 150 分鐘中等強度（如快走）。低於此算很少運動" en="'Regular' ≈ ≥ 150 min/week moderate (e.g. brisk walking); below that counts as rarely active" /></small>
             </label>
           </div>
+        </div>
+
+        <div class="wizard-nav">
+          <button type="button" class="wz-btn wz-back" data-goto="2">← <T zh="上一步" en="Back" /></button>
+          <button type="button" class="wz-btn wz-next" data-goto="4"><T zh="下一步 →" en="Next →" /></button>
+        </div>
+      </section>
+
+      <!-- Step 4 — Senses, mood & social -->
+      <section class="wizard-step" data-step="4">
+        <p class="section-heading">4. <T zh="感官・心理・社交" en="Senses, mood & social" /></p>
+        <p class="calc-section-desc"><T zh="不確定就選「不確定」，不會被算成風險。" en="Pick 'Not sure' if you don't know — it won't be counted as a risk." /></p>
+
+        <div class="calc-form-card">
+          <p class="calc-subheading"><T zh="👂 感官" en="👂 Sensory" /></p>
+          <div class="form-grid">
+            <label class="form-field">
+              <span><T zh="聽力損失" en="Hearing loss" /></span>
+              <select id="in-hearing">
+                <option value="none" data-zh="沒有" data-en="No">沒有</option>
+                <option value="untreated" data-zh="有，未使用助聽器" data-en="Yes, untreated">有，未使用助聽器</option>
+                <option value="treated" data-zh="有，已矯治／戴助聽器" data-en="Yes, treated / aids">有，已矯治／戴助聽器</option>
+                <option value="unknown" data-zh="不確定" data-en="Not sure">不確定</option>
+              </select>
+              <small class="field-hint"><T zh="「未矯治」= 聽得吃力／需調大音量但沒戴助聽器。矯治後風險大幅下降" en="'Untreated' = struggle to hear but no hearing aid. Treating it lowers the risk a lot" /></small>
+            </label>
+            <label class="form-field">
+              <span><T zh="視力損失" en="Vision loss" /></span>
+              <select id="in-vision">
+                <option value="none" data-zh="沒有" data-en="No">沒有</option>
+                <option value="untreated" data-zh="有，未矯治" data-en="Yes, untreated">有，未矯治</option>
+                <option value="treated" data-zh="有，已矯治（眼鏡／手術）" data-en="Yes, corrected">有，已矯治（眼鏡／手術）</option>
+                <option value="unknown" data-zh="不確定" data-en="Not sure">不確定</option>
+              </select>
+              <small class="field-hint"><T zh="「未矯治」= 可治療的視力問題（如白內障）未處理。戴眼鏡／手術矯正即算已矯治" en="'Untreated' = treatable vision loss (e.g. cataract) left uncorrected. Glasses/surgery count as corrected" /></small>
+            </label>
+          </div>
 
           <p class="calc-subheading"><T zh="🧠 心理健康" en="🧠 Mental health" /></p>
           <div class="form-grid">
@@ -238,7 +286,20 @@ import T from '../components/T.astro';
               <small class="field-hint"><T zh="獨居、很少與家人朋友往來、缺乏規律社交活動 → 較孤立" en="Living alone, little contact with family/friends, few regular social activities → isolated" /></small>
             </label>
           </div>
+        </div>
 
+        <div class="wizard-nav">
+          <button type="button" class="wz-btn wz-back" data-goto="3">← <T zh="上一步" en="Back" /></button>
+          <button type="button" class="wz-btn wz-next" data-goto="5"><T zh="下一步 →" en="Next →" /></button>
+        </div>
+      </section>
+
+      <!-- Step 5 — Lifestyle & injury -->
+      <section class="wizard-step" data-step="5">
+        <p class="section-heading">5. <T zh="生活型態與外傷" en="Lifestyle & injury" /></p>
+        <p class="calc-section-desc"><T zh="最後幾題，填完就能看結果。" en="Last few questions — then you'll see your results." /></p>
+
+        <div class="calc-form-card">
           <p class="calc-subheading"><T zh="🚬 生活型態與外傷" en="🚬 Lifestyle & injury" /></p>
           <div class="form-grid">
             <label class="form-field">
@@ -270,14 +331,14 @@ import T from '../components/T.astro';
         </div>
 
         <div class="wizard-nav">
-          <button type="button" class="wz-btn wz-back" data-goto="2">← <T zh="上一步" en="Back" /></button>
-          <button type="button" class="wz-btn wz-next" data-goto="4"><T zh="看結果 →" en="See results →" /></button>
+          <button type="button" class="wz-btn wz-back" data-goto="4">← <T zh="上一步" en="Back" /></button>
+          <button type="button" class="wz-btn wz-next" data-goto="6"><T zh="看結果 →" en="See results →" /></button>
         </div>
       </section>
 
-      <!-- Step 4 — Results -->
-      <section class="wizard-step" data-step="4">
-        <p class="section-heading">4. <T zh="你的結果" en="Your results" /></p>
+      <!-- Step 6 — Results -->
+      <section class="wizard-step" data-step="6">
+        <p class="section-heading">6. <T zh="你的結果" en="Your results" /></p>
 
         <div class="result-profile" id="out-profile"></div>
 
@@ -305,13 +366,13 @@ import T from '../components/T.astro';
         <ul class="action-list" id="out-actions"></ul>
 
         <div class="wizard-nav">
-          <button type="button" class="wz-btn wz-back" data-goto="3">← <T zh="修改答案" en="Edit answers" /></button>
+          <button type="button" class="wz-btn wz-back" data-goto="5">← <T zh="修改答案" en="Edit answers" /></button>
           <span></span>
         </div>
       </section>
     </div>
 
-    <!-- How it's calculated (brain-age model) — after the personal result, before the map -->
+    <!-- How it's calculated (brain-age model) — after the personal result -->
     <section class="calc-section calc-method">
       <p class="section-heading"><T zh="相對風險與腦齡計算方式" en="How relative risk & brain age are calculated" /></p>
       <p class="calc-section-desc">
@@ -322,7 +383,10 @@ import T from '../components/T.astro';
       </p>
       <p class="calc-section-desc"><em><T zh="假設與限制：λ = 0.6 與腦齡年數上限是本工具為避免高估所設的參數（非已發表常數）；PM2.5 採 ACAG 衛星年均資料（依居住縣市／國家與年份對應），歷史不足年份以最接近年份外推。這是教育性估計，非個人預測。" en="Assumptions: λ = 0.6 and the brain-age cap are this tool's parameters to avoid overstatement (not published constants); PM2.5 uses ACAG satellite annual data (matched to your county/country and year), with missing historical years extrapolated from the nearest available year. This is an educational estimate, not a personal prediction." /></em></p>
     </section>
+    </div><!-- /tab-panel calc -->
 
+    <!-- ── Tab 2: global map ── -->
+    <div class="tab-panel" data-panel="map">
     <!-- Regional map (Taiwan / Japan / Korea / China / USA / India) -->
     <section class="calc-section map-section">
       <p class="section-heading"><T zh="全球地圖：高齡化、認知退化與危險因子概況" en="Global map: aging, cognitive decline & risk factors" /></p>
@@ -414,7 +478,10 @@ import T from '../components/T.astro';
       </p>
       <div id="prev-method" class="prev-method" style="display:none"></div>
     </section>
+    </div><!-- /tab-panel map -->
 
+    <!-- ── Tab 3: data coverage + references ── -->
+    <div class="tab-panel" data-panel="refs">
     <!-- Data-provenance / availability disclosure -->
     <section class="calc-section calc-provenance">
       <p class="section-heading"><T zh="資料齊全度與來源" en="Data coverage & sources" /></p>
@@ -498,6 +565,7 @@ import T from '../components/T.astro';
         <li><strong>exposome</strong> — <T zh="環境暴露總和：一生累積的環境暴露總和" en="the exposome: the sum of one's lifetime environmental exposures" /></li>
       </ul>
     </section>
+    </div><!-- /tab-panel refs -->
 
   </div>
 </BaseLayout>
@@ -514,23 +582,55 @@ import T from '../components/T.astro';
   .calc-hero { margin-bottom: var(--spacing-md); }
   .calc-hero h1 { font-size: clamp(1.8rem, 4.5vw, 2.6rem); margin-bottom: 0.6rem; }
   .calc-subtitle { color: var(--color-text-muted); font-size: 1rem; line-height: 1.7; max-width: 720px; }
-  .calc-lede { max-width: 760px; margin: 0.9rem 0 0; padding-left: 1rem; border-left: 3px solid var(--color-accent); }
-  .calc-lede p { color: var(--color-text-muted); font-size: 1rem; line-height: 1.75; }
-  .calc-lede p + p { margin-top: 0.7rem; }
-  .calc-privacy { font-size: 0.85rem; color: var(--color-accent); margin-top: 0.6rem; }
+  .calc-tagline { color: var(--color-text-muted); font-size: 1rem; line-height: 1.7; max-width: 760px; margin: 0.5rem 0 1.1rem; }
 
-  .calc-disclaimer {
-    background: var(--color-surface);
-    border: 1px solid var(--color-border);
-    border-left: 4px solid #e5484d;
-    border-radius: var(--radius-md);
-    padding: 1rem 1.25rem;
-    margin-bottom: var(--spacing-lg);
-    font-size: 0.88rem;
-    line-height: 1.6;
+  /* Intro: three collapsible cards (story / privacy / disclaimer) */
+  .intro-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0.6rem; margin-bottom: var(--spacing-lg); }
+  .intro-card {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: var(--radius-md); box-shadow: var(--card-shadow); overflow: hidden;
   }
-  .calc-disclaimer ul { margin: 0.5rem 0 0; padding-left: 1.2rem; color: var(--color-text-muted); }
-  .calc-disclaimer li { margin-bottom: 0.3rem; }
+  .intro-card summary {
+    display: flex; align-items: center; gap: 0.5rem; cursor: pointer; list-style: none;
+    padding: 0.85rem 1rem; font-weight: 600; font-size: 0.92rem; color: var(--color-text);
+    transition: background-color 0.15s, border-color 0.15s;
+  }
+  .intro-card summary::-webkit-details-marker { display: none; }
+  .intro-card summary:hover { background: var(--color-surface); }
+  .intro-card summary:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+  .ic-icon { font-size: 1.15rem; line-height: 1; flex: none; }
+  .ic-title { flex: 1; min-width: 0; }
+  .ic-chev { flex: none; color: var(--color-text-muted); font-size: 0.8rem; transition: transform 0.2s; }
+  .intro-card[open] .ic-chev { transform: rotate(180deg); }
+  .intro-card[open] summary { border-bottom: 1px solid var(--color-border); }
+  /* An opened card takes the full row — three narrow columns of prose is unreadable. */
+  .intro-card[open] { grid-column: 1 / -1; }
+  .intro-card[open] .ic-body { max-width: 78ch; }
+  .ic-body { padding: 0.9rem 1rem 1.1rem; font-size: 0.88rem; line-height: 1.7; color: var(--color-text-muted); }
+  .ic-body p + p { margin-top: 0.7rem; }
+  .ic-body ul { margin: 0.5rem 0 0; padding-left: 1.2rem; }
+  .ic-body li { margin-bottom: 0.35rem; }
+  @media (max-width: 700px) { .intro-cards { grid-template-columns: 1fr; } }
+
+  /* Main tabs — one section on screen at a time (keeps the page short) */
+  .main-tabs {
+    display: flex; gap: 0.4rem; margin-bottom: var(--spacing-lg);
+    border-bottom: 1px solid var(--color-border); overflow-x: auto; scrollbar-width: none;
+  }
+  .main-tabs::-webkit-scrollbar { display: none; }
+  .mt-btn {
+    display: inline-flex; align-items: center; gap: 0.4rem; white-space: nowrap;
+    background: transparent; border: none; border-bottom: 2px solid transparent;
+    color: var(--color-text-muted); cursor: pointer; font-family: var(--font-sans);
+    font-size: 0.95rem; font-weight: 600; padding: 0.7rem 0.9rem; margin-bottom: -1px;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .mt-btn:hover { color: var(--color-text); }
+  .mt-btn:focus-visible { outline: 2px solid var(--color-accent); outline-offset: -2px; }
+  .mt-btn.is-active { color: var(--color-accent); border-bottom-color: var(--color-accent); }
+  .mt-ico { font-size: 1.05rem; line-height: 1; }
+  .tab-panel { display: none; }
+  .tab-panel.is-active { display: block; }
 
   .calc-section { margin-bottom: var(--spacing-xl); }
   .calc-section-desc { color: var(--color-text-muted); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1rem; }
@@ -565,16 +665,27 @@ import T from '../components/T.astro';
 
   /* Wizard */
   .wizard { margin-bottom: var(--spacing-xl); }
+  /* The stepper stays put while steps swap, so the page doesn't jump between steps.
+     top offset clears the sticky site header. */
   .wizard-steps {
-    display: flex; list-style: none; padding: 0; margin: 0 0 var(--spacing-lg);
-    gap: 0.4rem; flex-wrap: wrap;
+    display: flex; list-style: none; padding: 0.4rem 0; margin: 0 0 var(--spacing-lg);
+    gap: 0.4rem; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none;
+    position: sticky; top: 3.4rem; z-index: 20; background: var(--color-bg);
   }
+  .wizard-steps::-webkit-scrollbar { display: none; }
   .wizard-steps li {
-    display: flex; align-items: center; gap: 0.4rem;
+    display: flex; align-items: center; gap: 0.4rem; flex: none; white-space: nowrap;
     font-size: 0.8rem; font-weight: 600; color: var(--color-text-muted);
     padding: 0.35rem 0.7rem 0.35rem 0.4rem; border-radius: 999px;
     border: 1px solid var(--color-border); background: var(--color-surface);
     cursor: pointer; transition: border-color 0.15s, color 0.15s;
+  }
+  /* On phones the six labels won't fit — show numbers only, the active step keeps its label. */
+  @media (max-width: 560px) {
+    .wizard-steps li .wz-lbl { display: none; }
+    .wizard-steps li.is-active .wz-lbl { display: inline; }
+    .wizard-steps li { padding-right: 0.5rem; }
+    .wizard-steps li.is-active { padding-right: 0.7rem; }
   }
   .wizard-steps li:hover { border-color: var(--color-accent); color: var(--color-text); }
   .wizard-steps li:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
@@ -589,7 +700,10 @@ import T from '../components/T.astro';
   .wizard-steps li.is-active .wz-dot { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
   .wizard-steps li.is-done .wz-dot { background: var(--color-accent); color: #fff; border-color: var(--color-accent); }
 
-  .wizard-step { display: none; }
+  /* Equal-ish step heights so switching steps doesn't resize the page under you.
+     min-height is set at runtime (fitWizardHeight) to the tallest step; this is the floor. */
+  .wizard-step { display: none; min-height: 22rem; }
+  @media (max-width: 700px) { .wizard-step { min-height: 26rem; } }
   .wizard-step.is-active { display: block; animation: wzfade 0.2s ease; }
   @keyframes wzfade { from { opacity: 0; transform: translateY(4px); } to { opacity: 1; transform: none; } }
 
@@ -613,9 +727,11 @@ import T from '../components/T.astro';
   /* Fixed layout so the 246-country picker can't stretch the Country column;
      Country + Region share the remaining width evenly, numeric cols stay compact. */
   .res-table { table-layout: fixed; }
+  .res-table .col-drag { width: 1.9rem; }
   .res-table .col-year { width: 5.25rem; }
   .res-table .col-pm { width: 5.5rem; }
-  .res-table .col-del { width: 4.25rem; }
+  .res-table .col-del { width: 2.5rem; }
+  .res-table th, .res-table td { padding-left: 0.5rem; padding-right: 0.5rem; }
   /* :global — these selects/inputs are injected by renderResidences() via innerHTML,
      so they don't carry Astro's scope attribute; scope stays on the static .res-table. */
   .res-table :global(select), .res-table :global(input) {
@@ -626,19 +742,28 @@ import T from '../components/T.astro';
   .res-table :global(select) { text-overflow: ellipsis; overflow: hidden; white-space: nowrap; }
   .res-table :global(.res-pm) { white-space: nowrap; }
   .res-pm { white-space: nowrap; color: var(--color-text-muted); }
+  /* "nationwide" label for non-TW rows — needs its own padding or it collides with the year cell */
+  .res-table :global(.res-nat) {
+    display: inline-block; padding: 0.4rem 0.5rem; color: var(--color-text-muted);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%;
+  }
   .res-del {
     background: transparent; border: none; color: var(--color-text-muted); cursor: pointer;
     font-size: 1rem; padding: 0.2rem 0.4rem; border-radius: var(--radius-sm);
   }
   .res-del:hover { color: #e5484d; background: var(--color-surface); }
-  /* per-row insert-above/below controls (injected via innerHTML → plain classes) */
-  .res-actions { white-space: nowrap; }
-  .res-ins {
-    background: transparent; border: none; color: var(--color-text-muted); cursor: pointer;
-    font-size: 0.7rem; line-height: 1; padding: 0.2rem 0.2rem; border-radius: var(--radius-sm);
+  /* drag handle — rows reorder by drag (time slots stay, places move) */
+  .res-table :global(.res-drag) {
+    cursor: grab; color: var(--color-text-muted); user-select: none;
+    font-size: 0.95rem; line-height: 1; padding: 0.3rem 0.1rem; text-align: center;
   }
-  .res-ins:hover { color: var(--color-accent); background: var(--color-surface); }
+  .res-table :global(.res-drag:active) { cursor: grabbing; }
+  .res-table :global(tr.is-dragging) { opacity: 0.4; }
+  .res-table :global(tr.drop-above) { box-shadow: inset 0 2px 0 0 var(--color-accent); }
+  .res-table :global(tr.drop-below) { box-shadow: inset 0 -2px 0 0 var(--color-accent); }
+  .res-hint { font-size: 0.78rem; color: var(--color-text-muted); margin: 0.5rem 0 0; }
   .res-controls { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 0.8rem; flex-wrap: wrap; }
+  .res-add-group { display: flex; gap: 0.5rem; flex-wrap: wrap; }
   .res-summary { font-size: 0.85rem; color: var(--color-accent); font-weight: 600; margin: 0; }
 
   /* Results */
@@ -1073,6 +1198,22 @@ function insertResidence(i, where) {
   renderResidences();
 }
 
+/* Reorder by drag: the time slots stay where they are, only the PLACES move.
+   We keep each row's duration, move the row, then re-chain boundaries from the birth year. */
+function moveResidence(from, to) {
+  if (from === to || from < 0 || to < 0 || from >= residences.length || to >= residences.length) return;
+  normalizeResidences();
+  const spans = residences.map(r => r.to - r.from);                    // durations, in original order
+  const [row] = residences.splice(from, 1);
+  residences.splice(to, 0, row);
+  const moved = spans.splice(from, 1)[0];
+  spans.splice(to, 0, moved);
+  let y = birthYear();
+  residences.forEach((r, i) => { r.from = y; r.to = y + spans[i]; y = r.to; });
+  normalizeResidences();
+  renderResidences();
+}
+
 function renderResidences() {
   const grid = $('res-grid');
   if (!grid) return;
@@ -1090,16 +1231,18 @@ function renderResidences() {
     const toSel = isLast
       ? `<select class="res-to" data-idx="${i}" disabled title="${L('自動：當前年份', 'Auto: current year')}">${yearOptions(r.to, r.to, r.to)}</select>`
       : `<select class="res-to" data-idx="${i}">${yearOptions(r.to, r.from, CURRENT_YEAR)}</select>`;
-    const insUp = `<button type="button" class="res-ins" data-idx="${i}" data-where="above" title="${L('上方新增一段', 'Insert above')}">▲</button>`;
-    const insDown = `<button type="button" class="res-ins" data-idx="${i}" data-where="below" title="${L('下方新增一段', 'Insert below')}">▼</button>`;
     const del = residences.length > 1 ? `<button type="button" class="res-del" data-idx="${i}" title="${L('移除', 'Remove')}">✕</button>` : '';
-    return `<tr>
+    const drag = residences.length > 1
+      ? `<td class="res-drag" draggable="true" data-idx="${i}" title="${L('拖曳調整順序', 'Drag to reorder')}" aria-label="${L('拖曳調整順序', 'Drag to reorder')}">⠿</td>`
+      : '<td></td>';
+    return `<tr data-idx="${i}">
+      ${drag}
       <td><select class="res-country" data-idx="${i}">${countryOptions(r.country)}</select></td>
       <td>${region}</td>
       <td>${fromSel}</td>
       <td>${toSel}</td>
       <td class="res-pm">${pm.toFixed(1)} µg/m³</td>
-      <td class="res-actions">${insUp}${insDown}${del}</td>
+      <td>${del}</td>
     </tr>`;
   }).join('');
 
@@ -1119,11 +1262,43 @@ function renderResidences() {
     if (residences[i + 1]) residences[i + 1].from = v;
     renderResidences();
   }));
-  grid.querySelectorAll('.res-ins').forEach(btn => btn.addEventListener('click', () => insertResidence(+btn.dataset.idx, btn.dataset.where)));
   grid.querySelectorAll('.res-del').forEach(btn => btn.addEventListener('click', () => {
     residences.splice(+btn.dataset.idx, 1); renderResidences();
   }));
+
+  // Drag-to-reorder (HTML5 DnD on the handle cell; the row is the drop target).
+  let dragFrom = null;
+  grid.querySelectorAll('.res-drag').forEach(h => {
+    h.addEventListener('dragstart', e => {
+      dragFrom = +h.dataset.idx;
+      h.closest('tr').classList.add('is-dragging');
+      e.dataTransfer.effectAllowed = 'move';
+      try { e.dataTransfer.setData('text/plain', String(dragFrom)); } catch (_) {}
+    });
+    h.addEventListener('dragend', () => {
+      dragFrom = null;
+      grid.querySelectorAll('tr').forEach(t => t.classList.remove('is-dragging', 'drop-above', 'drop-below'));
+    });
+  });
+  grid.querySelectorAll('tr').forEach(tr => {
+    tr.addEventListener('dragover', e => {
+      if (dragFrom === null) return;
+      e.preventDefault();
+      e.dataTransfer.dropEffect = 'move';
+      const over = +tr.dataset.idx;
+      grid.querySelectorAll('tr').forEach(t => t.classList.remove('drop-above', 'drop-below'));
+      if (over !== dragFrom) tr.classList.add(over < dragFrom ? 'drop-above' : 'drop-below');
+    });
+    tr.addEventListener('drop', e => {
+      e.preventDefault();
+      const from = dragFrom !== null ? dragFrom : parseInt(e.dataTransfer.getData('text/plain'), 10);
+      const to = +tr.dataset.idx;
+      dragFrom = null;
+      if (Number.isFinite(from)) moveResidence(from, to);
+    });
+  });
   updateResSummary();
+  fitWizardHeight();   // row count changed → re-equalise so steps stay the same height
 }
 
 function residenceStats() {
@@ -1454,6 +1629,34 @@ function renderResults(r) {
 /* ── Wizard navigation ── */
 let currentStep = 1;
 let lastResult = null;
+const RESULT_STEP = 6;
+
+/* Height of the sticky site header — anything we scroll to must clear it,
+   otherwise the wizard stepper ends up hidden underneath. */
+function headerOffset() {
+  const h = document.querySelector('header');
+  return (h ? h.getBoundingClientRect().height : 0) + 12;
+}
+
+/* Keep every step the same height as the tallest one, so moving between steps
+   never resizes the page under the user's finger. Re-run on resize / lang change. */
+function fitWizardHeight() {
+  // Only the input steps are equalised; the results step is naturally long and is allowed to be.
+  const steps = [...document.querySelectorAll('.wizard-step')].filter(s => +s.dataset.step !== RESULT_STEP);
+  if (!steps.length) return;
+  const active = steps.find(s => s.classList.contains('is-active'));
+  steps.forEach(s => { s.style.minHeight = ''; });
+  let max = 0;
+  steps.forEach(s => {
+    const wasActive = s.classList.contains('is-active');
+    if (!wasActive) s.classList.add('is-active');
+    max = Math.max(max, s.scrollHeight);
+    if (!wasActive) s.classList.remove('is-active');
+  });
+  steps.forEach(s => { s.style.minHeight = max + 'px'; });
+  if (active) active.classList.add('is-active');
+}
+
 function showStep(n) {
   currentStep = n;
   document.querySelectorAll('.wizard-step').forEach(s => s.classList.toggle('is-active', +s.dataset.step === n));
@@ -1463,9 +1666,34 @@ function showStep(n) {
     li.classList.toggle('is-done', s < n);
   });
   if (n === 2) renderResidences();   // re-derive the year range from the age just entered in Step 1
-  if (n === 4) { lastResult = computeResult(); renderResults(lastResult); }
+  if (n === RESULT_STEP) { lastResult = computeResult(); renderResults(lastResult); }
+  // Keep the active step pill in view inside the horizontally-scrolling stepper.
+  const pill = document.querySelector(`.wizard-steps li[data-step="${n}"]`);
+  if (pill && pill.scrollIntoView) pill.scrollIntoView({ block: 'nearest', inline: 'nearest' });
   const wiz = document.querySelector('.wizard');
-  if (wiz) window.scrollTo({ top: wiz.getBoundingClientRect().top + window.scrollY - 20, behavior: 'smooth' });
+  if (wiz) window.scrollTo({ top: wiz.getBoundingClientRect().top + window.scrollY - headerOffset(), behavior: 'smooth' });
+}
+
+/* ── Main tabs (check-in / map / references) ── */
+let currentTab = 'calc';
+function showTab(name) {
+  currentTab = name;
+  document.querySelectorAll('.tab-panel').forEach(p => p.classList.toggle('is-active', p.dataset.panel === name));
+  document.querySelectorAll('.mt-btn').forEach(b => {
+    const on = b.dataset.tab === name;
+    b.classList.toggle('is-active', on);
+    b.setAttribute('aria-selected', on ? 'true' : 'false');
+  });
+  if (name === 'calc') fitWizardHeight();
+  // Leaflet/globe were sized while their panel was display:none (→ 0×0); re-measure on reveal.
+  if (name === 'map') {
+    setTimeout(() => {
+      if (map && map.invalidateSize) { try { map.invalidateSize(); } catch (_) {} }
+      try { gResize(); } catch (_) {}
+    }, 60);
+  }
+  const tabs = document.getElementById('main-tabs');
+  if (tabs) window.scrollTo({ top: tabs.getBoundingClientRect().top + window.scrollY - headerOffset(), behavior: 'smooth' });
 }
 
 /* ── Language re-render ── */
@@ -2279,8 +2507,16 @@ async function init() {
     });
   });
   document.querySelectorAll('.cat-view-btn').forEach(b => b.addEventListener('click', () => { catView = b.dataset.view; applyCatView(); }));
-  const addBtn = $('res-add');
-  if (addBtn) addBtn.addEventListener('click', () => insertResidence(residences.length - 1, 'below'));
+  const addFirst = $('res-add-first');
+  if (addFirst) addFirst.addEventListener('click', () => insertResidence(0, 'above'));
+  const addLast = $('res-add-last');
+  if (addLast) addLast.addEventListener('click', () => insertResidence(residences.length - 1, 'below'));
+  // main tabs
+  const tabs = $('main-tabs');
+  if (tabs) tabs.addEventListener('click', e => {
+    const b = e.target.closest('[data-tab]'); if (!b) return;
+    showTab(b.dataset.tab);
+  });
   // Re-derive the residence year range whenever the age changes (Step 1 feeds Step 2's timeline).
   const ageIn = $('in-age');
   if (ageIn) ageIn.addEventListener('change', renderResidences);
@@ -2319,13 +2555,17 @@ async function init() {
 
   applyOptionLangs();
   renderResidences();
+  fitWizardHeight();
   window.addEventListener('langchange', () => {
     applyOptionLangs();
     renderResidences();
-    if (currentStep === 4 && lastResult) renderResults(lastResult);
+    if (currentStep === RESULT_STEP && lastResult) renderResults(lastResult);
     relabelMap();
     renderProvenance();
+    fitWizardHeight();
   });
+  let _rz;
+  window.addEventListener('resize', () => { clearTimeout(_rz); _rz = setTimeout(fitWizardHeight, 150); });
   initMap();
   setupProvenance();
 }
