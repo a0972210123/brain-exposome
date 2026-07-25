@@ -613,9 +613,9 @@ import T from '../components/T.astro';
   /* Fixed layout so the 246-country picker can't stretch the Country column;
      Country + Region share the remaining width evenly, numeric cols stay compact. */
   .res-table { table-layout: fixed; }
-  .res-table .col-year { width: 5rem; }
+  .res-table .col-year { width: 5.25rem; }
   .res-table .col-pm { width: 5.5rem; }
-  .res-table .col-del { width: 2.5rem; }
+  .res-table .col-del { width: 4.25rem; }
   /* :global — these selects/inputs are injected by renderResidences() via innerHTML,
      so they don't carry Astro's scope attribute; scope stays on the static .res-table. */
   .res-table :global(select), .res-table :global(input) {
@@ -631,6 +631,13 @@ import T from '../components/T.astro';
     font-size: 1rem; padding: 0.2rem 0.4rem; border-radius: var(--radius-sm);
   }
   .res-del:hover { color: #e5484d; background: var(--color-surface); }
+  /* per-row insert-above/below controls (injected via innerHTML → plain classes) */
+  .res-actions { white-space: nowrap; }
+  .res-ins {
+    background: transparent; border: none; color: var(--color-text-muted); cursor: pointer;
+    font-size: 0.7rem; line-height: 1; padding: 0.2rem 0.2rem; border-radius: var(--radius-sm);
+  }
+  .res-ins:hover { color: var(--color-accent); background: var(--color-surface); }
   .res-controls { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin-top: 0.8rem; flex-wrap: wrap; }
   .res-summary { font-size: 0.85rem; color: var(--color-accent); font-weight: 600; margin: 0; }
 
@@ -1022,21 +1029,77 @@ function pmForSpan(country, place, from, to) {
 /* ── Residence state (module-scope array, mutated in place — the diet-calc ccPlan pattern) ── */
 let residences = [{ country: 'TW', place: '63000', from: 1990, to: 2020 }];
 
+/* ── Timeline bounds derived from the subject's age (Step 1), not a fixed floor ──
+   The whole residence history is a contiguous line birthYear → current year:
+   row 0's `from` pins to the birth year, the last row's `to` pins to the current year,
+   and each internal boundary is shared (row i.to === row i+1.from). Year fields are
+   dropdowns bounded to that range. */
+const CURRENT_YEAR = new Date().getFullYear();
+function birthYear() {
+  const a = parseInt(val('in-age'), 10);
+  const age = (Number.isFinite(a) && a > 0) ? Math.min(a, 120) : 50;   // fallback if age not yet entered
+  return CURRENT_YEAR - age;
+}
+function yearOptions(selected, lo, hi) {
+  let o = '';
+  for (let y = hi; y >= lo; y--) o += `<option value="${y}"${y === selected ? ' selected' : ''}>${y}</option>`;
+  return o;
+}
+/* Enforce the contiguous, end-pinned invariant. Safe to call before every render. */
+function normalizeResidences() {
+  const b = birthYear();
+  if (!residences.length) residences = [{ country: 'TW', place: '', from: b, to: CURRENT_YEAR }];
+  const n = residences.length;
+  for (let i = 0; i < n; i++) {
+    const r = residences[i];
+    r.from = i === 0 ? b : residences[i - 1].to;                       // pin first / mirror boundary
+    r.to = Math.max(r.from, Math.min(CURRENT_YEAR, (r.to | 0) || CURRENT_YEAR));
+  }
+  residences[n - 1].to = CURRENT_YEAR;                                 // pin last end
+}
+/* Insert a new segment above/below row i by splitting its span at the midpoint. */
+function insertResidence(i, where) {
+  normalizeResidences();
+  const r = residences[i];
+  const mid = Math.max(r.from, Math.min(r.to, Math.round((r.from + r.to) / 2)));
+  if (where === 'above') {
+    residences.splice(i, 0, { country: r.country, place: r.place, from: r.from, to: mid });
+    r.from = mid;                                                      // row i becomes the later half
+  } else {
+    residences.splice(i + 1, 0, { country: r.country, place: r.place, from: mid, to: r.to });
+    r.to = mid;                                                        // row i becomes the earlier half
+  }
+  normalizeResidences();
+  renderResidences();
+}
+
 function renderResidences() {
   const grid = $('res-grid');
   if (!grid) return;
+  normalizeResidences();
+  const b = birthYear();
   grid.innerHTML = residences.map((r, i) => {
+    const isFirst = i === 0, isLast = i === residences.length - 1;
     const pm = pmForSpan(r.country, r.place, r.from, r.to).mean;
     const region = r.country === 'TW'
       ? `<select class="res-place" data-idx="${i}">${countyOptions(r.place)}</select>`
       : `<span class="res-nat">${L('全國', 'nationwide')}</span>`;
+    // `from` is always auto (birth year / shared boundary) → disabled; `to` is the editable
+    // boundary except on the last row (pinned to the current year).
+    const fromSel = `<select class="res-from" data-idx="${i}" disabled title="${L('自動：出生年或上一段結束年', 'Auto: birth year or previous segment end')}">${yearOptions(r.from, r.from, r.from)}</select>`;
+    const toSel = isLast
+      ? `<select class="res-to" data-idx="${i}" disabled title="${L('自動：當前年份', 'Auto: current year')}">${yearOptions(r.to, r.to, r.to)}</select>`
+      : `<select class="res-to" data-idx="${i}">${yearOptions(r.to, r.from, CURRENT_YEAR)}</select>`;
+    const insUp = `<button type="button" class="res-ins" data-idx="${i}" data-where="above" title="${L('上方新增一段', 'Insert above')}">▲</button>`;
+    const insDown = `<button type="button" class="res-ins" data-idx="${i}" data-where="below" title="${L('下方新增一段', 'Insert below')}">▼</button>`;
+    const del = residences.length > 1 ? `<button type="button" class="res-del" data-idx="${i}" title="${L('移除', 'Remove')}">✕</button>` : '';
     return `<tr>
       <td><select class="res-country" data-idx="${i}">${countryOptions(r.country)}</select></td>
       <td>${region}</td>
-      <td><input class="res-from" type="number" data-idx="${i}" value="${r.from}" min="1930" max="2026" step="1" /></td>
-      <td><input class="res-to" type="number" data-idx="${i}" value="${r.to}" min="1930" max="2026" step="1" /></td>
+      <td>${fromSel}</td>
+      <td>${toSel}</td>
       <td class="res-pm">${pm.toFixed(1)} µg/m³</td>
-      <td>${residences.length > 1 ? `<button type="button" class="res-del" data-idx="${i}" title="${L('移除', 'Remove')}">✕</button>` : ''}</td>
+      <td class="res-actions">${insUp}${insDown}${del}</td>
     </tr>`;
   }).join('');
 
@@ -1049,12 +1112,14 @@ function renderResidences() {
   grid.querySelectorAll('.res-place').forEach(sel => sel.addEventListener('change', () => {
     residences[+sel.dataset.idx].place = sel.value; renderResidences();
   }));
-  grid.querySelectorAll('.res-from').forEach(inp => inp.addEventListener('change', () => {
-    residences[+inp.dataset.idx].from = parseInt(inp.value, 10) || 0; renderResidences();
+  // Editing a boundary `to` moves the next row's `from` in lockstep (shared boundary).
+  grid.querySelectorAll('.res-to').forEach(sel => sel.addEventListener('change', () => {
+    const i = +sel.dataset.idx, v = parseInt(sel.value, 10);
+    residences[i].to = v;
+    if (residences[i + 1]) residences[i + 1].from = v;
+    renderResidences();
   }));
-  grid.querySelectorAll('.res-to').forEach(inp => inp.addEventListener('change', () => {
-    residences[+inp.dataset.idx].to = parseInt(inp.value, 10) || 0; renderResidences();
-  }));
+  grid.querySelectorAll('.res-ins').forEach(btn => btn.addEventListener('click', () => insertResidence(+btn.dataset.idx, btn.dataset.where)));
   grid.querySelectorAll('.res-del').forEach(btn => btn.addEventListener('click', () => {
     residences.splice(+btn.dataset.idx, 1); renderResidences();
   }));
@@ -1397,6 +1462,7 @@ function showStep(n) {
     li.classList.toggle('is-active', s === n);
     li.classList.toggle('is-done', s < n);
   });
+  if (n === 2) renderResidences();   // re-derive the year range from the age just entered in Step 1
   if (n === 4) { lastResult = computeResult(); renderResults(lastResult); }
   const wiz = document.querySelector('.wizard');
   if (wiz) window.scrollTo({ top: wiz.getBoundingClientRect().top + window.scrollY - 20, behavior: 'smooth' });
@@ -2214,11 +2280,10 @@ async function init() {
   });
   document.querySelectorAll('.cat-view-btn').forEach(b => b.addEventListener('click', () => { catView = b.dataset.view; applyCatView(); }));
   const addBtn = $('res-add');
-  if (addBtn) addBtn.addEventListener('click', () => {
-    const last = residences[residences.length - 1] || { country: 'TW', place: '63000', to: 2000 };
-    residences.push({ country: last.country, place: last.place, from: last.to || 2000, to: 2026 });
-    renderResidences();
-  });
+  if (addBtn) addBtn.addEventListener('click', () => insertResidence(residences.length - 1, 'below'));
+  // Re-derive the residence year range whenever the age changes (Step 1 feeds Step 2's timeline).
+  const ageIn = $('in-age');
+  if (ageIn) ageIn.addEventListener('change', renderResidences);
   // load real PM2.5 — Taiwan county series + world country series (ACAG) — plus geo-detect, in parallel
   let detectedIso = null;
   try {
