@@ -1,0 +1,298 @@
+---
+/**
+ * Onboarding tour (spotlight) — authored with the Toutour playbook.
+ *
+ * Engine: Toutour v0.2 (MIT, github.com/a0972210123/Toutour), vendored at
+ * /vendor/toutour/. The two-tier structure (first-visit welcome → condensed main
+ * tour → persistent "?" replay → per-section mini-tours) is implemented here
+ * against the free engine's public API, so nothing commercial ships in this
+ * public repo.
+ *
+ * Site conventions reused (never re-invented):
+ *   i18n    → lang() reads <html data-lang>, re-renders on the `langchange` event
+ *   theme   → --tt-* mapped onto the site's CSS custom properties (auto dark mode)
+ *   storage → bare keys like the site's own `lang` / `theme`
+ *   metrics → gtag (GA4) if present
+ * z-index: the site's max is 50 (sticky header); the tour sits at 9000.
+ */
+---
+
+<link rel="stylesheet" href="/vendor/toutour/toutour.css" />
+<script is:inline src="/vendor/toutour/toutour.js"></script>
+
+<style>
+  /* Map the engine's tokens onto the site's design system → follows dark mode automatically. */
+  :global(:root) {
+    --tt-surface: var(--card-bg);
+    --tt-text: var(--color-text);
+    --tt-muted: var(--color-text-muted);
+    --tt-accent: var(--color-accent);
+    --tt-border: var(--card-border);
+    --tt-radius: var(--radius-md);
+  }
+
+  /* First-visit welcome card */
+  :global(.tour-welcome) {
+    position: fixed; inset: 0; z-index: 9100;
+    display: flex; align-items: center; justify-content: center;
+    background: rgba(0, 0, 0, 0.55); padding: 1.25rem;
+  }
+  :global(.tour-welcome[hidden]) { display: none; }
+  :global(.tw-card) {
+    background: var(--card-bg); border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg); box-shadow: 0 18px 50px rgba(0, 0, 0, 0.28);
+    max-width: 400px; width: 100%; padding: 1.6rem 1.5rem; text-align: center;
+  }
+  :global(.tw-icon) { font-size: 2.4rem; line-height: 1; }
+  :global(.tw-title) { font-size: 1.15rem; font-weight: 800; margin: 0.6rem 0 0.4rem; color: var(--color-text); }
+  :global(.tw-body) { font-size: 0.9rem; line-height: 1.7; color: var(--color-text-muted); margin: 0 0 1.2rem; }
+  :global(.tw-btns) { display: flex; gap: 0.6rem; justify-content: center; flex-wrap: wrap; }
+  :global(.tw-start), :global(.tw-skip) {
+    font-family: var(--font-sans); font-size: 0.9rem; font-weight: 600;
+    padding: 0.6rem 1.2rem; border-radius: var(--radius-sm); cursor: pointer; border: 1px solid transparent;
+  }
+  :global(.tw-start) { background: var(--color-accent); color: #fff; }
+  :global(.tw-skip) { background: transparent; color: var(--color-text-muted); border-color: var(--card-border); }
+  :global(.tw-start:hover) { filter: brightness(1.08); }
+  :global(.tw-skip:hover) { color: var(--color-text); }
+
+  /* Persistent "?" replay button (sits in the main tab bar) + per-section mini chips */
+  :global(.tour-help), :global(.tour-mini) {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.3rem;
+    background: transparent; border: 1px solid var(--color-border); color: var(--color-text-muted);
+    border-radius: 999px; cursor: pointer; font-family: var(--font-sans); font-weight: 700;
+  }
+  :global(.tour-help) { width: 1.9rem; height: 1.9rem; font-size: 0.9rem; margin-left: auto; align-self: center; flex: none; }
+  :global(.tour-mini) { font-size: 0.72rem; padding: 0.15rem 0.55rem; margin-left: 0.5rem; vertical-align: middle; }
+  :global(.tour-help:hover), :global(.tour-mini:hover) { color: var(--color-accent); border-color: var(--color-accent); }
+  :global(.tour-help:focus-visible), :global(.tour-mini:focus-visible) { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+</style>
+
+<div class="tour-welcome" id="tour-welcome" role="dialog" aria-modal="true" aria-labelledby="tw-title" hidden>
+  <div class="tw-card">
+    <div class="tw-icon">🧭</div>
+    <h2 class="tw-title" id="tw-title"></h2>
+    <p class="tw-body"></p>
+    <div class="tw-btns">
+      <button type="button" class="tw-start"></button>
+      <button type="button" class="tw-skip"></button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function () {
+  const $ = (id) => document.getElementById(id);
+  const lang = () => (document.documentElement.getAttribute('data-lang') === 'en' ? 'en' : 'zh');
+  const T = (zh, en) => ({ zh, en });
+  const pick = (o) => (o && typeof o === 'object' ? (o[lang()] ?? o.zh) : o);
+  const track = (name, data) => { try { if (typeof window.gtag === 'function') window.gtag('event', name, data || {}); } catch (e) {} }; // eslint-disable-line
+
+  const SEEN = 'tour_seen';
+  let welcomeTimer = 0;
+  const opts = () => ({
+    lang: lang(), zIndex: 9000, mask: true, ring: true, block: true, storageKey: SEEN,
+    labels: {
+      next: T('下一步', 'Next'), prev: T('上一步', 'Back'),
+      done: T('完成', 'Done'), skip: T('略過導覽', 'Skip tour'),
+    },
+    onEvent: (n, d) => track(n, d),
+  });
+
+  /* Reveal helpers — always drive the site's real controls, never re-implement state. */
+  const clickIf = (sel) => { const el = document.querySelector(sel); if (el) el.click(); };
+  const goTab = (name) => () => clickIf(`.mt-btn[data-tab="${name}"]`);
+  const goStep = (n) => () => { clickIf('.mt-btn[data-tab="calc"]'); clickIf(`.wizard-steps li[data-step="${n}"]`); };
+
+  /* ── Main tour: condensed, the 10 things a first-time visitor needs ── */
+  const MAIN = [
+    { target: '.intro-tabs', icon: '📖', place: 'bottom',
+      text: T('先從這裡開始：三個標籤分別是工具的由來、資料安全說明，以及使用前的重要提醒。點一下展開，再點一次收合。',
+              'Start here: three tabs — why this tool exists, how your data is handled, and the important caveats. Click to expand, click again to close.') },
+    { target: '#main-tabs', icon: '🗂️', place: 'bottom',
+      text: T('整個網站分成三大區：「風險因子填寫」是你的個人檢視，「全球地圖」看各國概況，「資料與文獻」是所有數字的出處。',
+              'The site has three sections: your personal check-in, the global map, and the sources behind every number.') },
+    { target: '#wizard-steps', icon: '🧭', before: goStep(1), place: 'bottom',
+      text: T('填寫分成六步，這一排就是進度。可以直接點任何一步跳著填，隨時回來修改。',
+              'The check-in has six steps — this is your progress bar. Click any step to jump around; you can come back and edit anytime.') },
+    { // Targets the weight field — `widen` expands it to its <label>, which also carries the live
+      // BMI readout. (Spotlighting the whole card is effectively full-screen on a phone, which
+      // leaves the tooltip nowhere to sit.)
+      target: '#in-weight', icon: '📝', before: goStep(1), place: 'right',
+      text: T('第一步是基本資料。填了身高體重，這裡會即時算出 BMI，並自動帶入後面的體位選項（你仍然可以自己改）。',
+              'Step 1 is your basic profile. Enter height and weight and your BMI appears here, pre-filling the body-weight question later on (still overridable).') },
+    { target: '.res-table', icon: '🏠', before: goStep(2), place: 'top',
+      text: T('第二步是居住史。時間軸從你的出生年一路到今年，年份用下拉選單選；上一段的結束年就是下一段的開始年，改一邊另一邊會自動跟著動。',
+              "Step 2 is where you've lived. The timeline runs from your birth year to today; pick years from the dropdowns. Each segment's end is the next one's start, so editing one side moves the other.") },
+    { target: '.res-controls', icon: '➕', before: goStep(2), place: 'top',
+      text: T('用這兩顆按鈕加入更早或更近期的居住地；列左邊的 ⠿ 可以上下拖曳調整順序——時間區間會留在原位，只有地點跟著換。',
+              'Add an earlier or a later place with these two buttons. Drag the ⠿ handle to reorder — the time slots stay put, only the places move.') },
+    { target: '.wizard-steps li[data-step="3"]', icon: '❤️', place: 'bottom',
+      text: T('第三到第五步是健康與生活型態，拆成三個短頁：心血管代謝、感官與心理、生活型態。不確定的就選「不確定」，不會被算成風險。',
+              'Steps 3–5 cover health and lifestyle in three short pages. Not sure about something? Pick "Not sure" — it won\'t be counted as a risk.') },
+    { target: '.result-brainage', icon: '🧠', before: goStep(6), place: 'left', timeout: 4000,
+      text: T('最後一步是結果。半圓儀表中央就是你的「腦齡加速」估計年數——這是教育性的比喻數字，不是影像量測的真實腦齡。',
+              'The last step is your result. The number inside the dial is the estimated "brain-age acceleration" — an educational illustration, not a real brain age from imaging.') },
+    { target: '#out-actions', icon: '✅', before: goStep(6), place: 'top', timeout: 4000,
+      text: T('下面會逐項列出你被標記的因子，以及可以怎麼行動。這是整個工具最實用的部分。',
+              'Below, each flagged factor is listed with what you can actually do about it — the most useful part of the tool.') },
+    { target: '.map-section .map-controls', icon: '🌍', before: goTab('map'), place: 'bottom', timeout: 4000,
+      text: T('「全球地圖」預設是地球儀，各國以 PM2.5 或可調控失智風險著色。點任一國（或用選單）可以下鑽看該國各行政區的細節。',
+              'The map tab opens on a globe shaded by PM2.5 or modifiable dementia risk. Click a country (or use the dropdown) to drill into its regional detail.') },
+    { target: '.calc-provenance .dp-tabs', icon: '📚', before: goTab('refs'), place: 'bottom', timeout: 4000,
+      text: T('「資料與文獻」誠實揭露每一類資料的齊全度：切換上方類型，表格會列出各國的來源與年份，以及是否已接入工具。',
+              'The data tab is an honest disclosure of coverage: switch the data type and the table lists every country\'s source, year, and whether it is wired in yet.') },
+    { target: '#tour-help', icon: '🔁', before: goTab('calc'), place: 'bottom',
+      text: T('隨時想重看這段導覽，就按這顆「?」。各區標題旁的小 ? 則會帶你看該區的細節。祝你用得順手！',
+              'Press this "?" any time to replay this tour. The small "?" chips next to section headings walk you through that section in detail. Enjoy!') },
+  ];
+
+  /* ── Mini tours: exhaustive, per section ── */
+  const MINIS = {
+    calc: {
+      anchor: '.wizard',
+      steps: [
+        { target: '#in-age', icon: '🎂', before: goStep(1), place: 'right',
+          text: T('年齡是整個居住史時間軸的基準：出生年 = 今年 − 年齡。改了年齡，第二步的年份範圍會自動重算。',
+                  'Your age anchors the whole residence timeline: birth year = this year − age. Change it and Step 2\'s year range re-derives.') },
+        { target: '#in-height', icon: '📏', before: goStep(1), place: 'right',
+          text: T('身高、體重是選填的。兩個都填才會算 BMI；不填也不影響其他計算。',
+                  'Height and weight are optional. Fill both to get a BMI; leaving them blank doesn\'t affect anything else.') },
+        { target: '#bmi-hint', icon: '⚖️', before: goStep(1), place: 'right',
+          text: T('這裡會即時顯示算出的 BMI 與判定（台灣切點：BMI ≥ 27 肥胖、24–27 過重），並自動帶入第三步的體位選項。',
+                  'Your BMI and its category appear here (Taiwan cutoffs: ≥27 obese, 24–27 overweight) and pre-fill the body-weight question in Step 3.') },
+        { target: '.res-table thead', icon: '📅', before: goStep(2), place: 'bottom',
+          text: T('每一列是一段居住：國家、地區、起訖年，右邊自動算出該段的年均 PM2.5。第一列的開始年與最後一列的結束年是鎖定的。',
+                  'Each row is one stint: country, region, start/end year, and the mean PM2.5 for that span. The first start and last end are locked to your lifespan.') },
+        { target: '#res-summary', icon: '📊', before: goStep(2), place: 'top',
+          text: T('這是把每段時間長度加權後的平均 PM2.5——也就是實際餵進腦齡模型的空污暴露值。',
+                  'This is your time-weighted mean PM2.5 — the air-pollution exposure actually fed into the brain-age model.') },
+        { target: '.wizard-step[data-step="3"] .calc-form-card', icon: '❤️', before: goStep(3), place: 'top',
+          text: T('心血管代謝這頁包含高血壓、糖尿病、體位、膽固醇與身體活動。LDL 有數值可以填得更精準，沒有就用上面的選項。',
+                  'The cardiometabolic page covers blood pressure, diabetes, weight, cholesterol and activity. Enter an LDL number for more precision, or just use the dropdown.') },
+        { target: '.wizard-step[data-step="6"] .cat-head', icon: '🕸️', before: goStep(6), place: 'top', timeout: 4000,
+          text: T('結果頁可以在「雷達圖」與「清單」之間切換，看各面向換算成腦齡的分布。',
+                  'On the results page you can switch between the radar chart and a plain list to see how each domain contributes.') },
+      ],
+    },
+    map: {
+      anchor: '.map-section .section-heading',
+      steps: [
+        { target: '#map-country', icon: '🗺️', before: goTab('map'), place: 'bottom', timeout: 4000,
+          text: T('用這個選單在「全球總覽」與 20 多個國家的細節地圖之間切換。',
+                  'Switch between the global overview and 20+ country detail maps here.') },
+        { target: '.map-toggle', icon: '🎨', before: goTab('map'), place: 'bottom', timeout: 4000,
+          text: T('切換著色的指標：PM2.5、失智盛行率、MCI／SCD、高齡化，或可調控風險 PAF。圖例會跟著換。',
+                  'Switch what the colours mean: PM2.5, dementia prevalence, MCI/SCD, aging, or modifiable-risk PAF. The legend follows.') },
+        { target: '#globe-stage', icon: '🌍', before: goTab('map'), place: 'left', timeout: 4000,
+          text: T('地球儀可以用滑鼠拖曳旋轉、用下方滑桿縮放，點任一國就會下鑽到該國的行政區地圖。',
+                  'Drag to spin the globe, zoom with the slider, and click any country to drill into its regional map.') },
+      ],
+    },
+    refs: {
+      anchor: '.calc-provenance .section-heading',
+      steps: [
+        { target: '.dp-controls', icon: '🔎', before: goTab('refs'), place: 'bottom', timeout: 4000,
+          text: T('可以搜尋國家，或勾「只顯示有資料」，快速看哪些國家已經接入工具。',
+                  'Search for a country, or tick "only with data" to see which countries are already wired in.') },
+        { target: '.calc-refs', icon: '📄', before: goTab('refs'), place: 'top', timeout: 4000,
+          text: T('最下面是完整的參考文獻與資料庫清單——每個數字都可以追到出處。',
+                  'At the bottom is the full reference list — every number here can be traced to its source.') },
+      ],
+    },
+  };
+
+  /* ── Welcome card ── */
+  const WELCOME = {
+    title: T('第一次使用？', 'First time here?'),
+    body: T('花 60 秒帶你看一遍：怎麼填、結果怎麼看、地圖和資料在哪裡。也可以直接開始，之後按「?」隨時重看。',
+            'Take a 60-second look around: how to fill it in, how to read your result, and where the map and data live. You can also dive straight in and press "?" later.'),
+    start: T('開始導覽', 'Show me around'),
+    skip: T('直接開始', 'I\'ll explore'),
+  };
+
+  function paintWelcome() {
+    const w = $('tour-welcome'); if (!w) return;
+    w.querySelector('.tw-title').textContent = pick(WELCOME.title);
+    w.querySelector('.tw-body').textContent = pick(WELCOME.body);
+    w.querySelector('.tw-start').textContent = pick(WELCOME.start);
+    w.querySelector('.tw-skip').textContent = pick(WELCOME.skip);
+  }
+  const hideWelcome = () => { const w = $('tour-welcome'); if (w) w.hidden = true; };
+
+  function startMain() {
+    clearTimeout(welcomeTimer);        // a pending welcome must never pop over a running tour
+    hideWelcome();
+    track('tour_start_main', {});
+    window.Toutour.start(MAIN, opts());
+  }
+  function startMini(key) {
+    const m = MINIS[key]; if (!m) return;
+    clearTimeout(welcomeTimer);
+    hideWelcome();
+    track('minitour_open', { panel: key });
+    window.Toutour.start(m.steps, opts());
+  }
+
+  /* ── Mount the persistent "?" and the per-section mini chips ── */
+  function mountButtons() {
+    const tabs = document.getElementById('main-tabs');
+    if (tabs && !document.getElementById('tour-help')) {
+      const b = document.createElement('button');
+      b.type = 'button'; b.id = 'tour-help'; b.className = 'tour-help'; b.textContent = '?';
+      b.addEventListener('click', startMain);
+      tabs.appendChild(b);
+    }
+    Object.entries(MINIS).forEach(([key, m]) => {
+      const host = document.querySelector(m.anchor);
+      if (!host || host.querySelector('.tour-mini')) return;
+      const c = document.createElement('button');
+      c.type = 'button'; c.className = 'tour-mini'; c.dataset.mini = key; c.textContent = '?';
+      c.addEventListener('click', (e) => { e.preventDefault(); e.stopPropagation(); startMini(key); });
+      // .wizard's first child is the stepper — put the chip on the section heading instead
+      const heading = host.matches('.wizard') ? document.querySelector('.tab-panel[data-panel="calc"] .section-heading') : host;
+      (heading || host).appendChild(c);
+    });
+    relabel();
+  }
+
+  function relabel() {
+    const t = pick(T('重看導覽', 'Replay the tour'));
+    const h = document.getElementById('tour-help');
+    if (h) { h.title = t; h.setAttribute('aria-label', t); }
+    document.querySelectorAll('.tour-mini').forEach(c => {
+      const lbl = pick(T('這一區的細節導覽', 'Detailed tour of this section'));
+      c.title = lbl; c.setAttribute('aria-label', lbl);
+    });
+  }
+
+  function init() {
+    if (!window.Toutour) return;
+    mountButtons();
+    paintWelcome();
+    const w = $('tour-welcome');
+    if (w) {
+      w.querySelector('.tw-start').addEventListener('click', startMain);
+      w.querySelector('.tw-skip').addEventListener('click', () => {
+        hideWelcome(); window.Toutour.markSeen({ storageKey: SEEN }); track('tour_welcome_skip', {});
+      });
+      // First-visit only; never on a shared deep link.
+      const deepLink = location.search.length > 1 || location.hash.length > 1;
+      if (!window.Toutour.seen({ storageKey: SEEN }) && !deepLink) {
+        welcomeTimer = setTimeout(() => {
+          if (window.Toutour.active) return;   // don't cover a tour the user already started
+          w.hidden = false; track('tour_welcome', {});
+        }, 800);
+      }
+    }
+    // Copy is bilingual and must follow a live language switch.
+    window.addEventListener('langchange', () => { paintWelcome(); relabel(); });
+    // Expose for the verification harness.
+    window.__startTour = startMain;
+    window.__startMini = startMini;
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
+})();
+</script>
