@@ -129,7 +129,7 @@ def main():
              "(or admin-1) estimate of **dementia · AD · MCI · SCD** prevalence for one country "
              "(national registry, surveillance, or a solid cohort). → **worth adding as that country's "
              "override** — same tiered pattern as Taiwan / Japan / Korea. ✋ **Needs owner approval first "
-             "(@a0972210123) before ingesting.**")
+             "(@matt-ye) before ingesting.**")
     L.append("- [ ] **(C) Not ingestable** — narrow cohort, mechanistic, bibliometric, or no new number "
              "the map can use. → note & skip (no site change).\n")
     L.append("**2. Incorporate** (A always; B only after ✋ approval):\n")
@@ -143,7 +143,7 @@ def main():
     L.append("> API layers (World Bank aging, WHO GHO smoking/inactivity) fetch directly and regenerate "
              "in CI; manual layers (NCD-RisC, GBD, ACAG, national prevalence papers) need a human "
              "download step — full detail in `docs/dementia-exposome/data-refresh-workflow.md`.")
-    L.append("\ncc @a0972210123")
+    L.append("\ncc @matt-ye")
 
     report = "\n".join(L)
     if args.out:

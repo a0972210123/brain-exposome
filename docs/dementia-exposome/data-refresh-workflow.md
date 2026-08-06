@@ -144,7 +144,7 @@ raw 輸入放 gitignored `scripts/_data_in/`；`manifest.json` 由 build 產生�
 
 ### 5.2 `.github/workflows/data-refresh.yml`（已實作）
 - **每月 1 號 06:00 UTC**（＋可手動 `workflow_dispatch`）跑 freshness check → 用 `gh` 開一張 **issue**：
-  標題視有無更新（`🔔 N update(s)` ／ `✅ no API changes`），內文含報告並 `@a0972210123` → owner 收到通知。
+  標題視有無更新（`🔔 N update(s)` ／ `✅ no API changes`），內文含報告並 `@matt-ye` → owner 收到通知。
 - **目前為 v1，涵蓋：偵測（api）＋通知（issue @mention）＋review 提醒（issue 內建 checklist）＋登錄框架（`data-versions.json`）。**
 - **下一步（萃取＋自動開 PR）**：API 層（World Bank / WHO GHO）可在 CI 直接重抓重算並開 PR，但需先把 `build_data.py` 拆出一個 **CI-safe 子集**（現況是單體、且部分步驟依賴 gitignored 的 `_data_in/`）；manual 層本質上仍需人工下載。維持 **絕不 auto-merge**。
 - **關鍵限制與風險**：
