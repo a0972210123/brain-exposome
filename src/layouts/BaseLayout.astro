@@ -33,7 +33,15 @@ const personLd = {
   url: 'https://mattye.dev',
   jobTitle: 'PhD Candidate · Presentation Coach',
   alumniOf: { '@type': 'CollegeOrUniversity', name: 'National Taiwan University' },
-  sameAs: ['https://www.linkedin.com/in/ching-wei-ye'],
+  /* sameAs 把散在各平台的身分串成同一個實體，搜尋引擎與 AI 引擎靠它確認
+     「這些帳號是同一個人」。這個站與 mattye.dev 共用同一個 Person @id，
+     兩邊的 sameAs 要一致，否則實體會被拆成兩個。 */
+  sameAs: [
+    'https://www.linkedin.com/in/ching-wei-ye',
+    'https://x.com/MattChingWeiYe',
+    'https://orcid.org/0009-0001-6085-8303',
+    'https://www.instagram.com/brown.yeh',
+  ],
 };
 const websiteLd = {
   '@type': 'WebSite',
@@ -94,7 +102,11 @@ const jsonLd = { '@context': 'https://schema.org', '@graph': [personLd, websiteL
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={imageURL} />
-    <meta name="twitter:creator" content="@mattye_dev" />
+    {/* ⚠ 原本填的 @mattye_dev 查證為 404（不存在），推測是從網域名 mattye.dev
+        推想出來的 handle。錯的 handle 會讓 X 卡片的歸屬失效。
+        site 標網站帳號、creator 標作者，個人網站兩者同帳號是正常的。 */}
+    <meta name="twitter:site" content="@MattChingWeiYe" />
+    <meta name="twitter:creator" content="@MattChingWeiYe" />
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
