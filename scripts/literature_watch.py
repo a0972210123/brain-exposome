@@ -92,8 +92,14 @@ def main():
     L.append("Candidate papers for the figures the map uses (Europe PMC, TITLE-scoped). "
              "**For review, not auto-ingested** — if one updates a number we use, follow "
              "extract→review→register.")
-    L.append("_🤖 LLM-triaged (NIM→Groq→Cloudflare); drops are collapsed._\n" if do_triage
-             else "_Keyless: all candidates listed (set provider secrets + `--triage` to filter)._\n")
+    # Filled in after the loop — the header has to name the model that actually
+    # answered, and that is not known until the first verdict comes back. Claiming
+    # "LLM-triaged" when every tier silently failed is the failure mode worth
+    # designing against: the run still succeeds and filters nothing.
+    triage_line = len(L)
+    L.append("")
+    triaged_by = set()
+    triage_tried = 0      # a quiet month has nothing to score — not the same as a broken chain
 
     total_keep = 0
     for t in cfg["topics"]:
@@ -108,7 +114,10 @@ def main():
         for r in results:
             v = None
             if do_triage:
+                triage_tried += 1
                 v = llm_triage.triage(r.get("title", ""), r.get("abstractText", ""))
+                if v:
+                    triaged_by.add(f"{v.get('tier', '?')}/`{v.get('model', '?')}`")
                 time.sleep(1)                      # gentle pacing for free-tier TPM
             if v and v.get("verdict") == "drop":
                 drops.append(line_for(r, v))
@@ -137,6 +146,17 @@ def main():
             for m in t["manual_also"]:
                 L.append(f"  - 🔎 manual: {m}")
             L.append("")
+
+    if not do_triage:
+        L[triage_line] = "_Keyless: all candidates listed (set provider secrets + `--triage` to filter)._\n"
+    elif triaged_by:
+        L[triage_line] = f"_🤖 LLM-triaged by {', '.join(sorted(triaged_by))}; drops are collapsed._\n"
+    elif not triage_tried:
+        L[triage_line] = "_🤖 Triage is on, but there was nothing to score this month._\n"
+    else:
+        L[triage_line] = ("_⚠️ **Triage was requested but every provider failed** — nothing was "
+                          "filtered and every candidate below is listed. Check the provider keys "
+                          "and `scripts/llm_triage.py`._\n")
 
     L.append(f"> {total_keep} candidate(s) to review across {len(cfg['topics'])} topics. "
              "Queries live in `scripts/literature-watch.json`.")
