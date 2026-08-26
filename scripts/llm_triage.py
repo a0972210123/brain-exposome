@@ -98,14 +98,16 @@ _PREFER = {
     # 順序＝2026-08-26 存活實測。nemotron-mini 當日中途由 200 變 410 Gone，降到最後但
     # 保留樣式（可能以新尺寸回來）。gemma 排第一還有第二個理由：第二層挑 gpt-oss-20b，
     # 兩層挑同一個模型，供應商換了但權重沒換。
-    "nim": [r"^google/gemma-\d+-\d+b-it$", r"^nvidia/nemotron-mini-\d+b-instruct$", r"^openai/gpt-oss-20b$"],
+    # gemma 排在 gpt-oss 之後而不是刪掉：它實測要 25–32 秒，本檔 TIMEOUT=40 跑得完，
+    # 但兩支 Worker 的 20 秒預算跑不完（那邊已移除）。同一個模型，能不能用取決於呼叫端。
+    "nim": [r"^openai/gpt-oss-20b$", r"^google/gemma-\d+-\d+b-it$", r"^nvidia/nemotron-mini-\d+b-instruct$"],
     "cf": [r"llama.*3\.3.*70b", r"llama.*4", r"qwen.*(32|72)b"],
 }
 # Last-resort candidates when discovery is unavailable or matches nothing.
 # Verified 2026-08-26 by reading the reply, not just the status code.
 _FALLBACK = {
     "groq": ["openai/gpt-oss-20b", "openai/gpt-oss-120b"],
-    "nim": ["google/gemma-4-31b-it", "openai/gpt-oss-20b"],   # nemotron-mini-4b：410 Gone (2026-08-26)
+    "nim": ["openai/gpt-oss-20b", "google/gemma-4-31b-it"],   # nemotron-mini-4b：410 Gone (2026-08-26)
     "cf": ["@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/meta/llama-3.1-8b-instruct"],
 }
 # Non-chat models that share the flat /v1/models list on NIM and Groq: speech,
