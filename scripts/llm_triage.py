@@ -92,14 +92,26 @@ _PREFER = {
     # `content` and never reaches the JSON, even at max_tokens=800 (measured
     # 2026-08-19). It is not a budget problem, so no budget fixes it.
     "groq": [r"gpt-oss-20b$", r"gpt-oss-120b$"],
-    "nim": [r"^meta/llama-3\.1-8b-instruct$", r"^nvidia/.*nemotron.*(9|12)b", r"^mistralai/.*small"],
+    # NIM's line-up was replaced wholesale in 2026-08. `meta/llama-3.1-8b-instruct`, pinned
+    # here until 2026-08-26, now answers `404 Function not found for account` while still
+    # appearing in /v1/models. Only these three were verified to return usable content.
+    "nim": [r"^nvidia/nemotron-mini-\d+b-instruct$", r"^google/gemma-\d+-\d+b-it$", r"^openai/gpt-oss-20b$"],
     "cf": [r"llama.*3\.3.*70b", r"llama.*4", r"qwen.*(32|72)b"],
 }
+# Last-resort candidates when discovery is unavailable or matches nothing.
+# Verified 2026-08-26 by reading the reply, not just the status code.
+_FALLBACK = {
+    "groq": ["openai/gpt-oss-20b", "openai/gpt-oss-120b"],
+    "nim": ["nvidia/nemotron-mini-4b-instruct", "google/gemma-4-31b-it", "openai/gpt-oss-20b"],
+    "cf": ["@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/meta/llama-3.1-8b-instruct"],
+}
 # Non-chat models that share the flat /v1/models list on NIM and Groq: speech,
-# embeddings, rerankers, safety classifiers, vision, and Groq's tool-using
-# compound systems (far too expensive for a one-line keep/drop verdict).
-_EXCLUDE = (r"whisper|orpheus|embed|bge-|rerank|guard|safeguard|moderation"
-            r"|vision|ocr|kosmos|deplot|diffusion|compound")
+# embeddings, rerankers, safety classifiers, vision, translation, and Groq's
+# tool-using compound systems (far too expensive for a one-line keep/drop verdict).
+# `content-safety` and `riva-translate` are here the hard way — both answer 200 to a
+# chat call, so only an exclusion keeps them out.
+_EXCLUDE = (r"whisper|orpheus|embed|bge-|rerank|guard|safeguard|moderation|content-safety"
+            r"|translate|vision|-vl$|omni|ocr|kosmos|deplot|diffusion|compound")
 
 
 def list_models(provider, env):
@@ -163,30 +175,32 @@ def choose_model(provider, ids):
     "JSON only" and must not be preferred at all (see _PREFER).
     """
     usable = [i for i in ids if not re.search(_EXCLUDE, i, re.I)]
+    ranked = []
     for pat in _PREFER.get(provider, []):
         for i in usable:
-            if re.search(pat, i, re.I):
-                return i
-    # Only Cloudflare gets a "something is better than nothing" fallback: its list
-    # arrives pre-filtered to Text Generation, so an unknown id there is still a
-    # chat model. On NIM and Groq an unrecognised id is more likely a new modality
-    # than a new instruct model, and a bad triage model is worse than no triage —
-    # the caller keeps every candidate when a tier declines, and says so.
-    return usable[0] if provider == "cf" and usable else None
+            if re.search(pat, i, re.I) and i not in ranked:
+                ranked.append(i)
+    # Only Cloudflare gets a "something is better than nothing" tail: its list arrives
+    # pre-filtered to Text Generation, so an unknown id there is still a chat model.
+    # On NIM and Groq an unrecognised id is more likely a new modality than a new
+    # instruct model, and a bad triage model is worse than no triage — the caller
+    # keeps every candidate when a tier declines, and says so.
+    if provider == "cf" and usable and not ranked:
+        ranked = usable[:1]
+    return ranked
 
 
-def resolve_model(provider, env):
-    """Return (model_id, how). Raises ValueError when the tier has nothing usable."""
+def candidates(provider, env):
+    """Ordered ids to try for this provider. Never one id — see the docstring above:
+    on NIM, 'listed' does not mean 'served', so the caller must be able to fall through."""
     pinned = env.get(_OVERRIDE_VAR[provider])
     if pinned:
-        return pinned, f"pinned by {_OVERRIDE_VAR[provider]}"
-    ids = list_models(provider, env)
-    if not ids:
-        raise ValueError(f"{provider}: model list is empty")
-    chosen = choose_model(provider, ids)
-    if not chosen:
-        raise ValueError(f"{provider}: no acceptable model among {len(ids)}")
-    return chosen, f"auto-picked from {len(ids)}"
+        return [pinned]
+    try:
+        ranked = choose_model(provider, list_models(provider, env))
+    except (urllib.error.URLError, urllib.error.HTTPError, ValueError, KeyError, TimeoutError):
+        ranked = []          # discovery is itself a network call, and it does fail
+    return ranked + [m for m in _FALLBACK.get(provider, []) if m not in ranked]
 
 
 def _stamp(verdict, model, how):
@@ -196,41 +210,67 @@ def _stamp(verdict, model, how):
 
 
 # ── providers: return a verdict dict, or None if unconfigured ──
+def _openai_chat(provider, url, key, title, abstract, env):
+    """Try each candidate until one returns a parsable verdict.
+
+    Falling through inside a provider matters as much as falling through between them.
+    On NIM only 17 of 95 listed ids serve chat, and three of the survivors answer HTTP 200
+    with either empty content or their own reasoning in place of the JSON — so the first
+    candidate failing says nothing about the second.
+    """
+    last = None
+    for model in candidates(provider, env):
+        try:
+            d = _post(url, {"Authorization": f"Bearer {key}"},
+                      {"model": model,
+                       "messages": _messages(title, abstract), "temperature": 0.1,
+                       "max_tokens": MAX_TOKENS, "response_format": {"type": "json_object"}})
+            v = _parse(d["choices"][0]["message"]["content"])
+            if v:
+                return _stamp(v, model, f"{provider} candidate")
+            last = ValueError(f"{provider}: {model} returned no usable verdict")
+        except (urllib.error.URLError, urllib.error.HTTPError, ValueError, KeyError, TimeoutError) as e:
+            last = e
+    if last:
+        raise last
+    return None
+
+
 def _nim(title, abstract, env):
     key = env.get("NVIDIA_API_KEY")
     if not key:
         return None
-    model, how = resolve_model("nim", env)
-    d = _post("https://integrate.api.nvidia.com/v1/chat/completions",
-              {"Authorization": f"Bearer {key}"},
-              {"model": model,
-               "messages": _messages(title, abstract), "temperature": 0.1,
-               "max_tokens": MAX_TOKENS, "response_format": {"type": "json_object"}})
-    return _stamp(_parse(d["choices"][0]["message"]["content"]), model, how)
+    return _openai_chat("nim", "https://integrate.api.nvidia.com/v1/chat/completions",
+                        key, title, abstract, env)
 
 
 def _groq(title, abstract, env):
     key = env.get("GROQ_API_KEY") or env.get("GroqCloud_API_KEY")
     if not key:
         return None
-    model, how = resolve_model("groq", env)
-    d = _post("https://api.groq.com/openai/v1/chat/completions",
-              {"Authorization": f"Bearer {key}"},
-              {"model": model,
-               "messages": _messages(title, abstract), "temperature": 0.1,
-               "max_tokens": MAX_TOKENS, "response_format": {"type": "json_object"}})
-    return _stamp(_parse(d["choices"][0]["message"]["content"]), model, how)
+    return _openai_chat("groq", "https://api.groq.com/openai/v1/chat/completions",
+                        key, title, abstract, env)
 
 
 def _cloudflare(title, abstract, env):
     acct, tok = env.get("CF_ACCOUNT_ID"), env.get("CF_API_TOKEN")
     if not (acct and tok):
         return None
-    model, how = resolve_model("cf", env)
-    d = _post(f"https://api.cloudflare.com/client/v4/accounts/{acct}/ai/run/{model}",
-              {"Authorization": f"Bearer {tok}"},
-              {"messages": _messages(title, abstract), "max_tokens": MAX_TOKENS})
-    return _stamp(_parse(d.get("result", {}).get("response")), model, how)
+    last = None
+    for model in candidates("cf", env):
+        try:
+            d = _post(f"https://api.cloudflare.com/client/v4/accounts/{acct}/ai/run/{model}",
+                      {"Authorization": f"Bearer {tok}"},
+                      {"messages": _messages(title, abstract), "max_tokens": MAX_TOKENS})
+            v = _parse(d.get("result", {}).get("response"))
+            if v:
+                return _stamp(v, model, "cf candidate")
+            last = ValueError(f"cf: {model} returned no usable verdict")
+        except (urllib.error.URLError, urllib.error.HTTPError, ValueError, KeyError, TimeoutError) as e:
+            last = e
+    if last:
+        raise last
+    return None
 
 
 TIERS = [_nim, _groq, _cloudflare]   # dreamcatcher order: NIM → Groq → Cloudflare
