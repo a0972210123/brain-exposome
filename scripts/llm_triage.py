@@ -95,14 +95,17 @@ _PREFER = {
     # NIM's line-up was replaced wholesale in 2026-08. `meta/llama-3.1-8b-instruct`, pinned
     # here until 2026-08-26, now answers `404 Function not found for account` while still
     # appearing in /v1/models. Only these three were verified to return usable content.
-    "nim": [r"^nvidia/nemotron-mini-\d+b-instruct$", r"^google/gemma-\d+-\d+b-it$", r"^openai/gpt-oss-20b$"],
+    # 順序＝2026-08-26 存活實測。nemotron-mini 當日中途由 200 變 410 Gone，降到最後但
+    # 保留樣式（可能以新尺寸回來）。gemma 排第一還有第二個理由：第二層挑 gpt-oss-20b，
+    # 兩層挑同一個模型，供應商換了但權重沒換。
+    "nim": [r"^google/gemma-\d+-\d+b-it$", r"^nvidia/nemotron-mini-\d+b-instruct$", r"^openai/gpt-oss-20b$"],
     "cf": [r"llama.*3\.3.*70b", r"llama.*4", r"qwen.*(32|72)b"],
 }
 # Last-resort candidates when discovery is unavailable or matches nothing.
 # Verified 2026-08-26 by reading the reply, not just the status code.
 _FALLBACK = {
     "groq": ["openai/gpt-oss-20b", "openai/gpt-oss-120b"],
-    "nim": ["nvidia/nemotron-mini-4b-instruct", "google/gemma-4-31b-it", "openai/gpt-oss-20b"],
+    "nim": ["google/gemma-4-31b-it", "openai/gpt-oss-20b"],   # nemotron-mini-4b：410 Gone (2026-08-26)
     "cf": ["@cf/meta/llama-3.3-70b-instruct-fp8-fast", "@cf/meta/llama-3.1-8b-instruct"],
 }
 # Non-chat models that share the flat /v1/models list on NIM and Groq: speech,
