@@ -39,16 +39,20 @@ or **region + 65+ %**. `scripts/_data_in/` is gitignored, so the raw files stay 
 - **Download:** CSV or XLSX (65+ ratio by sido, latest year). *(The OpenAPI key needs a Korean ID, so use the portal download.)*
 - **Save:** `scripts/_data_in/kr/`
 
-### 🇹🇷 TR — TÜİK (TurkStat)
-- **Site:** Nüfus İstatistikleri Portalı https://nip.tuik.gov.tr → "Population by age group and province", export Excel.
-- **Or direct PDF (verified):** https://www.tuik.gov.tr/media/announcements/ist_yasli2024.pdf (İstatistiklerle Yaşlılar 2024 — has a 65+ % by province table).
-- **Get:** 65+ share by province (il), 81 provinces. Strong gradient (Sinop 20.8% → Şırnak 3.7%).
-- **Save:** `scripts/_data_in/tr/`
+### 🇹🇷 TR — TÜİK (TurkStat)  ⚠️ needs re-grab (next round)
+- The elderly-stats **bulletin PDF** (`ist_yasli2024.pdf`) is INSUFFICIENT — national totals + charts only, no clean per-province 65+ table. Superseded.
+- **Real province data — use one of:**
+  - **Nüfus İstatistikleri Portalı** https://nip.tuik.gov.tr → "Population by age group and province" (ADNKS 2024) → export Excel (province × age group → 65+ / total).
+  - **veriportali press page** https://veriportali.tuik.gov.tr/tr/press/53783 → the bulletin's İstatistiksel Tablolar (statistical-tables) Excel, which has the by-province table.
+- Sources it cites: TÜİK ADNKS 2024; TÜİK Nüfus Projeksiyonları 2030–2100.
+- **Get:** 65+ share by province (il), 81 provinces. **Save:** `scripts/_data_in/tr/`
 
-### 🇨🇳 CN — National Bureau of Statistics
-- **Site:** https://data.stats.gov.cn (英文: https://data.stats.gov.cn/english/) → 分省年度数据 (Provincial annual) → 人口 → **"65岁及以上人口比重(%)"**.
-- **Download:** Excel export, by province, latest year (~2023). 31 provinces.
-- **Save:** `scripts/_data_in/cn/`  *(Chinese, JS-heavy portal — browser download is the reliable path.)*
+### 🇨🇳 CN — ✅ DONE (2020 census fallback, no VPN)
+- The live annual portal `data.stats.gov.cn` **geoblocks foreign IPs (403 UrlACL)** — needs a China ("回国") VPN.
+- **Fallback used instead:** 2020 Seventh National Census 65+ % per province (verified vs each provincial bureau's
+  第七次人口普查公报; national anchor 13.50%, range Tibet 5.67% → Liaoning 17.42%). Written by `build_aging_cn.mjs`
+  → `public/data/aging/cn-admin1.json` (31/31 provinces). vintage 2020 (matches WorldPop).
+- To refresh to the newer annual value (2023) later: use a 回国 VPN → `data.stats.gov.cn` 分省年度数据 → 人口 → 65岁及以上人口比重.
 
 ### 🇮🇳 IN — Census of India
 - **Site:** https://censusindia.gov.in/census.website/data/census-tables → table **C-13** (single-year age) or **C-14** (5-year age group by sex), by state.
