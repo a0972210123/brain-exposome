@@ -5,7 +5,14 @@
 
 ## 0. 一句話結論
 
-本站是「資料密集 + 出處完整」的公衛工具 —— 這正是 AEO 最愛引用的素材。**唯一問題：數字現在只活在 SVG/Leaflet 地圖與 JS 注入的表格裡，爬蟲與 LLM 看不到。** 解法＝把同一批數字，額外輸出成（a）語意化 HTML `<table>` 與（b）`schema.org` **Dataset** JSON-LD。基礎建設（canonical、OG、sitemap、Person/WebSite JSON-LD）都已就緒，只缺這兩層。
+本站是「資料密集 + 出處完整」的公衛工具 —— 這正是 AEO 最愛引用的素材。**唯一問題：數字現在只活在 SVG/Leaflet 地圖與 JS 注入的表格裡，爬蟲與 LLM 看不到。**
+
+**兩條槓桿要分清（依既有 SEO/AEO 研究，已查證）：**
+- **被 AI 引用（AEO）的真槓桿＝內容，不是 schema。** Ahrefs 實測：schema 對 AI 引用**無直接效**。GEO 論文實證前三：原話引言 +42.8%、**統計數據 +32.7%**、流暢化 +28.7%。本站每個 admin-1 數字都帶年份與出處 —— 只要**變成可爬的表格 + 可引用的統計句**，就正中「統計數據」這條。前提是先過 Cloudflare AI 爬蟲閘門。
+- **`schema.org` 的用途是「還活著的 rich results」與 Google Dataset Search 的發現性，不是 AI 引用。** 因此 **Dataset** JSON-LD 值得做（進 Google Dataset Search），但別期待它讓 LLM 引用我們 —— 那是內容的事。
+
+基礎建設（canonical、OG、sitemap、Person/WebSite JSON-LD）都已就緒。缺的是：**(a) 可爬的 SSR 表格 + 可引用統計句（AEO 主力）**、**(b) Dataset schema（Dataset Search 發現性）**。
+（研究正本：`D:\Claude_Project_Space\ShanLinSays\research\`，尤其 `00-...總覽.md` 第五節 CF 六項檢查與統一寫作清單。）
 
 ## 1. 現況盤點（已查證）
 
@@ -19,9 +26,9 @@
 
 ## 2. 硬前提（不先解，其餘白做）
 
-- **Cloudflare 邊緣預設擋 AI 爬蟲**（見既有研究：CF 的 "Block AI Scrapers and Crawlers" / Bot Fight Mode）。`robots.txt` 放行是**必要但不充分**——CF 在邊緣就把 GPTBot / ClaudeBot / PerplexityBot / Google-Extended 擋掉，AEO 直接歸零。
-  - **動作**：CF Dashboard 確認並**放行**這些 AI crawler UA；若用 "AI Audit" 功能，設為允許索引。
-  - 驗證：部署後看伺服器/CF log 是否有 GPTBot、ClaudeBot 實際取得 200。
+- **Cloudflare 邊緣預設擋 AI 爬蟲**（2025-07 起新網域預設封鎖）。`robots.txt` 放行是**必要但不充分**——CF 在邊緣就把爬蟲擋掉，AEO 直接歸零。
+  - **動作**：跑研究總覽 `00-...總覽.md` **第五節的六項檢查**；重點把**答案引擎的 Search/Agent bot 設為 don't block**（OAI-SearchBot、PerplexityBot、Claude-SearchBot、Google-Extended、GPTBot、ClaudeBot）。注意 GEO 引用走的是 *Search* bot，不是訓練爬蟲，兩者都要放行。
+  - 驗證：部署後看 CF/伺服器 log 是否有這些 UA 實際取得 200。
 - sitemap、canonical 已有，維持即可。
 
 ## 3. 資料 → 表格（本站現有資料逐層對應）
@@ -40,18 +47,22 @@
 
 ## 4. schema.org JSON-LD（加在既有 `@graph`）
 
+> ⚠️ 定位：schema **不是** AI 引用槓桿（Ahrefs 實測無直接效）。做它的理由是**還活著的 rich results 與 Google Dataset Search 的發現性**。別把它排在 §3/§5（可爬表格＋統計句）前面。
+
 在 `BaseLayout.astro` 的 `jsonLd['@graph']` 陣列**追加**下列型別（沿用既有機制，不新開檔）：
 
-- **`Dataset`（每層一個，最關鍵）**——`name` / `description` / `creator`（指向既有 Person）/ `license` / `temporalCoverage` / `spatialCoverage`（國家清單 `Place`）/ `variableMeasured`（`PropertyValue`：如「share of population aged 65+」）/ `distribution`（指向 `public/data/**` 的 JSON URL）/ `isBasedOn`（Eurostat、WorldPop、各國統計處…）/ `citation`（§⑤ 參考文獻）。→ 進 **Google Dataset Search**，並成為 AI 引用時的「出處」。
+- **`Dataset`（每層一個）**——`name` / `description` / `creator`（指向既有 Person）/ `license` / `temporalCoverage` / `spatialCoverage`（國家清單 `Place`）/ `variableMeasured`（`PropertyValue`：如「share of population aged 65+」）/ `distribution`（指向 `public/data/**` 的 JSON URL）/ `isBasedOn`（Eurostat、WorldPop、各國統計處…）/ `citation`（§⑤ 參考文獻）。**價值＝進 Google Dataset Search**（一個還活著的發現面），不是讓 LLM 引用。
 - **`WebApplication`**——本工具本身（`applicationCategory: HealthApplication`、`isAccessibleForFree: true`、`featureList`：腦齡估算、全球地圖、資料下鑽）。
 - **`MedicalWebPage`**——`about` = `MedicalCondition`「Dementia」（附 ICD-10 F03）、`lastReviewed`、`audience`；**務必保留「教育用途、非診斷」聲明**（`MedicalWebPage` 提升健康主題權威，但別過度宣稱醫療效力）。
 - Person / WebSite 已有；可補 `Person` 的 `sameAs`、資歷以強化 E-E-A-T（作者身分是答案引擎信任訊號）。
 
 實作方式：用各 `*.json` 的 `meta` 在 build 時**自動生成** Dataset 節點（資料變、schema 跟著變，零手維護，和 registry／freshness 同哲學）。
 
-## 5. AEO 內容形態（讓事實可被「抬走」）
+## 5. AEO 內容形態（讓事實可被「抬走」）— **這才是引用主力**
 
-- 每張地圖旁，同一批數字也給**一句定義句 + 一張表**（LLM 抬句子與表格，不抬 SVG）。例：「土耳其 Sinop 省 65 歲以上人口占 20.8%（TÜİK ADNKS 2024）。」
+依 GEO 論文實證：**統計數據 +32.7%**、原話引言 +42.8%、流暢化 +28.7%（關鍵字堆砌 −8.6%）。本站每個數字都帶出處與年份，天然吃到「統計數據」這條 —— 只要讓它可爬、可引用。
+
+- 每張地圖旁，同一批數字也給**一句可引用的統計句 + 一張表**（LLM 抬句子與表格，不抬 SVG）。例：「土耳其 Sinop 省 65 歲以上人口占 20.8%（TÜİK ADNKS 2024）。」—— 這一句同時滿足「統計數據」與「帶出處原話」兩條槓桿。
 - 逐國深連結（`?country=tr` 類）確保：渲染該國的表格 + 國別 `<title>`/`<meta>` + `Place` JSON-LD，讓「dementia aging Türkiye」這類查詢能落地且被引用。
 - 單位一致、年份明示、每個數字帶出處（meta 已具備）——這正是答案引擎會照抄的「according to X (year)」。
 
@@ -61,7 +72,7 @@
 2. **SSR 資料齊全度表**（`dp-table` 資料改 build 時渲染成 HTML）。
 3. **每層 Dataset JSON-LD**（由 `*.json` meta 自動生成）。
 4. **WebApplication + MedicalWebPage + 強化 author** JSON-LD。
-5. **驗證**：Google Rich Results Test、Schema Markup Validator、CF log 確認 GPTBot/ClaudeBot 取得 200。
+5. **驗證**：Google Rich Results Test／Schema Markup Validator（schema）、Google Dataset Search（Dataset 有無被收）、CF log 確認 Search bot 取得 200；**接 Bing Webmaster Tools —— 其 AI Performance 報表是目前唯一給「被 AI 引用次數」的官方後台**。GSC 起量先修「曝光零點擊／排名 8–20」舊頁，別急著先產新內容。
 
 ## 7. 明確不做（依既有 SEO/AEO 研究裁決）
 
@@ -72,4 +83,4 @@
 ---
 
 ### 附：一頁摘要
-「基礎 SEO 已滿分；AEO 的錢在 **Dataset schema + 可爬表格**。先過 CF AI 爬蟲閘門，再把地圖背後那批已帶出處的 `*.json` meta，一路輸出成 SSR 表格 + 自動生成的 Dataset JSON-LD——資料一變、表格與 schema 全自動跟上。」
+「基礎 SEO 已滿分。**AEO 被引用的錢在『可爬表格 + 可引用統計句』（schema 對 AI 引用無效）**；schema 另做，只為 Google Dataset Search 的發現性。先過 CF AI 爬蟲閘門，再把地圖背後那批已帶出處的 `*.json` meta，一路輸出成 SSR 表格 + 統計句，Dataset JSON-LD 自動生成——資料一變全自動跟上。」
