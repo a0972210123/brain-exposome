@@ -1,5 +1,13 @@
 # Sub-national (admin-1) "% aged 65+" — source manifest for Tier 2
 
+> ✅ **STATUS 2026-09-01 — COMPLETE.** All 26 drill-down countries now ship real admin-1 65+ gradients
+> (pk stays national by design; Tier-1 WorldPop for th/ph/id/vn/my/mm/bd, Tier-2 official for the rest).
+> The **authoritative machine-readable registry** (per-country source · URL · API/key · vintage · builder ·
+> refresh cadence) is [`scripts/aging-sources.json`](../../scripts/aging-sources.json); it is also wired into
+> the monthly data-refresh (`scripts/data-versions.json` → `aging_admin1_subnational`). The notes below are
+> retained as the original planning record + a how-each-was-sourced reference — "remaining/pending" mentions
+> are historical.
+
 Companion to the aging layer. **Tier 0** (shipped) shades every admin-1 unit with the country's *national*
 65+ % (World Bank; MOI for Taiwan). **Tier 1** = WorldPop 2020 age grids (re-run the pipeline). **Tier 2** (this
 doc) = replace with **real official admin-1 figures** where a statistics office publishes them, for a true

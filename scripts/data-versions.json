@@ -66,8 +66,8 @@
       "url": "https://www.hpa.gov.tw/"
     },
     "aging_admin1_subnational": {
-      "label": "🗺️ Admin-1 aging (65+) drill-down layer — 23 country sources (Eurostat/IBGE/ABS/StatCan/ONS/Census/e-Stat APIs + KOSIS/INEGI/StatsNZ/MOI/China-census). Per-source URL, vintage, builder & refresh cadence in scripts/aging-sources.json; re-run each builder to refresh (annual APIs + monthly KR/TW benefit most; census sources are decadal).",
-      "mode": "manual", "current_version": "2020–2026 mixed",
+      "label": "🗺️ Admin-1 aging (65+) drill-down layer — 26 country sources (Eurostat/IBGE/ABS/StatCan/ONS/Census/e-Stat APIs + KOSIS/INEGI/StatsNZ/MOI downloads + China/India/Iran/Türkiye census). Per-source URL, vintage, builder & refresh cadence in scripts/aging-sources.json; re-run each builder to refresh (annual APIs + monthly KR/TW benefit most; census sources are decadal).",
+      "mode": "manual", "current_version": "2011–2026 mixed",
       "url": "https://github.com/matt-ye/brain-exposome/blob/main/scripts/aging-sources.json"
     }
   }

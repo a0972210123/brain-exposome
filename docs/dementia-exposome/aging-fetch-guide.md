@@ -1,4 +1,8 @@
-# Aging layer — fetch guide for the remaining countries
+# Aging layer — fetch guide (COMPLETE — historical)
+
+> ✅ **2026-09-01 — all countries fetched.** tr (TÜİK ADNKS 2024, embedded), in (Census 2011 C-14), ir
+> (SCI 2016 via UN OCHA/HDX) were the last three; all built and shipped. Kept as a record of how each source
+> was obtained. Live per-source registry: [`scripts/aging-sources.json`](../../scripts/aging-sources.json).
 
 Step-by-step for the 9 countries I can't fetch unattended. **Two kinds of action:** (A) get a free **API key**
 and give it to me, or (B) **download a file** and drop it in `scripts/_data_in/<cc>/`, then tell me the filename —
