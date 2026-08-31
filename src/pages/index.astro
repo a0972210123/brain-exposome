@@ -1842,7 +1842,7 @@ function curBins() {
   return mapMode === 'composite' ? PAF_COMPOSITE.bins
     : EXPO_FACTORS.includes(mapMode) ? PAF_FACTOR.bins
       : mapMode === 'mci' ? MCI_BINS : mapMode === 'scd' ? SCD_BINS
-      : mapMode === 'aging' ? AGE_BINS_ADMIN
+      : mapMode === 'aging' ? agingScale().bins
       : mapMode === 'prevalence' ? curPrev().bins : PM_BINS;
 }
 
@@ -1920,7 +1920,7 @@ function buildLegend() {
         : mapMode === 'mci' ? L('MCI 盛行率 %', 'MCI %')
         : mapMode === 'scd' ? L('SCD 盛行率 %', 'SCD %')
         : mapMode === 'prevalence' ? L(curPrev().legendZh, curPrev().legendEn) : 'PM2.5 µg/m³';
-    const edges = [0, ...bins];
+    const edges = [mapMode === 'aging' ? agingScale().lo : 0, ...bins];
     let html = `<b>${unit}</b><br>`;
     for (let i = 0; i < ramp.length; i++) {
       const label = bins[i] != null ? `${edges[i]}–${bins[i]}` : `>${edges[edges.length - 1]}`;
@@ -2227,10 +2227,31 @@ function updateSpinBtn() {
 // read as "risk" like the YlOrRd layers.
 const AGE_BINS = [7, 14, 20];   // UN aging-society tiers: 7% aging · 14% aged · 20% super-aged (WPA)
 const AGE_RAMP = ['#edf8fb', '#b3cde3', '#8c96c6', '#88419d'];
-// Finer scale for the admin-1 aging choropleth; spans developing (~1-20%) and high-income (~12-32%)
-// ranges so both show a gradient. The globe keeps AGE_BINS' UN aging-society tiers.
+// The admin-1 aging choropleth fits a PER-COUNTRY, data-driven colour scale (not one global scale):
+// on any single fixed ramp a young country (in 2.6–8.3%) and an aged one (jp 22.6–37.6%) both
+// collapse to 1–2 shades. agingScale() fits 7 "nice"-rounded buckets to each country's own 65+
+// range so the internal gradient always shows. Absolute meaning is preserved elsewhere — the legend
+// prints the real thresholds, the tooltip carries the % + UN aging-society tier — so only the colour
+// is within-country (same per-country philosophy as the prevalence scales; the globe keeps AGE_BINS'
+// cross-country UN tiers). AGE_BINS_ADMIN is the fallback when a country has no admin-1 spread.
 const AGE_BINS_ADMIN = [6, 10, 14, 18, 22, 26];
 const AGE_RAMP_ADMIN = ['#f7fcfd', '#e0ecf4', '#bfd3e6', '#9ebcda', '#8c96c6', '#8856a7', '#810f7c'];
+let _agingScaleKey = null, AGING_BINS = AGE_BINS_ADMIN.slice(), AGING_LO = 0;
+function niceNum(x) { const p = Math.pow(10, Math.floor(Math.log10(x))); const f = x / p; return (f <= 1 ? 1 : f <= 2 ? 2 : f <= 2.5 ? 2.5 : f <= 5 ? 5 : 10) * p; }
+function agingScale() {   // {bins, lo} fitted to the current country's 65+ values; memoised per country
+  if (_agingScaleKey === mapCountry) return { bins: AGING_BINS, lo: AGING_LO };
+  const vals = VAL && VAL.aging ? Object.values(VAL.aging).filter(v => v != null) : [];
+  const mn = vals.length ? Math.min(...vals) : 0, mx = vals.length ? Math.max(...vals) : 0;
+  if (vals.length < 2 || !(mx > mn)) { AGING_BINS = AGE_BINS_ADMIN.slice(); AGING_LO = 0; }
+  else {
+    const step = niceNum((mx - mn) / 7), dp = step < 1 ? 2 : step < 3 ? 1 : 0, bins = [];
+    const lo = Math.floor(mn / step) * step;
+    for (let i = 1; i < 7; i++) bins.push(+(lo + step * i).toFixed(dp));
+    AGING_BINS = bins; AGING_LO = +lo.toFixed(dp);
+  }
+  _agingScaleKey = mapCountry;
+  return { bins: AGING_BINS, lo: AGING_LO };
+}
 const AGE_TIERS = [['未達高齡化 <7%', 'Pre-aging <7%'], ['高齡化社會 7–14%', 'Aging 7–14%'],
   ['高齡社會 14–20%', 'Aged 14–20%'], ['超高齡社會 ≥20%', 'Super-aged ≥20%']];
 // MCI (mild cognitive impairment) — a FEW strong-data countries only, on its own scale. Heterogeneous
