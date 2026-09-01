@@ -28,6 +28,10 @@ const imageURL = new URL(image, siteURL);
 const siteName = 'Matt Ye';
 const fullTitle = title === siteName ? title : `${title} · ${siteName}`;
 
+/* mattye.dev is the canonical home for this node — same @id, so the two must agree.
+   Everything below is mirrored from https://mattye.dev/ (its own JSON-LD and page
+   content); change it there first, then bring it across. This copy had drifted: it was
+   missing the ORCID, X and Instagram profiles the canonical node already published. */
 const personLd = {
   '@type': 'Person',
   '@id': 'https://mattye.dev/#person',
@@ -35,8 +39,30 @@ const personLd = {
   alternateName: '葉淨維',
   url: 'https://mattye.dev',
   jobTitle: 'PhD Candidate · Presentation Coach',
+  description: '職能治療師、研究者、溝通教育者。PhD @ NTU，專注 AI 輔助認知障礙診斷與簡報教育。',
+  affiliation: { '@type': 'CollegeOrUniversity', name: 'National Taiwan University' },
   alumniOf: { '@type': 'CollegeOrUniversity', name: 'National Taiwan University' },
-  sameAs: ['https://www.linkedin.com/in/ching-wei-ye'],
+  /* Author expertise is the first thing a health page is judged on, so the subject
+     areas here are the ones this site actually covers. */
+  knowsAbout: [
+    'Occupational therapy',
+    'Cognitive decline',
+    'Dementia risk factors',
+    'AI-assisted cognitive screening',
+    'Motor and handwriting analysis',
+    'Science communication',
+  ],
+  identifier: {
+    '@type': 'PropertyValue',
+    propertyID: 'ORCID',
+    value: 'https://orcid.org/0009-0001-6085-8303',
+  },
+  sameAs: [
+    'https://www.linkedin.com/in/ching-wei-ye',
+    'https://x.com/MattChingWeiYe',
+    'https://orcid.org/0009-0001-6085-8303',
+    'https://www.instagram.com/brown.yeh',
+  ],
 };
 const websiteLd = {
   '@type': 'WebSite',
@@ -97,7 +123,10 @@ const jsonLd = { '@context': 'https://schema.org', '@graph': [personLd, websiteL
     <meta name="twitter:title" content={fullTitle} />
     <meta name="twitter:description" content={description} />
     <meta name="twitter:image" content={imageURL} />
-    <meta name="twitter:creator" content="@mattye_dev" />
+    <!-- Handle taken from mattye.dev, which declares @MattChingWeiYe for both site and
+         creator and lists only x.com/MattChingWeiYe in its Person sameAs. -->
+    <meta name="twitter:site" content="@MattChingWeiYe" />
+    <meta name="twitter:creator" content="@MattChingWeiYe" />
 
     <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
