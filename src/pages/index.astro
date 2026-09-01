@@ -2,10 +2,26 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import T from '../components/T.astro';
 import Tour from '../components/Tour.astro';
+import provenance from '../../public/data/data-provenance.json';
+import { dpTableHtml, makeRegionNamer } from '../lib/dp-table.mjs';
+import { agingTables, agingSentence } from '../lib/aging-tables.mjs';
+
+/* Render the data tables at build time, not in the browser.
+   The map stays client-side; these are the same numbers in a form crawlers and answer
+   engines can read. The client script re-renders on tab / filter / language change. */
+const regionName = makeRegionNamer();
+const dpInitial = dpTableHtml(provenance, {
+  type: 'aging',
+  lang: 'zh',
+  name: (iso) => regionName(iso, 'zh'),
+});
+
+const aging = agingTables('zh');
+const AGING_TOP_N = 5;
 ---
 <BaseLayout
   title="腦健康 Exposome 檢測 · Brain-Health Exposome Check-in"
-  description="以 2024 年 Lancet 失智症委員會 14 項可調整風險因子與空氣污染（PM2.5）累積暴露為基礎的教育性腦健康自我檢視工具。估算「腦齡加速」的教育性參考值。純前端計算，資料不上傳、不儲存。"
+  description="腦健康自我檢視工具：以 Lancet 2024 十四項可調整風險因子與 PM2.5 暴露估算腦齡加速，並收錄全球高齡化、認知退化與危險因子盛行率資料。純前端計算，資料不上傳。"
 >
   <div class="container-wide calc-page">
 
@@ -63,7 +79,7 @@ import Tour from '../components/Tour.astro';
 
     <!-- ── Tab 1: personal check-in (wizard + method) ── -->
     <div class="tab-panel is-active" data-panel="calc">
-    <p class="section-heading"><T zh="個人 14 項可調整失智症風險因子填寫" en="Enter your 14 modifiable dementia risk factors" /></p>
+    <h2 class="section-heading"><T zh="個人 14 項可調整失智症風險因子填寫" en="Enter your 14 modifiable dementia risk factors" /></h2>
 
     <!-- Wizard -->
     <div class="wizard">
@@ -78,7 +94,7 @@ import Tour from '../components/Tour.astro';
 
       <!-- Step 1 — About you -->
       <section class="wizard-step is-active" data-step="1">
-        <p class="section-heading">1. <T zh="關於你" en="About you" /></p>
+        <h2 class="section-heading">1. <T zh="關於你" en="About you" /></h2>
         <div class="calc-form-card">
           <div class="form-grid">
             <label class="form-field">
@@ -120,7 +136,7 @@ import Tour from '../components/Tour.astro';
 
       <!-- Step 2 — Places -->
       <section class="wizard-step" data-step="2">
-        <p class="section-heading">2. <T zh="你住過的地方" en="Places you've lived" /></p>
+        <h2 class="section-heading">2. <T zh="你住過的地方" en="Places you've lived" /></h2>
         <p class="calc-section-desc">
           <T zh="加入你人生各階段主要居住的縣市與大約年份。系統會用該地區的年均 PM2.5 估算你「時間加權」的長期空氣污染暴露。年份可粗估即可。" en="Add the main counties you've lived in across life, with rough years. We estimate your time-weighted long-term PM2.5 exposure from each area's annual mean. Approximate years are fine." />
         </p>
@@ -165,11 +181,11 @@ import Tour from '../components/Tour.astro';
 
       <!-- Step 3 — Cardiometabolic -->
       <section class="wizard-step" data-step="3">
-        <p class="section-heading">3. <T zh="心血管與代謝" en="Heart & metabolic" /></p>
+        <h2 class="section-heading">3. <T zh="心血管與代謝" en="Heart & metabolic" /></h2>
         <p class="calc-section-desc"><T zh="不確定就選「不確定」，不會被算成風險。這些對應到 Lancet 委員會可調整的失智風險因子。" en="Pick 'Not sure' if you don't know — it won't be counted as a risk. These map to the Lancet Commission's modifiable dementia risk factors." /></p>
 
         <div class="calc-form-card">
-          <p class="calc-subheading"><T zh="❤️ 心血管代謝" en="❤️ Cardiometabolic" /></p>
+          <h3 class="calc-subheading"><T zh="❤️ 心血管代謝" en="❤️ Cardiometabolic" /></h3>
           <div class="form-grid">
             <label class="form-field">
               <span><T zh="高血壓" en="Hypertension" /></span>
@@ -237,11 +253,11 @@ import Tour from '../components/Tour.astro';
 
       <!-- Step 4 — Senses, mood & social -->
       <section class="wizard-step" data-step="4">
-        <p class="section-heading">4. <T zh="感官・心理・社交" en="Senses, mood & social" /></p>
+        <h2 class="section-heading">4. <T zh="感官・心理・社交" en="Senses, mood & social" /></h2>
         <p class="calc-section-desc"><T zh="不確定就選「不確定」，不會被算成風險。" en="Pick 'Not sure' if you don't know — it won't be counted as a risk." /></p>
 
         <div class="calc-form-card">
-          <p class="calc-subheading"><T zh="👂 感官" en="👂 Sensory" /></p>
+          <h3 class="calc-subheading"><T zh="👂 感官" en="👂 Sensory" /></h3>
           <div class="form-grid">
             <label class="form-field">
               <span><T zh="聽力損失" en="Hearing loss" /></span>
@@ -265,7 +281,7 @@ import Tour from '../components/Tour.astro';
             </label>
           </div>
 
-          <p class="calc-subheading"><T zh="🧠 心理健康" en="🧠 Mental health" /></p>
+          <h3 class="calc-subheading"><T zh="🧠 心理健康" en="🧠 Mental health" /></h3>
           <div class="form-grid">
             <label class="form-field">
               <span><T zh="憂鬱症" en="Depression" /></span>
@@ -278,7 +294,7 @@ import Tour from '../components/Tour.astro';
             </label>
           </div>
 
-          <p class="calc-subheading"><T zh="🤝 社會與認知" en="🤝 Social & cognitive" /></p>
+          <h3 class="calc-subheading"><T zh="🤝 社會與認知" en="🤝 Social & cognitive" /></h3>
           <div class="form-grid">
             <label class="form-field">
               <span><T zh="社交孤立" en="Social isolation" /></span>
@@ -300,11 +316,11 @@ import Tour from '../components/Tour.astro';
 
       <!-- Step 5 — Lifestyle & injury -->
       <section class="wizard-step" data-step="5">
-        <p class="section-heading">5. <T zh="生活型態與外傷" en="Lifestyle & injury" /></p>
+        <h2 class="section-heading">5. <T zh="生活型態與外傷" en="Lifestyle & injury" /></h2>
         <p class="calc-section-desc"><T zh="最後幾題，填完就能看結果。" en="Last few questions — then you'll see your results." /></p>
 
         <div class="calc-form-card">
-          <p class="calc-subheading"><T zh="🚬 生活型態與外傷" en="🚬 Lifestyle & injury" /></p>
+          <h3 class="calc-subheading"><T zh="🚬 生活型態與外傷" en="🚬 Lifestyle & injury" /></h3>
           <div class="form-grid">
             <label class="form-field">
               <span><T zh="吸菸" en="Smoking" /></span>
@@ -342,7 +358,7 @@ import Tour from '../components/Tour.astro';
 
       <!-- Step 6 — Results -->
       <section class="wizard-step" data-step="6">
-        <p class="section-heading">6. <T zh="你的結果" en="Your results" /></p>
+        <h2 class="section-heading">6. <T zh="你的結果" en="Your results" /></h2>
 
         <div class="result-profile" id="out-profile"></div>
 
@@ -355,7 +371,7 @@ import Tour from '../components/Tour.astro';
         </div>
 
         <div class="cat-head">
-          <p class="calc-subheading"><T zh="各面向風險換算腦齡老化概況" en="Brain-aging by domain (risk-converted)" /></p>
+          <h3 class="calc-subheading"><T zh="各面向風險換算腦齡老化概況" en="Brain-aging by domain (risk-converted)" /></h3>
           <div class="cat-toggle" role="group" aria-label="display style">
             <button type="button" class="cat-view-btn is-active" data-view="radar"><T zh="雷達圖" en="Radar" /></button>
             <button type="button" class="cat-view-btn" data-view="list"><T zh="清單" en="List" /></button>
@@ -366,7 +382,7 @@ import Tour from '../components/Tour.astro';
 
         <div class="result-exposome" id="out-exposome"></div>
 
-        <p class="calc-subheading"><T zh="你的風險因子：說明與建議" en="Your flagged factors: what they mean & what to do" /></p>
+        <h3 class="calc-subheading"><T zh="你的風險因子：說明與建議" en="Your flagged factors: what they mean & what to do" /></h3>
         <ul class="action-list" id="out-actions"></ul>
 
         <div class="wizard-nav">
@@ -378,7 +394,7 @@ import Tour from '../components/Tour.astro';
 
     <!-- How it's calculated (brain-age model) — after the personal result -->
     <section class="calc-section calc-method">
-      <p class="section-heading"><T zh="相對風險與腦齡計算方式" en="How relative risk & brain age are calculated" /></p>
+      <h2 class="section-heading"><T zh="相對風險與腦齡計算方式" en="How relative risk & brain age are calculated" /></h2>
       <p class="calc-section-desc">
         <T
           zh="每個「有」的因子會帶入已發表的相對風險（RR，主要來自 2024 年 Lancet 委員會與其引用的統合分析）。因為這些因子彼此相關、會重複計算，我們在合併時乘上一個縮減係數 λ = 0.6（近似委員會的 communality 調整），並設上限，避免高估。合併後的有效 RR 再換算成「腦齡加速」年數：Δ年 ≈ log₂(RR) × 5.5（失智風險大約每 5–6 年翻倍）。空氣污染以連續劑量處理（每 +5 µg/m³ 約 HR 1.08），因此不再重複計入委員會的類別式空污因子。"
@@ -393,7 +409,7 @@ import Tour from '../components/Tour.astro';
     <div class="tab-panel" data-panel="map">
     <!-- Regional map (Taiwan / Japan / Korea / China / USA / India) -->
     <section class="calc-section map-section">
-      <p class="section-heading"><T zh="全球地圖：高齡化、認知退化與危險因子概況" en="Global map: aging, cognitive decline & risk factors" /></p>
+      <h2 class="section-heading"><T zh="全球地圖：高齡化、認知退化與危險因子概況" en="Global map: aging, cognitive decline & risk factors" /></h2>
       <p class="calc-section-desc"><T zh="預設是「🌍 全球總覽」地球儀——每個國家以近年 PM2.5 或可調控失智風險（PAF，可歸因比例／population attributable fraction）著色，色階以 WHO 標準（≤5 µg/m³）為基準、可跨國比較。點任一國（或用選單切換到 20 多國）即可下鑽到該國各行政區的細節地圖，看更細的 PM2.5 與失智盛行「模型估計值」。把游標移到區域上看數值。" en="The default is a 🌍 global overview globe — each country shaded by recent PM2.5 or modifiable dementia risk (PAF, population attributable fraction), on a WHO-anchored scale (≤5 µg/m³) comparable across countries. Click a country (or pick one of 20+ from the dropdown) to drill into its admin-1 detail map, with finer PM2.5 and MODELLED dementia-prevalence estimates. Hover a district for values." /></p>
       <div class="map-controls">
         <label class="map-country-wrap">
@@ -488,20 +504,93 @@ import Tour from '../components/Tour.astro';
     <div class="tab-panel" data-panel="refs">
     <!-- Data-provenance / availability disclosure -->
     <section class="calc-section calc-provenance">
-      <p class="section-heading"><T zh="資料齊全度與來源" en="Data coverage & sources" /></p>
+      <h2 class="section-heading"><T zh="資料齊全度與來源" en="Data coverage & sources" /></h2>
       <p class="calc-section-desc"><T zh="逐一揭露本工具各類資料的齊全度與出處：切換上方資料類型，表列各國的國家級／省縣級資料來源與年份。狀態：✅ 已用於工具・◐ 部分（種子估計）・○ 已找到來源待接入・— 尚無資料。皆為模型估計／最新可得估計，會持續補齊。" en="Full disclosure of each data layer's coverage and provenance: pick a data type; the table lists every country's national / sub-national source and year. Status: ✅ in the tool · ◐ partial (seed) · ○ source identified, not yet wired · — none yet. All modelled / latest-available estimates; being filled in over time." /></p>
       <div class="dp-tabs" id="dp-tabs"></div>
       <div class="dp-controls">
         <input type="search" id="dp-filter" class="dp-filter" aria-label="filter countries" />
         <label class="dp-only"><input type="checkbox" id="dp-only-data" /> <T zh="只顯示有資料" en="Only with data" /></label>
       </div>
-      <div class="dp-table-wrap" id="dp-table-wrap"></div>
-      <p class="dp-count" id="dp-count"></p>
+      <div class="dp-table-wrap" id="dp-table-wrap" set:html={dpInitial.html}></div>
+      <p class="dp-count" id="dp-count">{dpInitial.count} 個國家/地區</p>
+    </section>
+
+    <!-- Admin-1 "population aged 65+" figures, rendered at build time.
+         Same numbers the map draws; here as text so crawlers and answer engines can cite
+         them. Top-N is visible; the full list sits in a <details> so it stays in the HTML
+         without costing first-paint layout. -->
+    <section class="calc-section calc-aging-tables">
+      <h2 class="section-heading"><T zh="各國省縣級高齡化數據（65 歲以上人口占比）" en="Sub-national population aged 65+, by country" /></h2>
+      <p class="calc-section-desc"><T
+        zh="地圖上的每一個省縣級數字，在這裡以文字列出，每筆都標明來源與年份。展開「完整列表」可看該國全部行政區。"
+        en="Every sub-national figure on the map, listed as text with its source and year. Expand “Full list” for all units in a country."
+      /></p>
+
+      {aging.map((c) => (
+        <div class="ag-country" id={`aging-${c.cc}`}>
+          <h3 class="ag-country-name">{c.country} <span class="ag-unit-count">({c.units.length})</span></h3>
+          <p class="ag-stat"><T zh={agingSentence(c, 'zh')} en={agingSentence(c, 'en')} /></p>
+          <table class="ag-table ag-table-top">
+            <caption class="visually-hidden">{c.country} — {c.meta.metric}, {c.meta.year}</caption>
+            <thead>
+              <tr>
+                <th scope="col"><T zh="行政區" en="Unit" /></th>
+                <th scope="col"><T zh="65 歲以上占比" en="Share aged 65+" /></th>
+              </tr>
+            </thead>
+            <tbody>
+              {c.units.slice(0, AGING_TOP_N).map((u) => (
+                <tr>
+                  <th scope="row">
+                    {u.nameLocal === u.name ? u.name : <T zh={u.nameLocal} en={u.name} />}
+                    {!u.named && <span class="ag-unnamed" title={u.code}><T zh="（來源代碼，地名未確認）" en="(source code; name unverified)" /></span>}
+                  </th>
+                  <td>{u.pct}%</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+          {c.units.length > AGING_TOP_N && (
+            <details class="ag-details">
+              <summary><T zh="完整列表" en="Full list" /> ({c.units.length})</summary>
+              <table class="ag-table">
+                <caption class="visually-hidden">{c.country} — {c.meta.metric}, {c.meta.year} (all units)</caption>
+                <thead>
+                  <tr>
+                    <th scope="col"><T zh="行政區" en="Unit" /></th>
+                    <th scope="col"><T zh="65 歲以上占比" en="Share aged 65+" /></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {c.units.map((u) => (
+                    <tr>
+                      <th scope="row">
+                        {u.nameLocal === u.name ? u.name : <T zh={u.nameLocal} en={u.name} />}
+                        {!u.named && <span class="ag-unnamed" title={u.code}><T zh="（來源代碼，地名未確認）" en="(source code; name unverified)" /></span>}
+                      </th>
+                      <td>{u.pct}%</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </details>
+          )}
+          <p class="ag-source">
+            <T zh={`來源：${c.meta.source}（${c.meta.year} 年）`} en={`Source: ${c.meta.source} (${c.meta.year})`} />
+            {c.unnamed > 0 && (
+              <T
+                zh={`　※ ${c.unnamed} 個單元在地理檔中沒有對應圖形，僅列出來源代碼。`}
+                en={`　※ ${c.unnamed} unit(s) have no matching shape in the geo file and are listed by source code only.`}
+              />
+            )}
+          </p>
+        </div>
+      ))}
     </section>
 
     <!-- Sources & references -->
     <section class="calc-section calc-refs">
-      <p class="section-heading"><T zh="資料來源與參考文獻" en="Sources & references" /></p>
+      <h2 class="section-heading"><T zh="資料來源與參考文獻" en="Sources & references" /></h2>
       <p class="calc-section-desc"><T zh="本工具整合以下公開文獻、政府與國際組織資料庫。所有失智盛行率與腦齡數字皆為教育性模型估計，非醫療診斷。" en="This tool builds on the public literature, government, and international datasets below. All dementia-prevalence and brain-age figures are educational modelled estimates, not medical diagnoses." /></p>
       <p class="calc-section-desc" style="font-size:0.78rem"><T zh="※ 資料庫類來源（GBD、內政部戶政司 #77132、日本 e-Stat、韓國 KOSIS、ACAG）均於 2026-07-14 存取；各條標註所用資料年份。" en="※ Database sources (GBD, MOI #77132, Japan e-Stat, Korea KOSIS, ACAG) were accessed 2026-07-14; each entry notes the data year used." /></p>
 
@@ -919,6 +1008,31 @@ import Tour from '../components/Tour.astro';
   .calc-provenance :global(.dp-badge) { font-size: 0.9rem; }
   .calc-provenance :global(.dp-count) { font-size: 0.72rem; color: var(--color-text-muted); margin: 0.4rem 0 0; padding: 0 0.55rem; }
 
+  /* Table captions: present for screen readers and crawlers, not shown. */
+  .visually-hidden {
+    position: absolute; width: 1px; height: 1px; margin: -1px; padding: 0;
+    overflow: hidden; clip: rect(0 0 0 0); clip-path: inset(50%); white-space: nowrap; border: 0;
+  }
+
+  /* Admin-1 aging tables (build-time rendered) */
+  .ag-country { margin-bottom: 1.6rem; }
+  .ag-country-name { font-size: 0.95rem; margin: 0 0 0.35rem; }
+  .ag-unit-count { font-weight: 400; font-size: 0.78rem; color: var(--color-text-muted); }
+  .ag-stat { font-size: 0.82rem; line-height: 1.6; margin: 0 0 0.5rem; }
+  .ag-table { width: 100%; border-collapse: collapse; font-size: 0.8rem; }
+  .ag-table caption { text-align: left; }
+  .ag-table th, .ag-table td { padding: 0.3rem 0.55rem; border-bottom: 1px solid var(--color-border); text-align: left; }
+  .ag-table thead th {
+    font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.04em; color: var(--color-text-muted);
+  }
+  .ag-table tbody th { font-weight: 400; }
+  .ag-table td { font-variant-numeric: tabular-nums; white-space: nowrap; }
+  .ag-details { margin-top: 0.4rem; }
+  .ag-details > summary { cursor: pointer; font-size: 0.78rem; color: var(--color-accent); }
+  .ag-details > .ag-table { margin-top: 0.4rem; }
+  .ag-source { font-size: 0.72rem; color: var(--color-text-muted); margin: 0.4rem 0 0; }
+  .ag-unnamed { font-size: 0.7rem; color: var(--color-text-muted); margin-left: 0.3rem; }
+
   /* Regional map */
   .map-controls { display: flex; gap: 1rem; align-items: flex-end; flex-wrap: wrap; margin-bottom: 0.8rem; }
   .map-country-wrap { display: flex; flex-direction: column; gap: 0.25rem; }
@@ -1010,6 +1124,8 @@ import Tour from '../components/Tour.astro';
 </style>
 
 <script>
+import { dpTableHtml, makeRegionNamer } from '../lib/dp-table.mjs';
+
 /* ── i18n helpers (mirror the site-wide data-lang + langchange pattern) ── */
 const lang = () => document.documentElement.getAttribute('data-lang') === 'en' ? 'en' : 'zh';
 const L = (zh, en) => lang() === 'en' ? en : zh;
@@ -2517,40 +2633,22 @@ function onLdlUnitChange() {
 }
 
 /* ── Data-provenance / coverage table (tabs = data type, rows = every country) ── */
+/* Markup comes from src/lib/dp-table.mjs — the same function the build used to render
+   the initial table, so the two can't drift. */
 let DP = null, dpType = 'aging', dpOnlyData = false;
-const _dpDN = {};
-function dpName(iso) {
-  const lg = lang() === 'en' ? 'en' : 'zh-Hant';
-  if (!(lg in _dpDN)) { try { _dpDN[lg] = new Intl.DisplayNames([lg], { type: 'region' }); } catch (e) { _dpDN[lg] = null; } }
-  try { return (_dpDN[lg] && _dpDN[lg].of(iso)) || iso; } catch (e) { return iso; }
-}
-function dpBadge(s) {
-  const m = { live: ['✅', 'dp-live'], seed: ['◐', 'dp-seed'], identified: ['○', 'dp-id'], none: ['—', 'dp-none'] };
-  const [sym, cls] = m[s] || m.none;
-  return `<span class="dp-badge ${cls}" title="${s}">${sym}</span>`;
-}
-function dpCell(o, k) {
-  const src = o[k + 'Src'], url = o[k + 'Url'], yr = o[k + 'Year'];
-  const s = (!src || src === '—') ? '—' : (url ? `<a href="${url}" target="_blank" rel="noopener">${src}</a>` : src);
-  return { src: s, yr: yr || '—' };
-}
+const _dpName = makeRegionNamer();
+function dpName(iso) { return _dpName(iso, lang()); }
 function renderDpTable() {
   if (!DP) return;
-  const t = DP.types.find(x => x.key === dpType) || DP.types[0];
-  const q = ($('dp-filter') ? $('dp-filter').value : '').trim().toLowerCase();
-  const rows = DP.iso.map(iso => ({ iso, name: dpName(iso), o: (DP.overrides[iso] && DP.overrides[iso][dpType]) || t.default }))
-    .filter(r => !q || r.name.toLowerCase().includes(q) || r.iso.toLowerCase().includes(q))
-    .filter(r => !dpOnlyData || r.o.status === 'live' || r.o.status === 'seed')
-    .sort((a, b) => a.name.localeCompare(b.name, lang() === 'en' ? 'en' : 'zh-Hant'));
-  const head = `<tr><th>${L('國家/地區', 'Country')}</th><th>${L('國家級來源', 'National source')}</th><th>${L('年份', 'Year')}</th>`
-    + `<th>${L('省縣級來源', 'Sub-national source')}</th><th>${L('年份', 'Year')}</th><th>${L('狀態', 'Status')}</th></tr>`;
-  const body = rows.map(r => {
-    const n = dpCell(r.o, 'nat'), s = dpCell(r.o, 'sub');
-    return `<tr><td class="dp-country">${r.name}</td><td>${n.src}</td><td class="dp-yr">${n.yr}</td>`
-      + `<td>${s.src}</td><td class="dp-yr">${s.yr}</td><td>${dpBadge(r.o.status)}</td></tr>`;
-  }).join('');
-  $('dp-table-wrap').innerHTML = `<table class="dp-table"><thead>${head}</thead><tbody>${body}</tbody></table>`;
-  const cnt = $('dp-count'); if (cnt) cnt.textContent = `${rows.length} ${L('個國家/地區', 'countries/areas')}`;
+  const { html, count } = dpTableHtml(DP, {
+    type: dpType,
+    lang: lang(),
+    name: dpName,
+    filter: $('dp-filter') ? $('dp-filter').value : '',
+    onlyData: dpOnlyData,
+  });
+  $('dp-table-wrap').innerHTML = html;
+  const cnt = $('dp-count'); if (cnt) cnt.textContent = `${count} ${L('個國家/地區', 'countries/areas')}`;
 }
 function renderProvenance() {
   if (!DP) return;
