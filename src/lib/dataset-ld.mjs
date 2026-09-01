@@ -35,6 +35,7 @@ function countryName(cc) {
 const LAYERS = [
   {
     key: 'aging',
+    keywords: ['population ageing', 'population aged 65 and over', 'admin-1', 'sub-national demographics', 'dementia risk'],
     variable: 'Share of population aged 65 and over',
     dir: 'aging',
     match: (f) => f.endsWith('-admin1.json'),
@@ -43,6 +44,7 @@ const LAYERS = [
   },
   {
     key: 'dementia',
+    keywords: ['dementia prevalence', 'sub-national', 'modelled estimate', 'Global Burden of Disease', 'ageing population'],
     variable: 'Modelled dementia prevalence, residents aged 60 and over',
     dir: 'dementia',
     match: (f) => f.endsWith('.json'),
@@ -51,6 +53,7 @@ const LAYERS = [
   },
   {
     key: 'pm25',
+    keywords: ['PM2.5', 'air pollution', 'particulate matter', 'environmental exposure', 'admin-1'],
     variable: 'Annual mean PM2.5 concentration',
     dir: 'pm25',
     match: (f) => f.endsWith('.json'),
@@ -59,6 +62,7 @@ const LAYERS = [
   },
   {
     key: 'exposome',
+    keywords: ['modifiable risk factors', 'population attributable fraction', 'dementia prevention', 'Lancet Commission', 'exposome'],
     variable: 'Prevalence and population attributable fraction of modifiable dementia risk factors',
     dir: 'exposome',
     match: (f) => f.endsWith('.json'),
@@ -67,6 +71,7 @@ const LAYERS = [
   },
   {
     key: 'mci',
+    keywords: ['mild cognitive impairment', 'MCI prevalence', 'cognitive decline', 'ageing'],
     variable: 'Mild cognitive impairment prevalence',
     dir: 'mci',
     match: (f) => f.endsWith('.json'),
@@ -75,6 +80,7 @@ const LAYERS = [
   },
   {
     key: 'scd',
+    keywords: ['subjective cognitive decline', 'SCD prevalence', 'self-reported memory complaints', 'cognitive ageing'],
     variable: 'Subjective cognitive decline prevalence',
     dir: 'scd',
     match: (f) => f.endsWith('.json'),
@@ -125,6 +131,10 @@ function layerDataset(layer) {
     '@id': `${SITE}/#dataset-${layer.key}`,
     name: layer.name,
     description: layer.description,
+    /* Landing page for the dataset — the tables and provenance section live here.
+       Google treats `url` as a recommended Dataset field. */
+    url: `${SITE}/`,
+    keywords: layer.keywords,
     creator: { '@id': PERSON_ID },
     isAccessibleForFree: true,
     includedInDataCatalog: { '@type': 'DataCatalog', name: 'Brain Exposome', url: SITE },
@@ -162,6 +172,14 @@ function layerDataset(layer) {
   const licenses = metas.map((m) => m.license);
   const stated = uniq(licenses);
   if (stated.length === 1 && licenses.every(Boolean)) node.license = stated[0];
+
+  /* Techniques are listed only when at least half the files declare one. The dementia
+     layer has a method on 1 file of 27 — a Taiwan-specific aggregation — and presenting
+     that as the layer's technique would repeat the licence mistake at a smaller scale. */
+  const methods = uniq(metas.map((m) => m.method));
+  if (methods.length && metas.filter((m) => m.method).length >= metas.length / 2) {
+    node.measurementTechnique = methods;
+  }
 
   return node;
 }

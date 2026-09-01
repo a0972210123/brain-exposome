@@ -55,6 +55,19 @@ for (const d of datasets) {
   }
 }
 
+// Google's recommended Dataset fields that we can state without inventing anything.
+for (const d of datasets) {
+  assert.equal(d.url, 'https://brain-exposome.mattye.dev/', `${d.name}: missing landing page url`);
+  assert.ok(Array.isArray(d.keywords) && d.keywords.length >= 4, `${d.name}: too few keywords`);
+}
+
+// measurementTechnique follows the same rule as licence: a technique declared by a
+// small minority of files describes that country, not the layer. dementia has a method
+// on 1 file of 27 and must not advertise it as the layer's technique.
+assert.equal(by('dementia').measurementTechnique, undefined, 'dementia method is on 1/27 files');
+assert.equal(by('aging').measurementTechnique.length, 16, 'aging states a method on every file');
+assert.ok(by('pm25').measurementTechnique.length >= 3, 'pm25 states its aggregation methods');
+
 // MedicalWebPage: the educational framing has to travel with the markup, and we do not
 // claim a human review date we cannot evidence.
 const med = graph.find((n) => n['@type'] === 'MedicalWebPage');
