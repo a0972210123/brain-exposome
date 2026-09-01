@@ -12,6 +12,15 @@ General rule for downloads: whatever format the site gives (XLSX / CSV / PDF) is
 `scripts/_data_in/<cc>/` and tell me the exact filename. Aim for a table of **region + (65+ count and total)**
 or **region + 65+ %**. `scripts/_data_in/` is gitignored, so the raw files stay local.
 
+> ⚠️ **`_data_in` is NOT protected by version control — 0 files tracked** (`.gitignore:32`). The raw inputs for
+> the five `access: download` countries (**tw / kr / mx / nz / in**) exist as a *single local copy*; the owner
+> keeps a Google Drive backup (confirmed 2026-09-01). The other countries are safe by construction: **cn** and
+> **tr** have their figures embedded in the (version-controlled) build scripts, and **ir** re-fetches from a
+> keyless URL each run — which is why `_data_in/cn`, `_data_in/ir` are empty and `_data_in/tr` holds only a
+> superseded bulletin PDF. That is by design, not a missing-file bug; see the `access` field in
+> [`scripts/aging-sources.json`](../../scripts/aging-sources.json) for the authoritative per-country answer.
+> If a raw file is ever lost, every source URL is recorded there and can be re-downloaded.
+
 ---
 
 ## A. Free API keys (give me the key; ~2 min each)
