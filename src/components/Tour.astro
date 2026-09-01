@@ -71,7 +71,10 @@
 <div class="tour-welcome" id="tour-welcome" role="dialog" aria-modal="true" aria-labelledby="tw-title" hidden>
   <div class="tw-card">
     <div class="tw-icon">🧭</div>
-    <h2 class="tw-title" id="tw-title"></h2>
+    <!-- Default text so the heading is never empty in the HTML (crawlers read an empty
+         h2 as a missing one). paintWelcome() swaps in the current language — keep this
+         in sync with WELCOME.title below. -->
+    <h2 class="tw-title" id="tw-title">第一次使用？</h2>
     <p class="tw-body"></p>
     <div class="tw-btns">
       <button type="button" class="tw-start"></button>
