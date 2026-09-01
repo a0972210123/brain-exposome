@@ -5,6 +5,7 @@ import Tour from '../components/Tour.astro';
 import provenance from '../../public/data/data-provenance.json';
 import { dpTableHtml, makeRegionNamer } from '../lib/dp-table.mjs';
 import { agingTables, agingSentence } from '../lib/aging-tables.mjs';
+import { structuredData } from '../lib/dataset-ld.mjs';
 
 /* Render the data tables at build time, not in the browser.
    The map stays client-side; these are the same numbers in a form crawlers and answer
@@ -18,10 +19,15 @@ const dpInitial = dpTableHtml(provenance, {
 
 const aging = agingTables('zh');
 const AGING_TOP_N = 5;
+
+/* Dataset / WebApplication / MedicalWebPage nodes, generated from the data files'
+   own meta so they cannot drift from the data. */
+const extraLd = structuredData();
 ---
 <BaseLayout
   title="腦健康 Exposome 檢測 · Brain-Health Exposome Check-in"
   description="腦健康自我檢視工具：以 Lancet 2024 十四項可調整風險因子與 PM2.5 暴露估算腦齡加速，並收錄全球高齡化、認知退化與危險因子盛行率資料。純前端計算，資料不上傳。"
+  extraLd={extraLd}
 >
   <div class="container-wide calc-page">
 
