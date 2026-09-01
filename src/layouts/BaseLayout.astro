@@ -9,6 +9,8 @@ interface Props {
   lang?: string;
   ogType?: 'website' | 'article';
   image?: string;
+  /** Extra schema.org nodes appended to this page's @graph — see src/lib/dataset-ld.mjs. */
+  extraLd?: Record<string, unknown>[];
 }
 
 const {
@@ -17,6 +19,7 @@ const {
   lang = 'zh-TW',
   ogType = 'website',
   image = '/OG.png',
+  extraLd = [],
 } = Astro.props;
 
 const siteURL = Astro.site ?? 'https://brain-exposome.mattye.dev';
@@ -45,7 +48,7 @@ const websiteLd = {
   copyrightYear: 2026,
   publisher: { '@id': 'https://mattye.dev/#person' },
 };
-const jsonLd = { '@context': 'https://schema.org', '@graph': [personLd, websiteLd] };
+const jsonLd = { '@context': 'https://schema.org', '@graph': [personLd, websiteLd, ...extraLd] };
 ---
 <!doctype html>
 <html lang={lang}>
