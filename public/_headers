@@ -1,0 +1,21 @@
+# Cloudflare Pages response headers.
+#
+# HTML is deliberately NOT given a longer cache. Pages does not purge its edge
+# cache on deploy, so raising the HTML TTL risks serving a stale page after every
+# release, and Cloudflare advises against custom caching for Pages projects:
+# https://developers.cloudflare.com/pages/configuration/serving-pages/
+# Measured warm LCP is already 2.0s mobile / 0.5s desktop, so HTML delivery is
+# not the bottleneck anyway.
+
+# Astro's build output is content-hashed: a changed file gets a new filename, so
+# a cached copy can never be stale.
+/_astro/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# The data layers are fetched on every page load (~600 KB across exposome,
+# provenance, mci, scd and the globe geometry) but only change when a builder is
+# re-run — monthly at most, see scripts/aging-sources.json. An hour of browser
+# cache saves the whole payload on repeat visits; the worst case is an hour of
+# stale figures on the day a refresh ships.
+/data/*
+  Cache-Control: public, max-age=3600
