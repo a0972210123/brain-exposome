@@ -1424,7 +1424,7 @@
  "LB": {
   "aging": {
    "natSrc": "Central Administration of Statistics (CAS)",
-   "natUrl": "http://cas.gov.lb/index.php/demographic-and-social-en/population-en",
+   "natUrl": "https://www.cas.gov.lb/population-social-conditions/population-demography/",
    "natYear": "2019",
    "status": "live"
   },
