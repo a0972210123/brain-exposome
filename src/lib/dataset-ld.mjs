@@ -18,6 +18,24 @@ const PERSON_ID = 'https://mattye.dev/#person';
 const read = (p) => JSON.parse(readFileSync(p, 'utf8'));
 const uniq = (xs) => [...new Set(xs.filter(Boolean))];
 
+/* Google reads `license` as a URL or a CreativeWork; the bare string a file records
+   ("CC BY 4.0") is neither, and Search Console reports it as an invalid object type.
+   Resolving the recorded identifier to its canonical deed URL is a FORMATTING change,
+   not a claim — the licence still comes from the file, and an identifier this table
+   does not know is emitted as a CreativeWork carrying the recorded text verbatim.
+   Every URL below was checked to resolve 200 on 2026-09-05. */
+const LICENSE_URL = {
+  'cc by 4.0': 'https://creativecommons.org/licenses/by/4.0/',
+  'cc-by-4.0': 'https://creativecommons.org/licenses/by/4.0/',
+  'cc by-sa 4.0': 'https://creativecommons.org/licenses/by-sa/4.0/',
+  'cc-by-sa-4.0': 'https://creativecommons.org/licenses/by-sa/4.0/',
+  'cc0 1.0': 'https://creativecommons.org/publicdomain/zero/1.0/',
+  'cc0-1.0': 'https://creativecommons.org/publicdomain/zero/1.0/',
+  'ogdl-taiwan-1.0': 'https://data.gov.tw/license',
+};
+const licenseValue = (text) =>
+  LICENSE_URL[String(text).trim().toLowerCase()] || { '@type': 'CreativeWork', name: String(text) };
+
 let _regions = null;
 function countryName(cc) {
   if (!_regions) {
@@ -171,7 +189,7 @@ function layerDataset(layer) {
      The repo has no LICENSE file, so an unstated licence stays unstated. */
   const licenses = metas.map((m) => m.license);
   const stated = uniq(licenses);
-  if (stated.length === 1 && licenses.every(Boolean)) node.license = stated[0];
+  if (stated.length === 1 && licenses.every(Boolean)) node.license = licenseValue(stated[0]);
 
   /* Techniques are listed only when at least half the files declare one. The dementia
      layer has a method on 1 file of 27 — a Taiwan-specific aggregation — and presenting
