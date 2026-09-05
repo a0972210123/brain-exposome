@@ -27,7 +27,20 @@ const by = (key) => datasets.find((d) => d['@id'].endsWith(`#dataset-${key}`));
 // The dementia layer has a single Taiwan file carrying OGDL-Taiwan-1.0 for its
 // boundaries; an earlier version promoted that to the whole layer.
 assert.equal(by('dementia').license, undefined, 'dementia must not inherit one file\'s licence');
-assert.equal(by('pm25').license, 'CC BY 4.0', 'pm25 states CC BY 4.0 on every file');
+/* The identifier the files record is resolved to its canonical deed URL. Search Console
+   reported a bare "CC BY 4.0" as an invalid object type for `license` (2026-09-05);
+   the claim is unchanged, only its expression. */
+assert.equal(by('pm25').license, 'https://creativecommons.org/licenses/by/4.0/',
+  'pm25 states CC BY 4.0 on every file, emitted as its canonical URL');
+
+// Whatever a file records, `license` must never reach the page as a bare label:
+// Google accepts a URL or a CreativeWork and nothing else.
+for (const d of datasets) {
+  if (d.license === undefined) continue;
+  const ok = (typeof d.license === 'string' && /^https?:\/\//.test(d.license))
+    || (d.license && d.license['@type'] === 'CreativeWork' && typeof d.license.name === 'string');
+  assert.ok(ok, `${d.name}: license must be a URL or a CreativeWork, got ${JSON.stringify(d.license)}`);
+}
 
 // `built` is a generation date, not data coverage. A layer that records only `built`
 // must have no temporalCoverage rather than a misleading one.
