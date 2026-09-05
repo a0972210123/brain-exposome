@@ -1,0 +1,65 @@
+Brain Exposome — licence
+========================
+
+Data
+----
+
+The datasets this project compiles and publishes — the files under `public/data/` and
+the values shown on https://brain-exposome.mattye.dev — are licensed under the Creative
+Commons Attribution 4.0 International Licence (CC BY 4.0).
+
+    Deed        https://creativecommons.org/licenses/by/4.0/
+    Legal code  https://creativecommons.org/licenses/by/4.0/legalcode
+
+Attribute as:
+
+    Brain Exposome — https://brain-exposome.mattye.dev
+
+The full licence text is not reproduced here; the deed and legal code above are the
+authoritative wording.
+
+
+Exception — modelled dementia prevalence
+----------------------------------------
+
+`public/data/dementia/` derives from GBD 2023 age-specific rates published by the
+Institute for Health Metrics and Evaluation (IHME). IHME releases GBD under a
+free-of-charge **non-commercial, attribution** agreement:
+
+    https://www.healthdata.org/Data-tools-practices/data-practices/ihme-free-charge-non-commercial-user-agreement
+
+CC BY 4.0 permits commercial reuse. This project therefore cannot pass that right on for
+GBD-derived values. **The dementia layer is available for non-commercial use with
+attribution only**, and reuse must credit both this project and:
+
+    Global Burden of Disease Study 2023 (GBD 2023),
+    Institute for Health Metrics and Evaluation (IHME)
+
+This is why the schema.org Dataset node for that layer states a different licence from
+the others — see `src/lib/dataset-ld.mjs`.
+
+
+Upstream sources keep their own terms
+-------------------------------------
+
+The CC BY 4.0 grant above covers this project's compilation, derivation and
+presentation. It does not — and cannot — relicense the sources those values come from.
+Every record carries its own `source` field, and each schema.org Dataset node lists its
+sources in `isBasedOn`. Terms that matter in practice:
+
+    ACAG SatPM2.5 V6.GL.03 (WashU)     CC BY 4.0
+    WorldPop 2020 1km age/sex grids    CC BY 4.0
+    Natural Earth boundaries           public domain
+    National statistics offices        each its own terms; see the per-record source
+    GBD 2023 (IHME)                    non-commercial + attribution — see the exception
+    Livingston et al., Lancet 2024     relative risks quoted with citation
+
+Raw upstream files are deliberately not redistributed here; only derived per-unit values
+are published (see docs/dementia-exposome/data-refresh-workflow.md).
+
+
+Source code
+-----------
+
+This file covers the data. The licence for the source code in this repository is not
+stated yet — treat it as all rights reserved until it is.

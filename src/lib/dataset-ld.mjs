@@ -18,23 +18,27 @@ const PERSON_ID = 'https://mattye.dev/#person';
 const read = (p) => JSON.parse(readFileSync(p, 'utf8'));
 const uniq = (xs) => [...new Set(xs.filter(Boolean))];
 
-/* Google reads `license` as a URL or a CreativeWork; the bare string a file records
-   ("CC BY 4.0") is neither, and Search Console reports it as an invalid object type.
-   Resolving the recorded identifier to its canonical deed URL is a FORMATTING change,
-   not a claim — the licence still comes from the file, and an identifier this table
-   does not know is emitted as a CreativeWork carrying the recorded text verbatim.
-   Every URL below was checked to resolve 200 on 2026-09-05. */
-const LICENSE_URL = {
-  'cc by 4.0': 'https://creativecommons.org/licenses/by/4.0/',
-  'cc-by-4.0': 'https://creativecommons.org/licenses/by/4.0/',
-  'cc by-sa 4.0': 'https://creativecommons.org/licenses/by-sa/4.0/',
-  'cc-by-sa-4.0': 'https://creativecommons.org/licenses/by-sa/4.0/',
-  'cc0 1.0': 'https://creativecommons.org/publicdomain/zero/1.0/',
-  'cc0-1.0': 'https://creativecommons.org/publicdomain/zero/1.0/',
-  'ogdl-taiwan-1.0': 'https://data.gov.tw/license',
+/* The licence of the compilation published here — this project's own grant to make,
+   recorded in LICENSE. It is NOT the upstream licence: what a data file records in
+   `meta.license` describes its SOURCE, and that belongs in `isBasedOn` and the
+   per-record source fields. An earlier version conflated the two and promoted one
+   file's licence onto a whole layer.
+
+   `dementia` is carved out. It derives from GBD 2023 (IHME), released under a
+   free-of-charge non-commercial + attribution agreement; CC BY 4.0 permits commercial
+   reuse, so applying it there would pass on a right this project does not hold. It is
+   stated as a CreativeWork rather than a URL because no single published deed says
+   "this compilation, under IHME's non-commercial term" — and `license` accepts a
+   CreativeWork, so the constraint travels instead of being flattened away. */
+const SITE_LICENSE = 'https://creativecommons.org/licenses/by/4.0/';
+const LAYER_LICENSE = {
+  dementia: {
+    '@type': 'CreativeWork',
+    name: 'Non-commercial use with attribution — derived from GBD 2023 under the IHME '
+        + 'free-of-charge non-commercial user agreement',
+    url: 'https://www.healthdata.org/Data-tools-practices/data-practices/ihme-free-charge-non-commercial-user-agreement',
+  },
 };
-const licenseValue = (text) =>
-  LICENSE_URL[String(text).trim().toLowerCase()] || { '@type': 'CreativeWork', name: String(text) };
 
 let _regions = null;
 function countryName(cc) {
@@ -183,13 +187,10 @@ function layerDataset(layer) {
   const citations = uniq(metas.map((m) => m.citation));
   if (citations.length) node.citation = citations;
 
-  /* A licence is only claimed when EVERY file in the layer records one and they agree.
-     One file's licence is not the layer's: the dementia layer has a single Taiwan file
-     carrying OGDL-Taiwan-1.0 for its boundaries, which says nothing about the rest.
-     The repo has no LICENSE file, so an unstated licence stays unstated. */
-  const licenses = metas.map((m) => m.license);
-  const stated = uniq(licenses);
-  if (stated.length === 1 && licenses.every(Boolean)) node.license = licenseValue(stated[0]);
+  /* Every layer states a licence now: the site's own grant for its compilation, with the
+     GBD-derived layer carrying IHME's non-commercial term instead. The upstream licences
+     the files record stay where they belong — in `isBasedOn` and the per-record sources. */
+  node.license = LAYER_LICENSE[layer.key] || SITE_LICENSE;
 
   /* Techniques are listed only when at least half the files declare one. The dementia
      layer has a method on 1 file of 27 — a Taiwan-specific aggregation — and presenting

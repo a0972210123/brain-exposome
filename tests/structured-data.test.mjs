@@ -23,20 +23,29 @@ assert.deepEqual(JSON.parse(JSON.stringify(graph)), graph, 'graph must survive a
 
 const by = (key) => datasets.find((d) => d['@id'].endsWith(`#dataset-${key}`));
 
-// A licence is only claimed when every file in the layer states the same one.
-// The dementia layer has a single Taiwan file carrying OGDL-Taiwan-1.0 for its
-// boundaries; an earlier version promoted that to the whole layer.
-assert.equal(by('dementia').license, undefined, 'dementia must not inherit one file\'s licence');
-/* The identifier the files record is resolved to its canonical deed URL. Search Console
-   reported a bare "CC BY 4.0" as an invalid object type for `license` (2026-09-05);
-   the claim is unchanged, only its expression. */
-assert.equal(by('pm25').license, 'https://creativecommons.org/licenses/by/4.0/',
-  'pm25 states CC BY 4.0 on every file, emitted as its canonical URL');
-
-// Whatever a file records, `license` must never reach the page as a bare label:
-// Google accepts a URL or a CreativeWork and nothing else.
+/* Every layer now states the site's own licence for its compilation (see LICENSE).
+   The licences the data files record describe their SOURCES and stay in isBasedOn —
+   the original mistake was promoting one file's licence onto a whole layer, and the
+   dementia layer still has that single Taiwan file carrying OGDL-Taiwan-1.0. */
+assert.equal(by('pm25').license, 'https://creativecommons.org/licenses/by/4.0/');
+assert.equal(by('aging').license, 'https://creativecommons.org/licenses/by/4.0/');
 for (const d of datasets) {
-  if (d.license === undefined) continue;
+  assert.ok(!/OGDL/i.test(JSON.stringify(d.license ?? null)),
+    `${d.name}: one file's licence must not become the layer's`);
+}
+
+/* GBD-derived values cannot be relicensed CC BY 4.0 — IHME's agreement is
+   non-commercial, and CC BY permits commercial reuse. Passing that right on is a
+   claim this project does not hold, so the dementia layer must carry IHME's term. */
+const demLic = by('dementia').license;
+assert.equal(demLic['@type'], 'CreativeWork', 'dementia states IHME terms, not a CC deed');
+assert.match(demLic.name, /non-commercial/i, 'the non-commercial restriction must be visible');
+assert.match(demLic.url, /^https:\/\/www\.healthdata\.org\//, 'points at the IHME agreement');
+
+// Whatever the source, `license` must reach the page as a URL or a CreativeWork:
+// Google accepts nothing else, and a bare label was reported invalid on 2026-09-05.
+for (const d of datasets) {
+  assert.ok(d.license, `${d.name}: every published dataset states a licence`);
   const ok = (typeof d.license === 'string' && /^https?:\/\//.test(d.license))
     || (d.license && d.license['@type'] === 'CreativeWork' && typeof d.license.name === 'string');
   assert.ok(ok, `${d.name}: license must be a URL or a CreativeWork, got ${JSON.stringify(d.license)}`);
