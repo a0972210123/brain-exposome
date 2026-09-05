@@ -61,5 +61,9 @@ are published (see docs/dementia-exposome/data-refresh-workflow.md).
 Source code
 -----------
 
-This file covers the data. The licence for the source code in this repository is not
-stated yet — treat it as all rights reserved until it is.
+Not licensed. This file grants rights to the DATA only.
+
+The source repository is private and the code is **all rights reserved**. This site is a
+static front end, so its HTML, CSS and JavaScript are necessarily served to every visitor
+— but being readable in a browser is not a grant. No permission to copy, modify,
+redistribute or reuse the code is given here or implied by its delivery.
